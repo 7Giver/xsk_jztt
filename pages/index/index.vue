@@ -15,9 +15,7 @@ export default {
       title: "Hello",
     };
   },
-  onLoad(...options) {
-    //  自己打印来看看咯
-    console.log(options);
+  onShow(...options) {
     console.log(this.$Route);
   },
   methods: {},
