@@ -133,3 +133,17 @@ video {
     height: 60rpx;
   }
 }
+
+// 全局字体大小
+@mixin add-size($size) {
+  font-size: $size;
+  &[data-size="0"] {
+    font-size: $uni-font-size-sm;
+  }
+  &[data-size="1"] {
+    font-size: $uni-font-size-base;
+  }
+  &[data-size="2"] {
+    font-size: $uni-font-size-lg;
+  }
+}
