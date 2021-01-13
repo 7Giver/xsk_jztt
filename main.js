@@ -1,6 +1,14 @@
 import Vue from "vue";
 import App from "./App";
-import { router, RouterMount } from "./router.js"; //路径换成自己的
+import { router, RouterMount } from "./router.js";
+import * as Common from "./common/util.js";
+
+// #ifdef H5
+import jwx from "./common/jwx.js";
+Vue.prototype.$jwx = jwx;
+// #endif
+Vue.prototype.$common = Common;
+
 Vue.use(router);
 
 App.mpType = "app";

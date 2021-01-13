@@ -4,21 +4,30 @@
     <view class="text-area">
       <text class="title">{{ title }}</text>
     </view>
-    <text>范德萨范德萨发</text>
   </view>
 </template>
 
 <script>
+import { getAreaList } from "api/home.js";
 export default {
   data() {
     return {
       title: "Hello",
     };
   },
-  onShow(...options) {
-    console.log(this.$Route);
+  onLoad(...options) {
+    this.getPageData();
   },
-  methods: {},
+  onShow(...options) {
+    // console.log(getAreaList);
+  },
+  methods: {
+    getPageData() {
+      getAreaList("/?r=").then((res) => {
+        console.log(res);
+      });
+    },
+  },
 };
 </script>
 
