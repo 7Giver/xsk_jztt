@@ -15,6 +15,10 @@
 		{
 			"path": "pages/mine/mine",
 			"name": "mine"
+		},
+		{
+			"path": "pages/video/video",
+			"name": "video"
 		}
 	],
 	"globalStyle": {
@@ -25,28 +29,44 @@
 		"navigationStyle": "custom"
 	},
 	"tabBar": {
-		"color": "#525252",
-		"selectedColor": "#4064B0",
+		"color": "#999999",
+		"selectedColor": "#F04323",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"iconPath": "/static/img/tabbar/icon01.png",
-				"selectedIconPath": "/static/img/tabbar/icon01_on.png",
-				"text": "首页"
-			},
-			{
-				"pagePath": "pages/news/news",
-				"iconPath": "/static/img/tabbar/icon02.png",
-				"selectedIconPath": "/static/img/tabbar/icon02_on.png",
+				"iconPath": "/static/img/tabbar/icon_news.png",
+				"selectedIconPath": "/static/img/tabbar/icon_news_on.png",
 				"text": "新闻"
 			},
 			{
+				"pagePath": "pages/video/video",
+				"iconPath": "/static/img/tabbar/icon_video.png",
+				"selectedIconPath": "/static/img/tabbar/icon_video_on.png",
+				"text": "视频"
+			},
+			{
+				"pagePath": "pages/news/news",
+				"iconPath": "/static/img/tabbar/icon_task.png",
+				"selectedIconPath": "/static/img/tabbar/icon_task_on.png",
+				"text": "任务"
+			},
+			{
 				"pagePath": "pages/mine/mine",
-				"iconPath": "/static/img/tabbar/icon04.png",
-				"selectedIconPath": "/static/img/tabbar/icon04_on.png",
+				"iconPath": "/static/img/tabbar/icon_mine.png",
+				"selectedIconPath": "/static/img/tabbar/icon_mine_on.png",
 				"text": "我的"
 			}
-		]
+		],
+		"midButton": {
+			"width": "69px",
+			"height": "47px",
+			//#ifdef MP-WEIXIN
+			"text": "文字",
+			//#endif
+			"iconPath": "/static/img/tabbar/icon_middle.png",
+			"iconWidth": "45px"
+			// "backgroundImage": "/static/img/tabbar/icon_middle.png"
+		}
 	}
 }
