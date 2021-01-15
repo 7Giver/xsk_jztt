@@ -1,5 +1,6 @@
 import Vue from "vue";
 import App from "./App";
+import uView from "uview-ui";
 import { router, RouterMount } from "./router.js";
 import * as Common from "./common/util.js";
 
@@ -9,7 +10,10 @@ Vue.prototype.$jwx = jwx;
 // #endif
 Vue.prototype.$common = Common;
 
+Vue.use(uView);
 Vue.use(router);
+
+
 
 App.mpType = "app";
 const app = new Vue({

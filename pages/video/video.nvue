@@ -1,19 +1,21 @@
 <template>
-	<view>
-		viedo page!
-	</view>
+  <view>
+    <view @tap="showModal = true">打开弹窗</view>
+    <u-popup v-model="showModal" mode="center" border-radius="14">
+      <view>出淤泥而不染，濯清涟而不妖</view>
+    </u-popup>
+  </view>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				
-			};
-		}
-	}
+export default {
+  data() {
+    return {
+      showModal: false,
+    };
+  },
+  methods: {},
+};
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
