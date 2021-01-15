@@ -13,8 +13,6 @@ Vue.prototype.$common = Common;
 Vue.use(uView);
 Vue.use(router);
 
-
-
 App.mpType = "app";
 const app = new Vue({
   ...App,

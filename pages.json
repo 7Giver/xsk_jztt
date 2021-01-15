@@ -1,15 +1,15 @@
 {
 	"easycom": {
-		// 下载安装的方式需要前面的"@/"，npm安装的方式无需"@/"
-		// 下载安装方式
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
-		// npm安装方式
-		// "^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"name": "index"
+		},
+		{
+			"path": "pages/login/login",
+			"name": "login"
 		},
 		{
 			"path": "pages/404/404",
@@ -20,12 +20,16 @@
 			"name": "news"
 		},
 		{
-			"path": "pages/mine/mine",
-			"name": "mine"
-		},
-		{
 			"path": "pages/video/video",
 			"name": "video"
+		},
+		{
+			"path": "pages/task/task",
+			"name": "video"
+		},
+		{
+			"path": "pages/mine/mine",
+			"name": "mine"
 		}
 	],
 	"globalStyle": {
@@ -41,7 +45,7 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
-				"pagePath": "pages/index/index",
+				"pagePath": "pages/news/news",
 				"iconPath": "/static/img/tabbar/icon_news.png",
 				"selectedIconPath": "/static/img/tabbar/icon_news_on.png",
 				"text": "新闻"
@@ -53,7 +57,7 @@
 				"text": "视频"
 			},
 			{
-				"pagePath": "pages/news/news",
+				"pagePath": "pages/task/task",
 				"iconPath": "/static/img/tabbar/icon_task.png",
 				"selectedIconPath": "/static/img/tabbar/icon_task_on.png",
 				"text": "任务"

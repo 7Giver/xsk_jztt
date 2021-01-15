@@ -4,6 +4,7 @@
     <view class="text-area">
       <text class="title" @click="toggleMessage('info')">{{ title }}</text>
     </view>
+    <view @click="goLogin">登录</view>
     <!-- 对话框 -->
     <uni-popup
       id="popupDialog"
@@ -43,6 +44,15 @@ export default {
     getPageData() {
       getAreaList("/?r=").then((res) => {
         console.log(res);
+      });
+    },
+    goLogin() {
+      this.$Router.push({
+        path: "/pages/login/login",
+        query: {
+          userId: "123",
+          list: [11, 33, 55],
+        },
       });
     },
     /**
