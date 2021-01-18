@@ -50,7 +50,7 @@
               maxlength="10"
             />
           </view>
-          <view>重新发送</view>
+          <view class="ver_code" @click="getCode">{{ tips }}</view>
         </view>
       </view>
       <view
@@ -86,6 +86,14 @@
       :safe-area-inset-bottom="true"
       @confirm="zoneConfirm"
     ></u-select>
+    <!-- 验证码倒计时 -->
+    <u-verification-code
+      ref="uCode"
+      change-text="重新获取(Xs)"
+      :seconds="seconds"
+      :keep-running="true"
+      @change="codeChange"
+    ></u-verification-code>
   </view>
 </template>
 
@@ -93,10 +101,12 @@
 export default {
   data() {
     return {
-      zoneNumber: 86, //手机区号
       phone: null, //显示手机号
+      zoneNumber: 86, //手机区号
+      seconds: 20,  //验证码倒计时
       phoneNumber: "", //去空格手机号
-      verCode: '', //验证码
+      verCode: "", //输入的验证码
+      tips: "", //验证码提示语
       zoneKey: [0], //区号键
       showZone: false, //区号选择器
       checkPhone: false, // 验证手机号
@@ -154,6 +164,27 @@ export default {
     // 获取二维码
     goGetCode() {
       this.sendCode = true;
+    },
+    codeChange(text) {
+      // console.log(text);
+      this.tips = text;
+    },
+    getCode() {
+      if (this.$refs.uCode.canGetCode) {
+        // 模拟向后端请求验证码
+        uni.showLoading({
+          title: "正在获取验证码",
+        });
+        setTimeout(() => {
+          uni.hideLoading();
+          // 这里此提示会被this.start()方法中的提示覆盖
+          this.$u.toast("验证码已发送");
+          // 通知验证码组件内部开始倒计时
+          this.$refs.uCode.start();
+        }, 2000);
+      } else {
+        this.$u.toast("倒计时结束后再发送");
+      }
     },
   },
 };
@@ -223,12 +254,16 @@ page {
     .has_code {
       justify-content: space-between;
       .input_wrap {
-        margin-right: 30rpx;
+        flex: 1;
+        padding-right: 24rpx;
         .u-input {
           u-input {
             font-size: 40rpx;
           }
         }
+      }
+      .ver_code {
+        white-space: nowrap;
       }
     }
   }
