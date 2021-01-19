@@ -103,7 +103,7 @@ export default {
     return {
       phone: null, //显示手机号
       zoneNumber: 86, //手机区号
-      seconds: 20,  //验证码倒计时
+      seconds: 20, //验证码倒计时
       phoneNumber: "", //去空格手机号
       verCode: "", //输入的验证码
       tips: "", //验证码提示语
@@ -163,7 +163,11 @@ export default {
     },
     // 获取二维码
     goGetCode() {
-      this.sendCode = true;
+      if (this.sendCode) {
+        this.$Router.push({ path: "/pages/news/news" });
+      } else {
+        this.sendCode = true;
+      }
     },
     codeChange(text) {
       // console.log(text);
