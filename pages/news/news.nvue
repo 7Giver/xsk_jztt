@@ -44,6 +44,24 @@
       </view>
     </scroll-view>
     <view class="tab-bar-line"></view>
+    <swiper
+      class="tab-box"
+      ref="swiper1"
+      :current="tabIndex"
+      :duration="300"
+      @change="onswiperchange"
+      @transition="onswiperscroll"
+      @animationfinish="animationfinish"
+      @onAnimationEnd="animationfinish"
+    >
+      <swiper-item
+        class="swiper-item"
+        v-for="(page, index) in tabList"
+        :key="index"
+      >
+        <newsPage class="page-item" :nid="page.newsid" ref="page"></newsPage>
+      </swiper-item>
+    </swiper>
   </view>
 </template>
 
@@ -52,12 +70,17 @@
 const dom = weex.requireModule("dom");
 // #endif
 
+import newsPage from "./news-page.nvue";
+
 // 缓存每页最多
 const MAX_CACHE_DATA = 100;
 // 缓存页签数量
 const MAX_CACHE_PAGE = 3;
 const TAB_PRELOAD_OFFSET = 1;
 export default {
+  components: {
+    newsPage,
+  },
   data() {
     return {
       tabIndex: 0,
@@ -138,6 +161,63 @@ export default {
 
       this.switchTab(index);
     },
+    onswiperchange(e) {
+      // 注意：百度小程序会触发2次
+
+      // #ifndef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+      let index = e.target.current || e.detail.current;
+      this.switchTab(index);
+      // #endif
+    },
+    onswiperscroll(e) {
+      if (this.isTap) {
+        return;
+      }
+
+      var offsetX = e.detail.dx;
+      var preloadIndex = this._lastTabIndex;
+      if (offsetX > TAB_PRELOAD_OFFSET) {
+        preloadIndex++;
+      } else if (offsetX < -TAB_PRELOAD_OFFSET) {
+        preloadIndex--;
+      }
+      if (
+        preloadIndex === this._lastTabIndex ||
+        preloadIndex < 0 ||
+        preloadIndex > this.pageList.length - 1
+      ) {
+        return;
+      }
+      if (this.pageList[preloadIndex].dataList.length === 0) {
+        this.loadTabData(preloadIndex);
+      }
+
+      // #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+      var percentage = Math.abs(this.swiperWidth / offsetX);
+      var currentSize = this.tabListSize[this._lastTabIndex];
+      var preloadSize = this.tabListSize[preloadIndex];
+      var lineL =
+        currentSize.left + (preloadSize.left - currentSize.left) / percentage;
+      var lineW =
+        currentSize.width +
+        (preloadSize.width - currentSize.width) / percentage;
+      this.updateIndicator(lineL, lineW);
+      // #endif
+    },
+    animationfinish(e) {
+      // #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+      let index = e.detail.current;
+      if (this._touchTabIndex === index) {
+        this.isTap = false;
+      }
+      this._lastTabIndex = index;
+      this.switchTab(index);
+      this.updateIndicator(
+        this.tabListSize[index].left,
+        this.tabListSize[index].width
+      );
+      // #endif
+    },
     selectorQuery() {
       // #ifdef APP-NVUE
       dom.getComponentRect(this.$refs.tabbar1, (res) => {
@@ -164,20 +244,20 @@ export default {
       // #endif
 
       // #ifdef MP-WEIXIN || H5 || MP-QQ
-      // uni
-      //   .createSelectorQuery()
-      //   .in(this)
-      //   .select(".tab-box")
-      //   .fields(
-      //     {
-      //       dataset: true,
-      //       size: true,
-      //     },
-      //     (res) => {
-      //       this.swiperWidth = res.width;
-      //     }
-      //   )
-      //   .exec();
+      uni
+        .createSelectorQuery()
+        .in(this)
+        .select(".tab-box")
+        .fields(
+          {
+            dataset: true,
+            size: true,
+          },
+          (res) => {
+            this.swiperWidth = res.width;
+          }
+        )
+        .exec();
       uni
         .createSelectorQuery()
         .in(this)
@@ -199,21 +279,21 @@ export default {
       this.indicatorLineWidth = width;
     },
     switchTab(index) {
-      // if (this.pageList[index].dataList.length === 0) {
-      //   this.loadTabData(index);
-      // }
+      if (this.pageList[index].dataList.length === 0) {
+        this.loadTabData(index);
+      }
 
       if (this.tabIndex === index) {
         return;
       }
 
       // 缓存 tabId
-      // if (this.pageList[this.tabIndex].dataList.length > MAX_CACHE_DATA) {
-      //   let isExist = this.cacheTab.indexOf(this.tabIndex);
-      //   if (isExist < 0) {
-      //     this.cacheTab.push(this.tabIndex);
-      //   }
-      // }
+      if (this.pageList[this.tabIndex].dataList.length > MAX_CACHE_DATA) {
+        let isExist = this.cacheTab.indexOf(this.tabIndex);
+        if (isExist < 0) {
+          this.cacheTab.push(this.tabIndex);
+        }
+      }
 
       this.tabIndex = index;
 
@@ -225,11 +305,11 @@ export default {
       // #endif
 
       // 释放 tabId
-      // if (this.cacheTab.length > MAX_CACHE_PAGE) {
-      //   let cacheIndex = this.cacheTab[0];
-      //   this.clearTabData(cacheIndex);
-      //   this.cacheTab.splice(0, 1);
-      // }
+      if (this.cacheTab.length > MAX_CACHE_PAGE) {
+        let cacheIndex = this.cacheTab[0];
+        this.clearTabData(cacheIndex);
+        this.cacheTab.splice(0, 1);
+      }
     },
     scrollTabTo(index) {
       const el = this.$refs["tabitem" + index][0];
@@ -284,6 +364,58 @@ page {
   /* #ifndef APP-PLUS */
   white-space: nowrap;
   /* #endif */
+  .scroll-view-indicator {
+    position: relative;
+    height: 2px;
+    background-color: transparent;
+  }
+
+  .scroll-view-underline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background-color: #f04323;
+  }
+
+  .scroll-view-animation {
+    transition-duration: 0.2s;
+    transition-property: left;
+  }
+
+  .tab-bar-line {
+    height: 1px;
+    background-color: #cccccc;
+  }
+
+  .uni-tab-item {
+    /* #ifndef APP-PLUS */
+    display: inline-block;
+    /* #endif */
+    flex-wrap: nowrap;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .uni-tab-item-title {
+    color: #555;
+    font-size: 15px;
+    height: 40px;
+    line-height: 40px;
+    flex-wrap: nowrap;
+    /* #ifndef APP-PLUS */
+    white-space: nowrap;
+    /* #endif */
+  }
+
+  .uni-tab-item-title-active {
+    color: #f04323;
+  }
+
+  .tab-bar-line {
+    height: 1px;
+    background-color: #e6e6e6;
+  }
 }
 
 /* #ifndef APP-NVUE */
@@ -297,60 +429,22 @@ page {
 
 /* #endif */
 
-.scroll-view-indicator {
-  position: relative;
-  height: 2px;
-  background-color: transparent;
-}
-
-.scroll-view-underline {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 0;
-  background-color: #f04323;
-}
-
-.scroll-view-animation {
-  transition-duration: 0.2s;
-  transition-property: left;
-}
-
-.tab-bar-line {
-  height: 1px;
-  background-color: #cccccc;
-}
-
 .tab-box {
   flex: 1;
-}
 
-.uni-tab-item {
-  /* #ifndef APP-PLUS */
-  display: inline-block;
-  /* #endif */
-  flex-wrap: nowrap;
-  padding-left: 20px;
-  padding-right: 20px;
-}
+  .swiper-item {
+    flex: 1;
+    flex-direction: column;
+  }
 
-.uni-tab-item-title {
-  color: #555;
-  font-size: 15px;
-  height: 40px;
-  line-height: 40px;
-  flex-wrap: nowrap;
-  /* #ifndef APP-PLUS */
-  white-space: nowrap;
-  /* #endif */
-}
-
-.uni-tab-item-title-active {
-  color: #f04323;
-}
-
-.tab-bar-line {
-  height: 1px;
-  background-color: #e6e6e6;
+  .page-item {
+    flex: 1;
+    flex-direction: row;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
 }
 </style>
