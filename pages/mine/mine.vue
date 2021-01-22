@@ -1,6 +1,6 @@
 <template>
   <view id="app" v-cloak>
-    <u-navbar :is-back="false" :border-bottom="false">
+    <u-navbar :is-back="false" :is-fixed="false" :border-bottom="false">
       <view class="navbar-right" slot="right">
         <view class="icon_wrap">
           <view class="left">
@@ -22,31 +22,65 @@
               <view class="nickname">{{ userInfo.nickname }}</view>
               <view class="bottom">
                 <text>查看个人主页</text>
-                <u-icon name="arrow-right" color="#969799" size="26"></u-icon>
+                <u-icon name="arrow-right" color="#969799" size="20"></u-icon>
               </view>
             </view>
           </view>
           <view class="incode_wrap">我的邀请码：{{ userInfo.inCode }}</view>
         </view>
-        <view class="header_bottom">
+        <view class="u-flex header_bottom">
           <view class="item">
-            <view>{{5312}}</view>
-            <text>我的金币</text>
+            <view class="number">{{ 5312 }}</view>
+            <text class="title">我的金币</text>
           </view>
           <view class="item">
-            <view>{{569}}</view>
-            <text>今日金币</text>
+            <view class="number">{{ 569 }}</view>
+            <text class="title">今日金币</text>
           </view>
           <view class="item">
-            <view>{{88}}</view>
-            <text>当前价值(元)</text>
+            <view class="number">{{ 88 }}</view>
+            <text class="title">当前价值(元)</text>
           </view>
           <view class="item">
-            <view>{{88}}</view>
-            <text>账户明细</text>
+            <image
+              class="icon"
+              src="/static/img/mine/icon_zhmx.png"
+              mode="widthFix"
+            />
+            <text class="title">账户明细</text>
           </view>
         </view>
       </view>
+      <view class="container">
+        <view class="u-flex share_wrap">
+          <view
+            class="u-flex item"
+            v-for="(item, index) in inviteList"
+            :key="index"
+          >
+            <image class="icon" :src="item.icon" mode="widthFix" />
+            <view class="title">{{ item.title }}</view>
+          </view>
+        </view>
+        <view class="banner_wrap mt">
+          <u-swiper
+            mode="none"
+            bg-color="#fff"
+            :height="220"
+            :list="bannerList"
+          ></u-swiper>
+        </view>
+        <view class="function_wrap mt">
+          <view class="main_title">我的功能</view>
+          <view class="u-flex content">
+            <view class="u-flex item" v-for="(item, index) in iconList" :key="index">
+              <image class="icon" :src="item.icon" mode="widthFix" />
+              <view class="title">{{ item.title }}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <!-- 设置全局字符大小 -->
       <view class="picker_wrap">
         <view class="clamp_one">字符大小：</view>
         <picker
@@ -72,10 +106,93 @@ export default {
       },
       fontIndex: 1,
       fontArray: ["小", "中", "大"],
+      inviteList: [
+        {
+          id: 1,
+          icon: "/static/img/mine/icon_wxyq.png",
+          title: "微信邀请",
+        },
+        {
+          id: 2,
+          icon: "/static/img/mine/icon_pyqyq.png",
+          title: "朋友圈邀请",
+        },
+        {
+          id: 3,
+          icon: "/static/img/mine/icon_qqyq.png",
+          title: "QQ邀请",
+        },
+        {
+          id: 4,
+          icon: "/static/img/mine/icon_wdhy.png",
+          title: "我的好友",
+        },
+      ],
+      bannerList: [
+        {
+          image: "https://cdn.uviewui.com/uview/swiper/1.jpg",
+          title: "昨夜星辰昨夜风，画楼西畔桂堂东",
+        },
+        {
+          image: "https://cdn.uviewui.com/uview/swiper/2.jpg",
+          title: "身无彩凤双飞翼，心有灵犀一点通",
+        },
+        {
+          image: "https://cdn.uviewui.com/uview/swiper/3.jpg",
+          title: "谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳",
+        },
+      ],
+      iconList: [
+        {
+          id: 1,
+          icon: '/static/img/mine/icon_gzfs.png',
+          title: '关注/粉丝'
+        },
+        {
+          id: 2,
+          icon: '/static/img/mine/icon_wdsc.png',
+          title: '我的收藏'
+        },
+        {
+          id: 3,
+          icon: '/static/img/mine/icon_wdzj.png',
+          title: '我的足迹'
+        },
+        {
+          id: 4,
+          icon: '/static/img/mine/icon_hbyq.png',
+          title: '海报邀请'
+        },
+        {
+          id: 5,
+          icon: '/static/img/mine/icon_cgx.png',
+          title: '草稿箱'
+        },
+        {
+          id: 6,
+          icon: '/static/img/mine/icon_wdzp.png',
+          title: '我的作品'
+        },
+        {
+          id: 7,
+          icon: '/static/img/mine/icon_yjms.png',
+          title: '夜间模式'
+        },
+        {
+          id: 6,
+          icon: '/static/img/mine/icon_fk.png',
+          title: '帮助反馈'
+        },
+        {
+          id: 7,
+          icon: '/static/img/mine/icon_xtsz.png',
+          title: '系统设置'
+        },
+      ]
     };
   },
   onShow() {
-    console.log(window.document.documentElement);
+    // console.log(window.document.documentElement);
   },
   methods: {
     fontPickerChange(e) {
@@ -102,11 +219,11 @@ export default {
   }
 }
 .mine-page {
-  height: calc(100% - 44px);
-  height: calc(100% - 44px - constant(safe-area-inset-top));
-  height: calc(100% - 44px - env(safe-area-inset-top));
+  // height: calc(100vh - env(safe-area-inset-top));
+  background-color: #f2f2f2;
   .header {
     padding: 0 30rpx;
+    background-color: #fff;
     .header_top {
       align-items: flex-end;
       justify-content: space-between;
@@ -133,7 +250,82 @@ export default {
       }
     }
     .header_bottom {
-
+      justify-content: space-around;
+      .item {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding: 30rpx 0;
+        .number {
+          color: #333333;
+          font-size: 34rpx;
+          font-weight: bold;
+          margin-bottom: 8rpx;
+        }
+        .title {
+          color: #666666;
+          font-size: 24rpx;
+        }
+        .icon {
+          width: 48rpx;
+          margin-bottom: 10rpx;
+        }
+      }
+    }
+  }
+  .container {
+    padding: 30rpx 30rpx 50rpx;
+    >view {
+      border-radius: 18rpx;
+      background-color: #fff;
+    }
+    .mt {
+      margin-top: 30rpx;
+    }
+    .share_wrap {
+      justify-content: space-around;
+      padding: 26rpx 10rpx;
+      .item {
+        align-items: center;
+        flex-direction: column;
+        .icon {
+          width: 80rpx;
+        }
+        .title {
+          color: #666666;
+          font-size: 24rpx;
+          margin-top: 16rpx;
+        }
+      }
+    }
+    .banner_wrap {
+      overflow: hidden;
+    }
+    .function_wrap {
+      padding: 30rpx 30rpx 10rpx;
+      .main_title {
+        color: #333333;
+        font-size: 30rpx;
+        font-weight: bold;
+      }
+      .content {
+        flex-wrap: wrap;
+        padding-top: 30rpx;
+        .item {
+          align-items: center;
+          flex-direction: column;
+          width: 25%;
+          margin-bottom: 30rpx;
+          .icon {
+            width: 80rpx;
+          }
+          .title {
+            color: #666666;
+            font-size: 24rpx;
+            margin-top: 10rpx;
+          }
+        }
+      }
     }
   }
   .picker_wrap {
