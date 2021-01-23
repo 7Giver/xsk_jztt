@@ -20,7 +20,7 @@
             </view>
             <view class="right">
               <view class="nickname">{{ userInfo.nickname }}</view>
-              <view class="bottom">
+              <view class="bottom" @click="goNext('personal')">
                 <text>查看个人主页</text>
                 <u-icon name="arrow-right" color="#969799" size="20"></u-icon>
               </view>
@@ -73,7 +73,11 @@
         <view class="function_wrap mt">
           <view class="main_title">我的功能</view>
           <view class="u-flex content">
-            <view class="u-flex item" v-for="(item, index) in iconList" :key="index">
+            <view
+              class="u-flex item"
+              v-for="(item, index) in iconList"
+              :key="index"
+            >
               <image class="icon" :src="item.icon" mode="widthFix" />
               <view class="title">{{ item.title }}</view>
             </view>
@@ -81,7 +85,7 @@
         </view>
       </view>
       <!-- 设置全局字符大小 -->
-      <view class="picker_wrap">
+      <!-- <view class="picker_wrap">
         <view class="clamp_one">字符大小：</view>
         <picker
           @change="fontPickerChange"
@@ -90,7 +94,7 @@
         >
           <view class="uni-input">{{ fontArray[fontIndex] }}</view>
         </picker>
-      </view>
+      </view> -->
     </view>
   </view>
 </template>
@@ -145,66 +149,78 @@ export default {
       iconList: [
         {
           id: 1,
-          icon: '/static/img/mine/icon_gzfs.png',
-          title: '关注/粉丝'
+          icon: "/static/img/mine/icon_gzfs.png",
+          title: "关注/粉丝",
         },
         {
           id: 2,
-          icon: '/static/img/mine/icon_wdsc.png',
-          title: '我的收藏'
+          icon: "/static/img/mine/icon_wdsc.png",
+          title: "我的收藏",
         },
         {
           id: 3,
-          icon: '/static/img/mine/icon_wdzj.png',
-          title: '我的足迹'
+          icon: "/static/img/mine/icon_wdzj.png",
+          title: "我的足迹",
         },
         {
           id: 4,
-          icon: '/static/img/mine/icon_hbyq.png',
-          title: '海报邀请'
+          icon: "/static/img/mine/icon_hbyq.png",
+          title: "海报邀请",
         },
         {
           id: 5,
-          icon: '/static/img/mine/icon_cgx.png',
-          title: '草稿箱'
+          icon: "/static/img/mine/icon_cgx.png",
+          title: "草稿箱",
         },
         {
           id: 6,
-          icon: '/static/img/mine/icon_wdzp.png',
-          title: '我的作品'
+          icon: "/static/img/mine/icon_wdzp.png",
+          title: "我的作品",
         },
         {
           id: 7,
-          icon: '/static/img/mine/icon_yjms.png',
-          title: '夜间模式'
+          icon: "/static/img/mine/icon_yjms.png",
+          title: "夜间模式",
         },
         {
           id: 6,
-          icon: '/static/img/mine/icon_fk.png',
-          title: '帮助反馈'
+          icon: "/static/img/mine/icon_fk.png",
+          title: "帮助反馈",
         },
         {
           id: 7,
-          icon: '/static/img/mine/icon_xtsz.png',
-          title: '系统设置'
+          icon: "/static/img/mine/icon_xtsz.png",
+          title: "系统设置",
         },
-      ]
+      ],
     };
   },
   onShow() {
     // console.log(window.document.documentElement);
   },
   methods: {
+    // 切换字符大小
     fontPickerChange(e) {
       // console.log("picker发送选择改变，携带值为", e.target.value);
       this.fontIndex = e.target.value;
       window.document.documentElement.setAttribute("data-size", e.target.value);
     },
+    // 跳转页面
+    goNext(type) {
+      switch (type) {
+        case "personal":
+          this.$Router.push({ path: "/pages/mine/personal" });
+          break;
+
+        default:
+          break;
+      }
+    },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .navbar-right {
   margin-right: 30rpx;
   display: flex;
@@ -275,7 +291,7 @@ export default {
   }
   .container {
     padding: 30rpx 30rpx 50rpx;
-    >view {
+    > view {
       border-radius: 18rpx;
       background-color: #fff;
     }

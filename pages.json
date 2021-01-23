@@ -30,6 +30,10 @@
 		{
 			"path": "pages/mine/mine",
 			"name": "mine"
+		},
+		{
+			"path": "pages/mine/personal",
+			"name": "personal"
 		}
 	],
 	"globalStyle": {
