@@ -52,6 +52,7 @@
           ></u-tabs-swiper>
         </view>
         <swiper
+          class="uni-swiper"
           :current="swiperCurrent"
           @transition="transition"
           @animationfinish="animationfinish"
@@ -61,33 +62,45 @@
             v-for="(order, idx) in orderList"
             :key="idx"
           >
-            <scroll-view
-              scroll-y
-              style="height: 800rpx; width: 100%"
-              @scrolltolower="onreachBottom"
-            >
+            <scroll-view :scroll-y="true" @scrolltolower="reachBottom">
               <view
                 class="works_wrap"
                 v-for="(item, index) in dataList"
                 :key="index"
               >
                 <view class="u-flex top_wrap">
-                  <u-avatar :src="item.avatar" size="80"></u-avatar>
+                  <u-avatar :src="item.avatar" size="75"></u-avatar>
                   <view class="right">
-                    <view class="nickname">{{ item.nickname }}</view>
-                    <view>{{ item.addTime }}</view>
+                    <view class="u-line-1 nickname">{{ item.nickname }}</view>
+                    <view class="addtime">{{ item.addTime }}</view>
                   </view>
                 </view>
                 <view class="content">
-                  <view class="u-flex many_wrap">
-                    <view v-for="(image, ids) in item.imgList" :key="ids">
-                      <u-image :src="image" width="150" mode="widthFix">
-                        <u-loading slot="loading"></u-loading>
-                      </u-image>
+                  <div class="many_mode" v-if="item.imgList.length >= 3">
+                    <view class="u-line-2 title">{{ item.title }}</view>
+                    <view class="u-flex many_wrap">
+                      <div
+                        class="item"
+                        v-for="(image, ids) in item.imgList"
+                        :key="ids"
+                      >
+                        <u-image :src="image" height="180">
+                          <u-loading slot="loading"></u-loading>
+                        </u-image>
+                      </div>
                     </view>
-                  </view>
+                  </div>
+                  <div class="single_mode" v-else-if="item.imgList.length == 1">
+                    <view class="u-line-3 title">{{ item.title }}</view>
+                    <image :src="item.imgList[0]" />
+                  </div>
+                  <div class="video_mode" v-else-if="item.videoSrc">
+                    <view class="u-line-2 title">{{ item.title }}</view>
+                    <video :src="item.video"></video>
+                  </div>
                 </view>
               </view>
+              <!-- <u-loadmore :status="loadStatus[0]" bgColor="#f2f2f2"></u-loadmore> -->
             </scroll-view>
           </swiper-item>
         </swiper>
@@ -125,15 +138,26 @@ export default {
       dataList: [
         {
           id: 1,
-          nickname: "夏日流星限定贩卖",
+          nickname:
+            "夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖",
           addTime: "3天前",
+          title: "这里是标题这里是标题这里是标题这里是标题这里是标题这里是标题",
           imgList: [
             "//img13.360buyimg.com/n7/jfs/t1/103005/7/17719/314825/5e8c19faEb7eed50d/5b81ae4b2f7f3bb7.jpg",
             "//img12.360buyimg.com/n7/jfs/t1/102191/19/9072/330688/5e0af7cfE17698872/c91c00d713bf729a.jpg",
             "//img14.360buyimg.com/n7/jfs/t1/60319/15/6105/406802/5d43f68aE9f00db8c/0affb7ac46c345e2.jpg",
           ],
         },
+        {
+          id: 2,
+          nickname:
+            "夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖夏日流星限定贩卖",
+          addTime: "3天前",
+          title: "这里是标题这里是标题这里是标题这里是标题这里是标题这里是标题",
+          imgList: ["/static/img/pic_bg.png"],
+        },
       ],
+      loadStatus: ["loadmore", "loadmore", "loadmore"],
     };
   },
   onLoad(options) {},
@@ -151,11 +175,23 @@ export default {
       this.swiperCurrent = current;
       this.current = current;
     },
+    reachBottom() {
+      // 此tab为空数据
+      this.loadStatus.splice(this.current, 1, "loading");
+      setTimeout(() => {
+        // this.getOrderList(this.current);
+      }, 1200);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 .navbar-right {
   margin-right: 30rpx;
   display: flex;
@@ -170,6 +206,9 @@ export default {
   }
 }
 .personal-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   .header {
     padding: 30rpx 35rpx;
     .top_wrap {
@@ -200,9 +239,74 @@ export default {
     }
   }
   .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f2f2f2;
+    .uni-swiper {
+      flex: 1;
+    }
     .works_wrap {
-      padding: 20rpx;
+      padding: 30rpx;
+      background-color: #fff;
+      margin-bottom: 15rpx;
       .top_wrap {
+        margin-bottom: 20rpx;
+        .u-avatar {
+          margin-right: 20rpx;
+        }
+        .right {
+          flex: 1;
+          .nickname {
+            width: 200rpx;
+            color: #333333;
+            font-size: 26rpx;
+            font-weight: bold;
+          }
+          .addtime {
+            color: #999999;
+            font-size: 24rpx;
+          }
+        }
+      }
+      .content {
+        .many_mode {
+          .title {
+            font-size: 28rpx;
+            line-height: 1.4;
+          }
+          .many_wrap {
+            margin-top: 10rpx;
+            .item {
+              flex: 1;
+              &:not(:last-child) {
+                margin-right: 10rpx;
+              }
+              .u-image {
+                width: 100%;
+              }
+            }
+          }
+        }
+        .single_mode {
+          display: flex;
+          .title {
+            flex: 1;
+            font-size: 28rpx;
+            line-height: 1.4;
+            margin-right: 18rpx;
+          }
+          image {
+            width: 280rpx;
+            height: 160rpx;
+          }
+        }
+        .video_mode {
+          .title {
+            font-size: 28rpx;
+            line-height: 1.4;
+          }
+        }
       }
     }
   }

@@ -25,7 +25,7 @@
 		},
 		{
 			"path": "pages/task/task",
-			"name": "video"
+			"name": "task"
 		},
 		{
 			"path": "pages/mine/mine",

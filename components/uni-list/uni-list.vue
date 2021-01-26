@@ -1,9 +1,4 @@
 <template>
-	<!-- #ifdef APP-VUE -->
-	<view class="uni-list">
-		<slot />
-	</list>
-	<!-- #endif -->
 	<!-- #ifdef APP-NVUE -->
 	<list class="uni-list" :enableBackToTop="enableBackToTop" loadmoreoffset="15" :scroll-y="scrollY" @loadmore="loadMore">
 		<slot />
