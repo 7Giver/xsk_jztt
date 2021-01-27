@@ -164,8 +164,12 @@
             detail: encodeURIComponent(JSON.stringify(detail))
           })
         } else {
-          uni.navigateTo({
-            url: '/pages/detail/detail?query=' + encodeURIComponent(JSON.stringify(detail))
+          // uni.navigateTo({
+          //   url: '/pages/news/detail?query=' + encodeURIComponent(JSON.stringify(detail))
+          // });
+          this.$Router.push({
+            path: "/pages/news/detail",
+            query: detail,
           });
         }
       },

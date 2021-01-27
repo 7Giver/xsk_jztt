@@ -2,8 +2,7 @@
 	"easycom": {
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [
-		{
+	"pages": [{
 			"path": "pages/index/index",
 			"name": "index"
 		},
@@ -34,6 +33,10 @@
 		{
 			"path": "pages/mine/personal",
 			"name": "personal"
+		}, 
+		{
+			"path": "pages/news/detail",
+			"name": "newsDetail"
 		}
 	],
 	"globalStyle": {
