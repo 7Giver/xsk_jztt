@@ -33,10 +33,14 @@
 		{
 			"path": "pages/mine/personal",
 			"name": "personal"
-		}, 
+		},
 		{
 			"path": "pages/news/detail",
 			"name": "newsDetail"
+		},
+		{
+			"path": "pages/comment/reply",
+			"name": "CommentReply"
 		}
 	],
 	"globalStyle": {
