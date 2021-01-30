@@ -42,33 +42,20 @@
             <text class="title">当前价值(元)</text>
           </view>
           <view class="item">
-            <image
-              class="icon"
-              src="/static/img/mine/icon_zhmx.png"
-              mode="widthFix"
-            />
+            <image class="icon" src="/static/img/mine/icon_zhmx.png" mode="widthFix" />
             <text class="title">账户明细</text>
           </view>
         </view>
       </view>
       <view class="container">
         <view class="u-flex share_wrap">
-          <view
-            class="u-flex item"
-            v-for="(item, index) in inviteList"
-            :key="index"
-          >
+          <view class="u-flex item" v-for="(item, index) in inviteList" :key="index">
             <image class="icon" :src="item.icon" mode="widthFix" />
             <view class="title">{{ item.title }}</view>
           </view>
         </view>
         <view class="banner_wrap mt">
-          <u-swiper
-            mode="none"
-            bg-color="#fff"
-            :height="220"
-            :list="bannerList"
-          ></u-swiper>
+          <u-swiper mode="none" bg-color="#fff" :height="220" :list="bannerList"></u-swiper>
         </view>
         <view class="function_wrap mt">
           <view class="main_title">我的功能</view>
@@ -77,6 +64,7 @@
               class="u-flex item"
               v-for="(item, index) in iconList"
               :key="index"
+              @click="goNextPage(item)"
             >
               <image class="icon" :src="item.icon" mode="widthFix" />
               <view class="title">{{ item.title }}</view>
@@ -94,7 +82,7 @@
         >
           <view class="uni-input">{{ fontArray[fontIndex] }}</view>
         </picker>
-      </view> -->
+      </view>-->
     </view>
   </view>
 </template>
@@ -183,12 +171,12 @@ export default {
           title: "夜间模式",
         },
         {
-          id: 6,
+          id: 8,
           icon: "/static/img/mine/icon_fk.png",
           title: "帮助反馈",
         },
         {
-          id: 7,
+          id: 9,
           icon: "/static/img/mine/icon_xtsz.png",
           title: "系统设置",
         },
@@ -212,6 +200,41 @@ export default {
           this.$Router.push({ path: "/pages/mine/personal" });
           break;
 
+        default:
+          break;
+      }
+    },
+    // 功能页面跳转
+    goNextPage(item) {
+      switch (item.id) {
+        case 1:
+          this.$Router.push({ path: "/pages/mine/foucFans" });
+          break;
+        case 2:
+          this.$Router.push({ path: "/pages/mine/collection" });
+          break;
+        case 3:
+          this.$Router.push({ path: "/pages/mine/footprint" });
+          break;
+        case 4:
+          this.$Router.push({ path: "/pages/mine/poster" });
+          break;
+        case 5:
+          this.$Router.push({ path: "/pages/mine/drafts" });
+          break;
+        case 6:
+          this.$Router.push({ path: "/pages/mine/works" });
+          break;
+        case 7:
+          // this.$Router.push({ path: "/pages/mine/works" });
+          // 夜间模式
+          break;
+        case 8:
+          this.$Router.push({ path: "/pages/mine/works" });
+          break;
+        case 9:
+          this.$Router.push({ path: "/pages/mine/setting" });
+          break;
         default:
           break;
       }

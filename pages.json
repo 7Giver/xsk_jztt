@@ -41,6 +41,10 @@
 		{
 			"path": "pages/comment/reply",
 			"name": "CommentReply"
+		}, 
+		{
+			"path": "pages/video/detail",
+			"name": "videoDetail"
 		}
 	],
 	"globalStyle": {
