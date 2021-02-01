@@ -29,7 +29,7 @@
             连续签到每日可得
             <text>{{ 100 }}</text>金币
           </view>
-          <view class="u-flex right">
+          <view class="u-flex right" @click="goNext('sign')">
             <view class="text">
               已连续
               <text>{{ 30 }}</text>天
@@ -219,7 +219,19 @@ export default {
     };
   },
   onLoad(options) {},
-  methods: {},
+  methods: {
+    // 跳转页面
+    goNext(type) {
+      switch (type) {
+        case 'sign':
+          this.$Router.push({path: "/pages/task/sign"})
+          break;
+      
+        default:
+          break;
+      }
+    }
+  },
 };
 </script>
 

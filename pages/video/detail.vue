@@ -58,6 +58,7 @@
           </view>
           <view class="right_wrap">
             <image class="banner" :src="item.banner" />
+            <view class="times">{{item.times}}</view>
           </view>
         </view>
 				<view class="showmore_wrap">
@@ -98,21 +99,24 @@ export default {
             "这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题",
           avatar: "",
           name: "新闻小能手新闻小能手新闻小能手新闻小能手",
-          play_time: 15.03,
+          play_time: 15.3,
+          times: '15:03',
           banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
         },
         {
           title: "这边是标题这边是标题这边是标题这边是标题",
           avatar: "",
           name: "新闻小能手",
-          add_time: 8.0,
+          play_time: 8,
+          times: '15:03',
           banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
         },
         {
           title: "这边是标题这边是标题这边是标题这边是标题",
           avatar: "",
           name: "新闻小能手",
-          add_time: 13.2,
+          play_time: 5.04,
+          times: '15:03',
           banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
         },
       ],
@@ -242,7 +246,7 @@ export default {
       .bottom {
         color: #999999;
         font-size: 24rpx;
-        margin-top: 20rpx;
+        margin-top: 26rpx;
         .left {
           .name {
             width: 160rpx;
@@ -262,10 +266,24 @@ export default {
       }
     }
     .right_wrap {
+      position: relative;
       .banner {
         width: 250rpx;
         height: 100%;
         border-radius: 10rpx;
+      }
+      .times {
+        position: absolute;
+        right: 10rpx;
+        bottom: 10rpx;
+        color: #fff;
+        width: 96rpx;
+        text-align: center;
+        font-size: 24rpx;
+        letter-spacing: 1px;
+        line-height: 40rpx;
+        border-radius: 300rpx;
+        background-color: rgba($color: #000000, $alpha: 0.4);
       }
     }
   }

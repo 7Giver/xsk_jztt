@@ -1,5 +1,19 @@
 <template>
   <view>
+    <u-navbar :is-back="false" :border-bottom="false" :background="navbarBg">
+      <view class="slot-wrap">
+        <u-search
+          v-model="keyword"
+          shape="square"
+          height="60"
+          bg-color="#fff"
+          :show-action="true"
+          :animation="true"
+          :action-style="{color: '#fff'}"
+          :input-style="inputStyle"
+        ></u-search>
+      </view>
+    </u-navbar>
     <view @tap="showModal = true">打开弹窗</view>
     <u-popup v-model="showModal" mode="center" border-radius="14">
       <view @click="goDetail">出淤泥而不染，濯清涟而不妖</view>
@@ -12,14 +26,27 @@ export default {
   data() {
     return {
       showModal: false,
+      keyword: "",
+      navbarBg: { background: "#F04323" },
+      inputStyle: { color: "#333" },
     };
   },
   methods: {
     goDetail() {
-      this.$Router.push({ path: "/pages/video/detail"})
-    }
+      this.$Router.push({ path: "/pages/video/detail" });
+    },
   },
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.slot-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 0 30rpx;
+  .u-search {
+    width: 100%;
+  }
+}
+</style>
