@@ -28,7 +28,7 @@
           </view>
           <view class="incode_wrap">我的邀请码：{{ userInfo.inCode }}</view>
         </view>
-        <view class="u-flex header_bottom">
+        <view class="u-flex header_bottom" @click="goNext('coin')">
           <view class="item">
             <view class="number">{{ 5312 }}</view>
             <text class="title">我的金币</text>
@@ -199,7 +199,9 @@ export default {
         case "personal":
           this.$Router.push({ path: "/pages/mine/personal" });
           break;
-
+        case "coin":
+          this.$Router.push({ path: "/pages/mine/coin" });
+          break;
         default:
           break;
       }
