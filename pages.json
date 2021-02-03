@@ -53,6 +53,10 @@
 		{
 			"path": "pages/mine/coin",
 			"name": "myCoin"
+		},
+		{
+			"path": "pages/mine/collection",
+			"name": "collection"
 		}
 	],
 	"globalStyle": {
