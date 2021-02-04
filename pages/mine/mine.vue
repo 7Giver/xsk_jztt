@@ -232,7 +232,7 @@ export default {
           // 夜间模式
           break;
         case 8:
-          this.$Router.push({ path: "/pages/mine/works" });
+          this.$Router.push({ path: "/pages/mine/helps" });
           break;
         case 9:
           this.$Router.push({ path: "/pages/mine/setting" });

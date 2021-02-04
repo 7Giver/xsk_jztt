@@ -5,7 +5,7 @@
 		marginTop: marginTop + 'rpx',
 		height: $u.addUnit(height)
 	}">
-		<u-line color="#d4d4d4" length="50"></u-line>
+		<!-- <u-line color="#d4d4d4" length="50"></u-line> -->
 		<!-- 加载中和没有更多的状态才显示两边的横线 -->
 		<view :class="status == 'loadmore' || status == 'nomore' ? 'u-more' : ''" class="u-load-more-inner">
 			<view class="u-loadmore-icon-wrap">
@@ -16,7 +16,7 @@
 				{{ showText }}
 			</view>
 		</view>
-		<u-line color="#d4d4d4" length="50"></u-line>
+		<!-- <u-line color="#d4d4d4" length="50"></u-line> -->
 	</view>
 </template>
 
