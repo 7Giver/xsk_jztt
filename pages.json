@@ -57,26 +57,20 @@
 		{
 			"path": "pages/mine/collection",
 			"name": "collection"
+		},
+		{
+			"path": "pages/mine/footprint",
+			"name": "footprint"
+		},
+		{
+			"path": "pages/mine/foucFans",
+			"name": "foucFans"
+		},
+		{
+			"path": "pages/message/message",
+			"style": "message"
 		}
-	    ,{
-            "path" : "pages/mine/footprint",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/mine/foucFans",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "九章头条",

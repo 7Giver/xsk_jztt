@@ -2,7 +2,7 @@
   <view id="app" v-cloak>
     <u-navbar :is-back="false" :is-fixed="false" :border-bottom="false">
       <view class="navbar-right" slot="right">
-        <view class="icon_wrap">
+        <view class="icon_wrap" @click="goNext('message')">
           <view class="left">
             <u-icon name="email" size="43" color="#333"></u-icon>
             <u-badge size="mini" :is-dot="true" :offset="[-8, -8]"></u-badge>
@@ -201,6 +201,9 @@ export default {
           break;
         case "coin":
           this.$Router.push({ path: "/pages/mine/coin" });
+          break;
+        case "message":
+          this.$Router.push({ path: "/pages/message/message" });
           break;
         default:
           break;
