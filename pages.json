@@ -68,7 +68,11 @@
 		},
 		{
 			"path": "pages/message/message",
-			"style": "message"
+			"name": "message"
+		}, 
+		{
+			"path": "pages/message/content",
+			"name": "messageContent"
 		}
 	],
 	"globalStyle": {

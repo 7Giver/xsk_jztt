@@ -24,7 +24,7 @@
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <view class="container">
         <view class="inner_wrap">
-          <view class="item">
+          <view class="item" @click="goNext('system')">
             <view class="left_wrap">
               <image class="icon" src="/static/img/icon/icon_xtxx.png" mode="widthFix" />
               <view class="point"></view>
@@ -39,7 +39,7 @@
               >这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行</view>
             </view>
           </view>
-          <view class="item">
+          <view class="item" @click="goNext('friends')">
             <view class="left_wrap">
               <image class="icon" src="/static/img/icon/icon_yqhy.png" mode="widthFix" />
               <view class="point"></view>
@@ -95,6 +95,25 @@ export default {
   methods: {
     // 设置全部已读
     setAllRead() {},
+    // 页面跳转集合
+    goNext(type) {
+      switch (type) {
+        case "system":
+          this.$Router.push({
+            path: "/pages/message/content",
+            query: { type: 1 },
+          });
+          break;
+        case "friends":
+          this.$Router.push({
+            path: "/pages/message/content",
+            query: { type: 2 },
+          });
+          break;
+        default:
+          break;
+      }
+    },
   },
 };
 </script>
