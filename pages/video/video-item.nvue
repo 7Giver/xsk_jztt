@@ -1,0 +1,223 @@
+<template>
+  <view class="video-item" v-if="videoItem.video_link">
+    <view class="video_view" @click="goDetail">
+      <view class="title_wrap">
+        <view class="title">{{videoItem.title}}</view>
+      </view>
+      <!-- <video id="myVideo" :src="videoItem.video_link" @error="videoErrorCallback" controls></video> -->
+      <image class="banner" :src="videoItem.banner" />
+      <view class="play_wrap">
+        <u-icon name="play-right-fill"></u-icon>
+      </view>
+      <view class="video_time">{{videoItem.video_length}}</view>
+    </view>
+    <view class="video_footer flex-row">
+      <view class="left_wrap flex-row">
+        <view class="user_wrap flex-row">
+          <u-avatar :src="videoItem.avatar" size="52"></u-avatar>
+          <view class="nickname">{{videoItem.nickname}}</view>
+        </view>
+        <view class="inner_line"></view>
+        <view class="title_wrap">
+          <view class="foucs" v-if="videoItem.video_type == 0">{{videoItem.is_focus ? '已关注' : '关注'}}</view>
+          <view class="advert" v-else-if="videoItem.video_type == 1">广告</view>
+        </view>
+      </view>
+      <view class="right_wrap flex-row" v-if="videoItem.video_type == 0">
+        <view class="like_wrap">
+          <view class="icon_wrap">
+            <u-icon name="thumb-up-fill" v-if="videoItem.is_like"></u-icon>
+            <u-icon name="thumb-up" v-else></u-icon>
+          </view>
+          <view :class="[videoItem.is_like ? 'number like' : 'number']">{{videoItem.like}}</view>
+        </view>
+        <view class="comment_wrap">
+          <view class="icon_wrap">
+            <image class="comment_icon" :src="icon_pl" mode="widthFix" />
+          </view>
+          <view class="number">{{videoItem.comment}}</view>
+        </view>
+        <view class="more_wrap">
+          <u-icon name="more-dot-fill"></u-icon>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  props: {
+    videoItem: {
+      type: Object,
+      default: function (e) {
+        return {};
+      },
+    },
+  },
+  data() {
+    return {
+      icon_pl:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAWlBMVEUAAACZmZmYmJilpaWZmZmZmZmYmJiZmZmZmZmZmZmampqZmZmZmZmZmZmYmJiZmZmZmZmZmZmYmJiYmJiampqYmJiZmZmZmZmZmZmYmJibm5uampqWlpaZmZmuRwFPAAAAHXRSTlMA5ysG+cs+1LvaYhns84uHR8Ymwm9ubJ6TVBfMOEhvYg4AAADaSURBVCjPfZPbbsMgEEQXWGhxMY4dO7d2/v83K0o0QpTkPNiWjhnQ7iIk5NWomjUH6ZkiAE1JAcRJWjYP+N06EWf38r0JOc3wTVjwmE90isVJg1ugT7vNuEjHBfNfsvNY5B8LfAmb6qulLilnjggyICCWh5chK4Jk7DXHkrrLgSxnWClcQa5SsDiL0frj/ZPca5Qa0SQvSPpGGjBWHl9PHpQ80A3kRplx1IZ+kIlyVARKlm8gWfiRZMvGUiyb3UuOyVjWAfsOI8nRXI/aK5LQDbVpQOyuAxrizy8mVRDzoPmV7gAAAABJRU5ErkJggg==",
+    };
+  },
+  mounted() {
+    // console.log(this.videoItem);
+  },
+  methods: {
+    // 视频报错回调
+    videoErrorCallback(e) {
+      // console.log(e);
+      uni.showModal({
+        content: "视频错误",
+        showCancel: false,
+      });
+    },
+    goDetail() {
+      this.$Router.push({ path: "/pages/video/detail" });
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.flex-row {
+  flex-direction: row;
+}
+.video-item {
+  width: 100%;
+  background: #fff;
+  margin-bottom: 15rpx;
+}
+.video_view {
+  position: relative;
+  #myVideo {
+    width: 100%;
+  }
+  .title_wrap {
+    position: absolute;
+    top: 0;
+    z-index: 99;
+    height: 140rpx;
+    padding: 16rpx 28rpx;
+    background: linear-gradient(to bottom, #242525 35%, transparent 100%);
+    .title {
+      width: 100%;
+      color: #fff;
+      font-size: 30rpx;
+      overflow: hidden;
+      word-break: break-all;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+  }
+  .icon_play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100rpx;
+  }
+  .play_wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .u-icon {
+      color: #fff;
+      font-size: 42rpx;
+      padding-left: 10rpx;
+    }
+  }
+  .banner {
+    width: 100%;
+    height: 400rpx;
+  }
+  .video_time {
+    position: absolute;
+    left: 30rpx;
+    bottom: 20rpx;
+    color: #fff;
+    padding: 0 16rpx;
+    font-size: 24rpx;
+    line-height: 40rpx;
+    letter-spacing: 1px;
+    border-radius: 100rpx;
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+.video_footer {
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 26rpx;
+  .left_wrap {
+    align-items: center;
+    .user_wrap {
+      align-items: center;
+      .u-avatar {
+        margin-right: 15rpx;
+      }
+      .nickname {
+        color: #333;
+        font-size: 28rpx;
+        font-weight: bold;
+      }
+    }
+    .inner_line {
+      width: 1rpx;
+      height: 28rpx;
+      margin: 0 20rpx;
+      background: #e6e6e6;
+    }
+    .title_wrap {
+      font-size: 28rpx;
+      .foucs {
+        color: #f04323;
+      }
+    }
+  }
+  .right_wrap {
+    > view {
+      align-items: center;
+      flex-direction: row;
+    }
+    .number {
+      font-size: 26rpx;
+    }
+    .icon_wrap {
+      margin-right: 10rpx;
+    }
+    .like_wrap {
+      .u-icon {
+        color: #f04323;
+        font-size: 32rpx;
+      }
+      .like {
+        color: #f04323;
+      }
+    }
+    .comment_wrap {
+      color: #999999;
+      margin: 0 46rpx;
+      .comment_icon {
+        width: 28rpx;
+      }
+    }
+    .more_wrap {
+      .u-icon {
+        color: #999;
+        font-size: 40rpx;
+      }
+    }
+  }
+}
+</style>
