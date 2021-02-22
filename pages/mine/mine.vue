@@ -222,7 +222,7 @@ export default {
           this.$Router.push({ path: "/pages/mine/footprint" });
           break;
         case 4:
-          this.$Router.push({ path: "/pages/mine/poster" });
+          this.$Router.push({ path: "/pages/mine/invitePoster" });
           break;
         case 5:
           this.$Router.push({ path: "/pages/mine/drafts" });

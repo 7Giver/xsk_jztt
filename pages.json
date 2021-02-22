@@ -69,10 +69,14 @@
 		{
 			"path": "pages/message/message",
 			"name": "message"
-		}, 
+		},
 		{
 			"path": "pages/message/content",
 			"name": "messageContent"
+		}, 
+		{
+			"path": "pages/mine/invitePoster",
+			"name": "invitePoster"
 		}
 	],
 	"globalStyle": {
