@@ -73,10 +73,18 @@
 		{
 			"path": "pages/message/content",
 			"name": "messageContent"
-		}, 
+		},
 		{
 			"path": "pages/mine/invitePoster",
 			"name": "invitePoster"
+		},
+		{
+			"path": "pages/mine/drafts",
+			"name": "drafts"
+		}, 
+		{
+			"path": "pages/mine/works",
+			"name": "works"
 		}
 	],
 	"globalStyle": {
