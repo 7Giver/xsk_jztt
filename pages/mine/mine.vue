@@ -238,7 +238,7 @@ export default {
           this.$Router.push({ path: "/pages/mine/helps" });
           break;
         case 9:
-          this.$Router.push({ path: "/pages/mine/setting" });
+          this.$Router.push({ path: "/pages/setting/setting" });
           break;
         default:
           break;

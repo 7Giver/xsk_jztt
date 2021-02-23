@@ -81,10 +81,22 @@
 		{
 			"path": "pages/mine/drafts",
 			"name": "drafts"
-		}, 
+		},
 		{
 			"path": "pages/mine/works",
 			"name": "works"
+		},
+		{
+			"path": "pages/setting/setting",
+			"name": "setting"
+		},
+		{
+			"path": "pages/setting/account",
+			"name": "account"
+		},
+		{
+			"path": "pages/setting/personal",
+			"style": "personalData"
 		}
 	],
 	"globalStyle": {
