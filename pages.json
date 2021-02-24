@@ -97,6 +97,14 @@
 		{
 			"path": "pages/setting/personal",
 			"style": "personalData"
+		}, 
+		{
+			"path": "pages/login/tagIndex",
+			"name": "tagIndex"
+		}, 
+		{
+			"path": "pages/login/tagOff",
+			"name": "tagOff"
 		}
 	],
 	"globalStyle": {
