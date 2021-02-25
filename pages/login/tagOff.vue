@@ -10,16 +10,22 @@
         <view class="wrap_item" v-for="(item, index) in tagList" :key="index">
           <view class="u-line-1 title">{{item.title}}</view>
           <view class="u-flex tag_list">
-            <view :class="[tag.checked ? 'u-line-1 tag on' : 'u-line-1 tag']" v-for="(tag, i) in item.tag" :key="i" @click="taggleTag(item, tag)">{{tag.name}}</view>
+            <view
+              :class="[tag.checked ? 'u-line-1 tag on' : 'u-line-1 tag']"
+              v-for="(tag, i) in item.tag"
+              :key="i"
+              @click="taggleTag(item, tag)"
+            >{{tag.name}}</view>
           </view>
         </view>
       </view>
-      <view class="next_btn" @click="goNext('news')">完成</view>
+      <view class="next_btn" @click="getLogin">完成</view>
     </view>
   </view>
 </template>
 
 <script>
+import { userLogin } from "api/home.js";
 export default {
   data() {
     return {
@@ -193,33 +199,44 @@ export default {
     };
   },
   methods: {
-    // 页面跳转
-    goNext(type) {
-      switch (type) {
-        case "news":
-          this.$Router.push({ path: "/pages/news/news" });
-          break;
-        default:
-          break;
+    async getLogin() {
+      let params = {
+        mobile: this.vuex_user.tel || 13023367790,
+        code: "1234",
+        invite: "",
+        openid: "",
+      };
+      let { code, data, msg } = await userLogin(params);
+      if (code !== 0) {
+        this.$u.toast(msg);
+        setTimeout(() => {
+          this.$Router.push({ path: "/pages/login/login" });
+        }, 800);
+        return;
+      }
+      this.$u.vuex("vuex_token", data.token);
+      this.$u.toast("登录成功");
+      setTimeout(() => {
+        this.$Router.push({ path: "/pages/news/news" });
+      }, 800);
+    },
+    // 选中标签
+    taggleTag(item, tag) {
+      let arr = item.tag;
+      let resutlt = arr.filter((item) => item.checked);
+      if (resutlt.length < 5 || tag.checked) {
+        tag.checked = !tag.checked;
+      } else {
+        this.$u.toast("不能超过5个");
       }
     },
-		// 选中标签
-		taggleTag(item, tag) {
-			let arr = item.tag;
-			let resutlt = arr.filter(item => item.checked);
-			if (resutlt.length < 5 || tag.checked) {
-				tag.checked = !tag.checked;
-			} else {
-				this.$u.toast('不能超过5个')
-			}
-		}
   },
 };
 </script>
 
 <style lang="scss" scoped>
 page {
-	padding-bottom: 80rpx;
+  padding-bottom: 80rpx;
 }
 .navbar-right {
   margin-right: 30rpx;
@@ -250,36 +267,36 @@ page {
       background: #f8f8f8;
       border-radius: 10rpx;
       .title {
-				width: 52%;
+        width: 52%;
         font-size: 30rpx;
         font-weight: bold;
       }
       .tag_list {
         flex-wrap: wrap;
         .tag {
-					max-width: 28%;
+          max-width: 28%;
           color: #666666;
           font-size: 26rpx;
           line-height: 50rpx;
           text-align: center;
-					padding: 0 3%;
-					margin: 20rpx 5% 0 0;
+          padding: 0 3%;
+          margin: 20rpx 5% 0 0;
           border-radius: 8rpx;
           border: 1px solid #999999;
           &:nth-child(4n) {
             margin-right: 0;
           }
         }
-				.on {
-					color: #F04323;
-					border-color: #F04323;
-				}
+        .on {
+          color: #f04323;
+          border-color: #f04323;
+        }
       }
     }
   }
   .next_btn {
     width: 100%;
-		margin: 60rpx auto 0;
+    margin: 60rpx auto 0;
     color: #fff;
     font-size: 30rpx;
     line-height: 80rpx;

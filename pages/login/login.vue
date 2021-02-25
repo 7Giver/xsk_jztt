@@ -7,16 +7,12 @@
     <view class="container">
       <view class="top_wrap">
         <view class="u-flex title_wrap">
-          <image
-            class="logo"
-            src="/static/img/login/icon_logo.png"
-            mode="widthFix"
-          />
+          <image class="logo" src="/static/img/login/icon_logo.png" mode="widthFix" />
           <view class="title">{{ sendCode ? "输入验证码" : "手机登录" }}</view>
         </view>
         <view class="off_title">
           <view class="u-flex" v-if="sendCode">
-            <text class="title">验证码已发送至+86 {{ phoneNumber }}</text>
+            <text class="title">验证码发送至+86 {{ phoneNumber }}</text>
             <view>
               <u-icon name="edit-pen-fill" @click="eidtPhone"></u-icon>
               <text @click="sendCode = false">修改</text>
@@ -53,30 +49,19 @@
           <view class="ver_code" @click="getCode">{{ tips }}</view>
         </view>
       </view>
-      <view
-        class="tips_wrap"
-        :style="{ visibility: sendCode ? 'hidden' : null }"
-      >
-        未注册的手机号验证通过后将自注册
-      </view>
+      <view class="tips_wrap" :style="{ visibility: sendCode ? 'hidden' : null }">未注册的手机号验证通过后将自注册</view>
       <view class="button_wrap">
         <u-button
           :ripple="true"
           :disabled="!checkPhone"
           ripple-bg-color="#e78d7d"
-          @click="goGetCode"
-        >
-          {{ sendCode ? "下一步" : "获取短信验证码" }}
-        </u-button>
+          @click="goReadyTo"
+        >{{ sendCode ? "下一步" : "获取短信验证码" }}</u-button>
       </view>
     </view>
     <view class="authorize_wrap">
       <u-divider>微信登录</u-divider>
-      <image
-        class="icon_wx"
-        src="/static/img/login/icon_wx.png"
-        mode="widthFix"
-      />
+      <image class="icon_wx" src="/static/img/login/icon_wx.png" mode="widthFix" />
     </view>
     <!-- 选择区号 -->
     <u-select
@@ -98,6 +83,7 @@
 </template>
 
 <script>
+import { getOauthCode } from "api/home.js";
 export default {
   data() {
     return {
@@ -124,7 +110,9 @@ export default {
     };
   },
   onLoad(options) {
-    console.log(this.$Route.query);
+    // console.log(this.$Route.query);
+    // console.log(this.$u.vuex);
+    console.log(this.$http);
   },
   computed: {
     innerPage() {
@@ -161,34 +149,37 @@ export default {
         this.checkPhone = false;
       }
     },
-    // 获取二维码
-    goGetCode() {
+    // 点击下一步
+    goReadyTo() {
       if (this.sendCode) {
-        this.$Router.push({ path: "/pages/news/news" });
+        this.$Router.push({ path: "/pages/login/tagIndex" });
       } else {
         this.sendCode = true;
       }
     },
+    // 验证码倒计时监听
     codeChange(text) {
       // console.log(text);
       this.tips = text;
     },
-    getCode() {
-      if (this.$refs.uCode.canGetCode) {
-        // 模拟向后端请求验证码
-        uni.showLoading({
-          title: "正在获取验证码",
-        });
-        setTimeout(() => {
-          uni.hideLoading();
-          // 这里此提示会被this.start()方法中的提示覆盖
-          this.$u.toast("验证码已发送");
-          // 通知验证码组件内部开始倒计时
-          this.$refs.uCode.start();
-        }, 2000);
-      } else {
+    // 获取验证码
+    async getCode() {
+      if (!this.$refs.uCode.canGetCode) {
         this.$u.toast("倒计时结束后再发送");
+        return;
       }
+      uni.showLoading({
+        title: "正在获取验证码",
+      });
+      let { code, data, msg } = await getOauthCode(this.phoneNumber);
+      if (code !== 0) {
+        uni.hideLoading();
+        this.$u.toast(msg);
+        return;
+      }
+      uni.hideLoading();
+      this.$u.toast("验证码已发送");
+      this.$refs.uCode.start();
     },
   },
 };

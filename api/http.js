@@ -10,17 +10,17 @@ Vue.prototype.$dataURL = dataURL;
 
 if (process.env.NODE_ENV == "development") {
   //开发
-  baseURL = "http://ztc1.blackhw.com";
+  baseURL = "http://bssdzs188.com";
 } else if (process.env.NODE_ENV == "production") {
   //线上
-  baseURL = "http://ztc1.blackhw.com";
+  baseURL = "http://bssdzs188.com";
 }
 
-const request = uni_request({
+export const request = uni_request({
   baseURL: baseURL,
   //   baseURL: testURL, //测试接口
   header: {
-    "content-type": "multipart/form-data",
+    "content-type": "application/x-www-form-urlencoded",
   },
   timeout: 60000,
   // #ifdef H5
@@ -38,27 +38,27 @@ export function http(type, url, params) {
 }
 
 /**
- * get方法，对应get请求
- * @param {String} url [请求的url地址]
- * @param {Object} params [请求时携带的参数]
+ * get请求方法
+ * @param {String} url 请求的url地址
+ * @param {Object} params 请求时携带的参数
  */
 export function get(url, params) {
-  return request.get(url, { params: params });
+  return request.get(url, params);
 }
 
 /**
- * post方法，对应post请求
- * @param {String} url [请求的url地址]
- * @param {Object} params [请求时携带的参数]
+ * post请求方法
+ * @param {String} url 请求的url地址
+ * @param {Object} params 请求时携带的参数
  */
 export function post(url, params) {
-  return request.post(url, QS.stringify(params));
+  return request.post(url, params);
 }
 
 /**
  * @desc 上传文件
- * @param url
- * @param file
+ * @param {String} url 请求的url地址
+ * @param {file} file 文件参数
  */
 export function uploadFile(url, file) {
   let formdata = new FormData();

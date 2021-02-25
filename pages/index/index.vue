@@ -42,9 +42,11 @@ export default {
   },
   methods: {
     getPageData() {
-      getAreaList("/?r=").then((res) => {
-        console.log(res);
-      });
+      // getAreaList({
+      //   tel: 12321312321
+      // }).then((res) => {
+      //   console.log(res);
+      // });
     },
     goLogin() {
       this.$Router.push({

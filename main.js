@@ -1,8 +1,10 @@
 import Vue from "vue";
 import App from "./App";
+import store from '@/store';
 import uView from "uview-ui";
 import { router, RouterMount } from "./router.js";
 import * as Common from "./common/util.js";
+import { request } from "./api/http";
 
 // #ifdef H5
 import jwx from "./common/jwx.js";
@@ -10,11 +12,18 @@ Vue.prototype.$jwx = jwx;
 // #endif
 Vue.prototype.$common = Common;
 
+Vue.prototype.$http = request;
+
 Vue.use(uView);
 Vue.use(router);
 
+// 引入uView提供的对vuex的简写法文件
+let vuexStore = require('@/store/$u.mixin.js');
+Vue.mixin(vuexStore);
+
 App.mpType = "app";
 const app = new Vue({
+  store,
   ...App,
 });
 

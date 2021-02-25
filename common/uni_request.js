@@ -173,7 +173,7 @@ export default function({
 					}
 					requestTask = uni.request({
 						url: url[0] === '/' ? baseURL + url : url,
-						data: JSON.stringify(data),
+						data: data,
 						method,
 						header,
 						success: async res => { // 网络请求成功
