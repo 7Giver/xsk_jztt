@@ -1,5 +1,5 @@
 <template>
-  <view id="app">
+  <view id="app" v-cloak>
     <!-- <u-navbar
       :is-back="false"
       :is-fixed="false"
@@ -14,10 +14,10 @@
     </view>-->
     <view class="header">
       <view class="main_title">任务中心</view>
-      <view class="cash_wrap">
+      <view class="cash_wrap" @click="goNext('coin')">
         <view class="u-flex top">
-          <view class="coin">{{ 147789 }}</view>
-          <view class="cash">约{{ 14.77 }}元</view>
+          <view class="coin">{{ integral }}</view>
+          <view class="cash">约{{ assess_money }}元</view>
         </view>
         <text class="title">我的金币</text>
       </view>
@@ -27,12 +27,12 @@
         <view class="u-flex top">
           <view class="left">
             连续签到每日可得
-            <text>{{ 100 }}</text>金币
+            <text>{{ sign_final }}</text>金币
           </view>
           <view class="u-flex right" @click="goNext('sign')">
             <view class="text">
               已连续
-              <text>{{ 30 }}</text>天
+              <text>{{ series }}</text>天
             </view>
             <u-icon name="arrow-right"></u-icon>
           </view>
@@ -54,68 +54,66 @@
         </view>
       </view>
       <view class="task_wrap" style="margin-top: -40px;">
-        <view class="main_title">{{noviceTask.main_title}}</view>
-        <view class="item" v-for="(item, index) in noviceTask.taskList" :key="index">
+        <view class="main_title">新手任务</view>
+        <view class="item" v-for="(item, index) in new_task" :key="index">
           <view class="u-flex left_wrap">
             <view class="icon_wrap">
               <image class="icon" :src="item.icon" />
             </view>
             <view class="content">
               <view class="u-flex title_wrap">
-                <view class="title">{{item.title}}</view>
+                <view class="title">{{item.name}}</view>
                 <view class="tips_wrap">
-                  <view class="u-flex bag_wrap" v-if="item.type == 'yqhy'">
+                  <view class="u-flex bag_wrap" v-if="item.award_type == 2">
                     <image class="redBag" :src="redBag" mode="widthFix" />
-                    <view class="cash">{{item.cash}}元</view>
+                    <view class="cash">{{item.award}}元</view>
                   </view>
-                  <view class="tips" v-else>+{{item.cash}}</view>
+                  <view class="tips" v-else>+{{item.award}}</view>
                 </view>
               </view>
-              <view class="text_wrap">{{item.off_title}}</view>
+              <view class="text_wrap">{{item.intro}}</view>
             </view>
           </view>
           <view class="u-flex btn_wrap">
-            <view class="btn task" v-if="item.status == 0">
-              <text v-if="item.type == 'xryd'">去阅读</text>
-              <text v-if="item.type == 'yqhy'">去邀请</text>
-              <text v-if="item.type == 'wszl'">去完善</text>
+            <view class="btn get" v-if="item.is_finish == 0">
+              <text v-if="item.id == 1">去阅读</text>
+              <text v-if="item.id == 2">去邀请</text>
+              <text v-if="item.id == 3">去完善</text>
             </view>
-            <view class="btn get" v-else-if="item.status == 1">立即领取</view>
-            <view class="btn done" v-else-if="item.status == 2">已完成</view>
+            <view class="btn done" v-else-if="item.status == 1">已完成</view>
           </view>
         </view>
       </view>
 
       <view class="task_wrap">
-        <view class="main_title">{{dailyTask.main_title}}</view>
-        <view class="item" v-for="(item, index) in dailyTask.taskList" :key="index">
+        <view class="main_title">日常任务</view>
+        <view class="item" v-for="(item, index) in daily_task" :key="index">
           <view class="u-flex left_wrap">
             <view class="icon_wrap">
               <image class="icon" :src="item.icon" />
             </view>
             <view class="content">
               <view class="u-flex title_wrap">
-                <view class="title">{{item.title}}</view>
+                <view class="title">{{item.name}}</view>
                 <view class="tips_wrap">
-                  <view class="u-flex bag_wrap" v-if="item.type == 'yqhy'">
+                  <view class="u-flex bag_wrap" v-if="item.award_type == 2">
                     <image class="redBag" :src="redBag" mode="widthFix" />
-                    <view class="cash">{{item.cash}}元</view>
+                    <view class="cash">{{item.award}}元</view>
                   </view>
-                  <view class="tips" v-else>+{{item.cash}}</view>
+                  <view class="tips" v-else>+{{item.award}}</view>
                 </view>
               </view>
-              <view class="text_wrap">{{item.off_title}}</view>
+              <view class="text_wrap">{{item.intro}}</view>
             </view>
           </view>
           <view class="u-flex btn_wrap">
-            <view class="btn task" v-if="item.status == 0">
-              <text v-if="item.type == 'yddj'">去阅读</text>
-              <text v-if="item.type == 'yqyd'">去邀请</text>
-              <text v-if="item.type == 'qdjl'">去签到</text>
-              <text v-if="item.type == 'txjl'">去提现</text>
+            <view class="btn get" v-if="item.is_finish == 0">
+              <text v-if="item.id == 4">去阅读</text>
+              <text v-if="item.id == 5">去邀请</text>
+              <text v-if="item.id == 6">去签到</text>
+              <text v-if="item.id == 7">去提现</text>
             </view>
-            <view class="btn get" v-else-if="item.status == 1">立即领取</view>
-            <view class="btn done" v-else-if="item.status == 2">已完成</view>
+            <view class="btn done" v-else-if="item.status == 1">已完成</view>
           </view>
         </view>
       </view>
@@ -124,9 +122,14 @@
 </template>
 
 <script>
+import { getTaskList } from "api/home.js";
 export default {
   data() {
     return {
+      integral: 0, //当前金币
+      assess_money: 0, //折合现金
+      series: 0, //连续签到天数
+      sign_final: 0, //连续签到可得金币数
       redBag: "/static/img/task/pic_hb.png",
       taskCoin: [
         {
@@ -150,87 +153,37 @@ export default {
           status: 0,
         },
       ],
-      noviceTask: {
-        main_title: "新手任务",
-        taskList: [
-          {
-            type: "xryd",
-            icon: "/static/img/task/pic_xryd.png",
-            title: "新人首次阅读任务",
-            off_title: "阅读文章50秒后完成任务",
-            cash: 1000,
-            status: 1,
-          },
-          {
-            type: "yqhy",
-            icon: "/static/img/task/pic_yqhy.png",
-            title: "首次邀请好友",
-            off_title: "首次邀请好友，奖励5元",
-            cash: 5,
-            status: 0,
-          },
-          {
-            type: "wszl",
-            icon: "/static/img/task/pic_wszl.png",
-            title: "完善资料",
-            off_title: "新用户完善资料后完成任务",
-            cash: 1000,
-            status: 2,
-          },
-        ],
-      },
-      dailyTask: {
-        main_title: "日常任务",
-        taskList: [
-          {
-            type: "yddj",
-            icon: "/static/img/task/pic_yddj.png",
-            title: "阅读得大奖励",
-            off_title: "阅读5/10/30/60分钟可得奖励",
-            cash: 1500,
-            status: 2,
-          },
-          {
-            type: "yqyd",
-            icon: "/static/img/task/pic_yqyd.png",
-            title: "邀请好友阅读",
-            off_title: "好友阅读完成的奖励",
-            cash: 300,
-            status: 0,
-          },
-          {
-            type: "qdjl",
-            icon: "/static/img/task/pic_qdjl.png",
-            title: "签到的奖励",
-            off_title: "连续签到天数越多奖励越多",
-            cash: 50,
-            status: 0,
-          },
-          {
-            type: "txjl",
-            icon: "/static/img/task/pic_txjl.png",
-            title: "完成提现的奖励",
-            off_title: "成功完成一次提现",
-            cash: 300,
-            status: 0,
-          },
-        ],
-      },
+      new_task: [], //新手任务
+      daily_task: [], //日常任务
     };
   },
-  onLoad(options) {},
+  onShow(options) {
+    this.getTask();
+  },
   methods: {
+    // 获取任务列表
+    async getTask() {
+      let { data } = await getTaskList(this.vuex_token);
+      this.integral = data.integral;
+      this.assess_money = data.assess_money;
+      this.series = data.series;
+      this.sign_final = data.sign_final;
+      this.new_task = data.new_task;
+      this.daily_task = data.daily_task;
+    },
     // 跳转页面
     goNext(type) {
       switch (type) {
-        case 'sign':
-          this.$Router.push({path: "/pages/task/sign"})
+        case "sign":
+          this.$Router.push({ name: "taskSign" });
           break;
-      
+        case "coin":
+          this.$Router.push({ name: "myCoin" });
+          break;
         default:
           break;
       }
-    }
+    },
   },
 };
 </script>
@@ -254,6 +207,7 @@ export default {
   padding-top: env(safe-area-inset-top);
   padding-left: 30rpx;
   padding-right: 30rpx;
+  padding-bottom: 180rpx;
   .main_title {
     color: #fff;
     font-size: 36rpx;
@@ -262,7 +216,6 @@ export default {
   }
   .cash_wrap {
     color: #fff;
-    padding-bottom: 180rpx;
     .top {
       .coin {
         font-size: 48rpx;

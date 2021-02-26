@@ -171,12 +171,7 @@ export default {
       uni.showLoading({
         title: "正在获取验证码",
       });
-      let { code, data, msg } = await getOauthCode(this.phoneNumber);
-      if (code !== 0) {
-        uni.hideLoading();
-        this.$u.toast(msg);
-        return;
-      }
+      let { data } = await getOauthCode(this.phoneNumber);
       uni.hideLoading();
       this.$u.toast("验证码已发送");
       this.$refs.uCode.start();

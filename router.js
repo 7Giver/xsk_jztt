@@ -1,3 +1,4 @@
+import store from "@/store";
 import { RouterMount, createRouter } from "uni-simple-router";
 
 const router = createRouter({
@@ -12,8 +13,22 @@ const router = createRouter({
     },
   ],
 });
+
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
+  const hasToken = store.state.vuex_token;
+  if (hasToken) {
+    if (to.name === "login") {
+      // if is logged in, redirect to the home page
+      return next({ name: "news" });
+    } else {
+      return next();
+    }
+  }
+  /* has no token*/
+  if (to.name !== "login") {
+    return next({ name: "login" });
+  }
   next();
 });
 // 全局路由后置守卫

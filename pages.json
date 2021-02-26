@@ -48,7 +48,7 @@
 		},
 		{
 			"path": "pages/task/sign",
-			"name": "TaskSign"
+			"name": "taskSign"
 		},
 		{
 			"path": "pages/mine/coin",

@@ -54,12 +54,11 @@
             >
               <view class="coin_item" v-for="(item, index) in orderList[idx]" :key="index">
                 <view class="left_wrap">
-                  <view class="title">{{item.title}}</view>
+                  <view class="title">{{item.content}}</view>
                   <view class="time">{{item.add_time}}</view>
                 </view>
                 <view class="right_wrap">
-                  <view v-if="item.type == 0">+{{item.cash}}金币</view>
-                  <view v-else-if="item.type == 1">-{{item.cash}}金币</view>
+                  <view>{{item.use_type == 1 ? '-' : '+'}}{{item.amount}}{{item.source == 1 ? '金币' : '通宝'}}</view>
                 </view>
               </view>
               <u-loadmore :status="loadStatus[idx]" margin-top="30"></u-loadmore>
@@ -73,6 +72,7 @@
 </template>
 
 <script>
+import { getCoinData } from "api/home.js";
 export default {
   data() {
     return {
@@ -92,6 +92,8 @@ export default {
           name: "金币",
         },
       ],
+      page: 1,
+      limit: 10,
       current: 0,
       swiperCurrent: 0,
       orderList: [[], [], []],
@@ -137,13 +139,22 @@ export default {
   },
   methods: {
     // 页面数据
-    getOrderList(idx) {
-      for (let i = 0; i < 20; i++) {
-        let index = this.$u.random(0, this.dataList.length - 1);
-        let data = JSON.parse(JSON.stringify(this.dataList[index]));
-        this.orderList[idx].push(data);
-      }
-      this.loadStatus.splice(this.current, 1, "loadmore");
+    async getOrderList(idx) {
+      let params = {
+        token: this.vuex_token,
+        page: this.page,
+        limit: this.limit,
+        type: this.swiperCurrent,
+      };
+      let { data } = await getCoinData(params);
+      console.log(data);
+      this.orderList[idx] = data.list;
+      // for (let i = 0; i < 20; i++) {
+      //   let index = this.$u.random(0, this.dataList.length - 1);
+      //   let data = JSON.parse(JSON.stringify(this.dataList[index]));
+      //   this.orderList[idx].push(data);
+      // }
+      this.loadStatus.splice(idx, 1, "loadmore");
     },
     // 触发加载
     reachBottom() {
