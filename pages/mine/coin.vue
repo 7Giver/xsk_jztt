@@ -66,7 +66,7 @@
           </swiper-item>
         </swiper>
       </view>
-      <view class="sumbit_btn">申请交易</view>
+      <view class="sumbit_btn">申请提现</view>
     </view>
   </view>
 </template>
@@ -134,8 +134,6 @@ export default {
   },
   onLoad(options) {
     this.getOrderList(0);
-    // this.getOrderList(1);
-    // this.getOrderList(2);
   },
   methods: {
     // 页面数据
@@ -147,25 +145,46 @@ export default {
         type: this.swiperCurrent,
       };
       let { data } = await getCoinData(params);
-      console.log(data);
-      this.orderList[idx] = data.list;
+      let result = data.list;
+      let targetArr = this.orderList[idx];
+      if (data == null || result.length == 0) {
+        // 加载结束
+        this.loadStatus.splice(idx, 1, "nomore");
+        return false;
+      }
+      this.orderList[idx] = targetArr.concat(result);
+      this.page++;
+      if (result.length < this.limit) {
+        // 一页不足的情况
+        this.loadStatus.splice(idx, 1, "nomore");
+      } else {
+        this.loadStatus.splice(idx, 1, "loadmore");
+      }
+      // 随机数据
+      // this.orderList[idx] = data.list;
       // for (let i = 0; i < 20; i++) {
       //   let index = this.$u.random(0, this.dataList.length - 1);
       //   let data = JSON.parse(JSON.stringify(this.dataList[index]));
       //   this.orderList[idx].push(data);
       // }
-      this.loadStatus.splice(idx, 1, "loadmore");
+      // this.loadStatus.splice(idx, 1, "loadmore");
     },
     // 触发加载
     reachBottom() {
-      this.loadStatus.splice(this.current, 1, "loading");
-      setTimeout(() => {
-        this.getOrderList(this.current);
-      }, 1200);
+      let targetArr = this.orderList[this.current];
+      if (targetArr.length >= this.limit) {
+        this.loadStatus.splice(this.current, 1, "loading");
+        setTimeout(() => {
+          this.getOrderList(this.current);
+        }, 600);
+      }
     },
     // tab栏切换
     tabChange(index) {
       this.swiperCurrent = index;
+      this.page = this.$options.data().page;
+      this.limit = this.$options.data().limit;
+      this.orderList[index] = [];
       this.getOrderList(index);
     },
     transition({ detail: { dx } }) {

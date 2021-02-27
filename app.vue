@@ -1,4 +1,6 @@
 <script>
+import store from "@/store";
+import { getSystemConfig } from "api/home.js";
 export default {
   onLaunch: function () {
     // console.log('App Launch');
@@ -39,12 +41,25 @@ export default {
       src: "url('./static/text-icon.ttf')",
     });
     // #endif
+
+    const token = store.state.vuex_token;
+    token && this.getSystemDate(token);
   },
   onShow: function () {
     // console.log('App Show')
+    // const token = store.state.vuex_token;
+    // token && this.getSystemDate(token);
   },
   onHide: function () {
     // console.log('App Hide')
+  },
+  methods: {
+    // 获取系统设置
+    async getSystemDate(token) {
+      let { data } = await getSystemConfig(token);
+      // console.log(data);
+      // this.$u.vuex("vuex_user", data);
+    },
   },
 };
 </script>
@@ -54,6 +69,6 @@ export default {
 @import "uview-ui/index.scss";
 @import "@/static/css/app.scss";
 html {
- @include add-size($uni-font-size-base);
+  @include add-size($uni-font-size-base);
 }
 </style>

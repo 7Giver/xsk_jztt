@@ -47,7 +47,7 @@ request.interceptors.response.use(
     } else {
       uni.showToast({
         icon: "none",
-        title: response.data.msg,
+        title: '请求失败',
       });
       return Promise.reject(response || "error");
     }

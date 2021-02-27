@@ -1,11 +1,6 @@
 <template>
   <view id="app">
-    <u-navbar
-      :is-back="true"
-      :is-fixed="false"
-      :border-bottom="false"
-      title="用户名称"
-    >
+    <u-navbar :is-back="true" :is-fixed="false" :border-bottom="false" :title="userInfo.name">
       <view class="navbar-right" slot="right">
         <view class="icon_wrap">
           <view class="left">
@@ -22,22 +17,20 @@
           </view>
           <view class="u-flex u-flex-1 right_wrap">
             <view class="item">
-              <view class="number">{{ userInfo.dynamic }}</view>
+              <view class="number">{{ userInfo.trends || 0 }}</view>
               <text class="title">动态</text>
             </view>
             <view class="item">
-              <view class="number">{{ userInfo.focus }}</view>
+              <view class="number">{{ userInfo.focus || 0 }}</view>
               <text class="title">关注</text>
             </view>
             <view class="item">
-              <view class="number">{{ userInfo.fans }}</view>
+              <view class="number">{{ userInfo.fans || 0 }}</view>
               <text class="title">粉丝</text>
             </view>
           </view>
         </view>
-        <view class="detail_wrap">
-          简介：{{ userInfo.detail || "暂无简介" }}
-        </view>
+        <view class="detail_wrap">简介：{{ userInfo.intro || "暂无简介" }}</view>
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <view class="container">
@@ -57,17 +50,9 @@
           @transition="transition"
           @animationfinish="animationfinish"
         >
-          <swiper-item
-            class="swiper-item"
-            v-for="(order, idx) in orderList"
-            :key="idx"
-          >
+          <swiper-item class="swiper-item" v-for="(order, idx) in orderList" :key="idx">
             <scroll-view :scroll-y="true" @scrolltolower="reachBottom">
-              <view
-                class="works_wrap"
-                v-for="(item, index) in dataList"
-                :key="index"
-              >
+              <view class="works_wrap" v-for="(item, index) in dataList" :key="index">
                 <view class="u-flex top_wrap">
                   <u-avatar :src="item.avatar" size="75"></u-avatar>
                   <view class="right">
@@ -79,11 +64,7 @@
                   <div class="many_mode" v-if="item.imgList.length >= 3">
                     <view class="u-line-2 title">{{ item.title }}</view>
                     <view class="u-flex many_wrap">
-                      <div
-                        class="item"
-                        v-for="(image, ids) in item.imgList"
-                        :key="ids"
-                      >
+                      <div class="item" v-for="(image, ids) in item.imgList" :key="ids">
                         <u-image :src="image" height="180">
                           <u-loading slot="loading"></u-loading>
                         </u-image>
@@ -110,17 +91,13 @@
 </template>
 
 <script>
+import { getUserIndex, getUserWorks } from "api/home.js";
 export default {
   data() {
     return {
-      userInfo: {
-        avatar: "",
-        nickname: "这里是用户名",
-        detail: "",
-        dynamic: 5463,
-        focus: 163,
-        fans: 336,
-      },
+      userInfo: {},
+      page: 1,
+      limit: 10,
       current: 0,
       swiperCurrent: 0,
       orderList: [[], [], []],
@@ -160,8 +137,28 @@ export default {
       loadStatus: ["loadmore", "loadmore", "loadmore"],
     };
   },
-  onLoad(options) {},
+  onLoad(options) {
+    this.getUserData();
+    this.getUserWork();
+  },
   methods: {
+    // 获取用户数据
+    async getUserData() {
+      let { data } = await getUserIndex(this.vuex_token);
+      this.userInfo = data;
+    },
+    // 获取用户数据
+    async getUserWork() {
+      let params = {
+        token: this.vuex_token,
+        page: this.page,
+        limit: this.limit,
+        sid: "",
+        type: this.current,
+      };
+      let { data } = await getUserWorks(params);
+      console.log(data);
+    },
     // tab栏切换
     tabChange(index) {
       this.swiperCurrent = index;

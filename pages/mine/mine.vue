@@ -16,29 +16,29 @@
         <view class="u-flex header_top">
           <view class="u-flex left_wrap">
             <view class="avatar">
-              <u-avatar :src="userInfo.avatar" size="100"></u-avatar>
+              <u-avatar :src="vuex_user.avatar" size="100"></u-avatar>
             </view>
             <view class="right">
-              <view class="nickname">{{ userInfo.nickname }}</view>
+              <view class="nickname">{{ vuex_user.name || 'client' }}</view>
               <view class="bottom" @click="goNext('personal')">
                 <text>查看个人主页</text>
                 <u-icon name="arrow-right" color="#969799" size="20"></u-icon>
               </view>
             </view>
           </view>
-          <view class="incode_wrap">我的邀请码：{{ userInfo.inCode }}</view>
+          <view class="incode_wrap">我的邀请码：{{ vuex_user.invite_code }}</view>
         </view>
         <view class="u-flex header_bottom" @click="goNext('coin')">
           <view class="item">
-            <view class="number">{{ 5312 }}</view>
+            <view class="number">{{ vuex_user.integral }}</view>
             <text class="title">我的金币</text>
           </view>
-          <view class="item">
+          <!-- <view class="item">
             <view class="number">{{ 569 }}</view>
             <text class="title">今日金币</text>
-          </view>
+          </view> -->
           <view class="item">
-            <view class="number">{{ 88 }}</view>
+            <view class="number">{{ vuex_user.money }}</view>
             <text class="title">当前价值(元)</text>
           </view>
           <view class="item">
@@ -88,14 +88,10 @@
 </template>
 
 <script>
+import { getUserInfo } from "api/home.js";
 export default {
   data() {
     return {
-      userInfo: {
-        avatar: "",
-        nickname: "这里是用户名",
-        inCode: 5463155,
-      },
       fontIndex: 1,
       fontArray: ["小", "中", "大"],
       inviteList: [
@@ -185,6 +181,7 @@ export default {
   },
   onShow() {
     // console.log(window.document.documentElement);
+    this.getUserData();
   },
   methods: {
     // 切换字符大小
@@ -192,6 +189,11 @@ export default {
       // console.log("picker发送选择改变，携带值为", e.target.value);
       this.fontIndex = e.target.value;
       window.document.documentElement.setAttribute("data-size", e.target.value);
+    },
+    // 获取用户数据
+    async getUserData() {
+      let { data } = await getUserInfo(this.vuex_token);
+      this.$u.vuex("vuex_user", data);
     },
     // 跳转页面
     goNext(type) {
