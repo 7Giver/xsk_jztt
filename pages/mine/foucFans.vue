@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { getFoucfans } from "api/home.js";
 export default {
   data() {
     return {
@@ -61,6 +62,8 @@ export default {
           name: "我的粉丝",
         },
       ],
+      page: 1,
+      limit: 10,
       current: 0,
       swiperCurrent: 0,
       orderList: [[], []],
@@ -102,7 +105,16 @@ export default {
   },
   methods: {
     // 页面数据
-    getOrderList(idx) {
+    async getOrderList(idx) {
+      let params = {
+        token: this.vuex_token,
+        page: this.page,
+        limit: this.limit,
+        sid: "",
+        type: this.current,
+      };
+      let { data } = await getFoucfans(params);
+      console.log(data);
       if (this.orderList[idx].length >= 30) {
         this.loadStatus.splice(this.current, 1, "nomore");
         return false;
@@ -168,26 +180,26 @@ page {
         .works {
           color: #999999;
           font-size: 24rpx;
-					margin-top: 4rpx;
+          margin-top: 4rpx;
         }
       }
     }
     .right_wrap {
       font-size: 28rpx;
-			.btn {
-				width: 120rpx;
-				text-align: center;
-				line-height: 50rpx;
-				border-radius: 200rpx;
-				border: 1px solid transparent;
-			}
+      .btn {
+        width: 120rpx;
+        text-align: center;
+        line-height: 50rpx;
+        border-radius: 200rpx;
+        border: 1px solid transparent;
+      }
       .foucs {
-				color: #F04323;
-				border-color: #F04323;
+        color: #f04323;
+        border-color: #f04323;
       }
       .cancel {
         color: #999999;
-				border-color: #C7C7C7;
+        border-color: #c7c7c7;
       }
     }
   }

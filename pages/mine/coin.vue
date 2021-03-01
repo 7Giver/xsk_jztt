@@ -22,7 +22,7 @@
           </view>
           <view class="notice_wrap">
             <u-icon name="bell-fill"></u-icon>
-            <view class="text">当前汇率：{{10000}}金币={{1}}通宝 每晚{{0}}点自动兑换</view>
+            <view class="text">当前汇率：{{vuex_setting.goldrate}}金币=1通宝 每晚{{0}}点自动兑换</view>
           </view>
         </view>
       </view>
@@ -52,7 +52,7 @@
               style="height: 100%;width: 100%;padding-bottom: 30rpx;"
               @scrolltolower="reachBottom"
             >
-              <view class="coin_item" v-for="(item, index) in orderList[idx]" :key="index">
+              <view class="coin_item" v-for="(item, index) in order" :key="index">
                 <view class="left_wrap">
                   <view class="title">{{item.content}}</view>
                   <view class="time">{{item.add_time}}</view>
@@ -184,7 +184,7 @@ export default {
       this.swiperCurrent = index;
       this.page = this.$options.data().page;
       this.limit = this.$options.data().limit;
-      this.orderList[index] = [];
+      this.orderList = this.$options.data().orderList;
       this.getOrderList(index);
     },
     transition({ detail: { dx } }) {

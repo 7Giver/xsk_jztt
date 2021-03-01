@@ -57,8 +57,7 @@ export default {
     // 获取系统设置
     async getSystemDate(token) {
       let { data } = await getSystemConfig(token);
-      // console.log(data);
-      // this.$u.vuex("vuex_user", data);
+      this.$u.vuex("vuex_setting", data);
     },
   },
 };

@@ -75,3 +75,15 @@ export function getUserIndex(token) {
 export function getUserWorks(params) {
   return get(`/${version}/user/trends`, params);
 }
+
+/**
+ * 用户关注、粉丝列表
+ * @param {string} token 登录Token (必填)
+ * @param {?number} page 页码 (必填)
+ * @param {?number} limit 每页条数（必填，默认10条）
+ * @param {?string} sid 用户加密sid（传空表示查看自己的文章、视频）	
+ * @param {?number} type 类型 (必填，1--关注列表，2--粉丝列表)
+ */
+export function getFoucfans(params) {
+  return get(`/${version}/user/fan-list`, params);
+}
