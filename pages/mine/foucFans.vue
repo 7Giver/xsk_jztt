@@ -30,13 +30,13 @@
               <view class="left_wrap">
                 <u-avatar :src="item.avatar" size="80"></u-avatar>
                 <view class="right">
-                  <view class="nickname">{{item.nickname}}</view>
-                  <view class="works">{{item.works}}作品</view>
+                  <view class="nickname">{{item.name}}</view>
+                  <view class="works">{{item.trends ? (item.trends+'作品') : '暂无作品'}}</view>
                 </view>
               </view>
-              <view class="right_wrap">
-                <view class="btn foucs" v-if="item.foucs == 0">关注</view>
-                <view class="btn cancel" v-else-if="item.foucs == 1">取关</view>
+              <view class="right_wrap" @click="goGetFocus(item, index)">
+                <view class="btn foucs" v-if="item.is_focus == 0">关注</view>
+                <view class="btn cancel" v-else-if="item.is_focus == 1">取关</view>
               </view>
             </view>
             <view class="loadmore">
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { getFoucfans } from "api/home.js";
+import { getFoucfans, getFocus } from "api/home.js";
 export default {
   data() {
     return {
@@ -62,42 +62,12 @@ export default {
           name: "我的粉丝",
         },
       ],
-      page: 1,
+      pageIndex: [1, 1],
       limit: 10,
       current: 0,
       swiperCurrent: 0,
       orderList: [[], []],
       loadStatus: ["loadmore", "loadmore"],
-      dataList: [
-        {
-          id: 1,
-          avatar: "",
-          nickname: "这里是用户名1",
-          works: 3245,
-          foucs: 1,
-        },
-        {
-          id: 2,
-          avatar: "",
-          nickname: "这里是用户名2",
-          works: 3245,
-          foucs: 1,
-        },
-        {
-          id: 3,
-          avatar: "",
-          nickname: "这里是用户名3",
-          works: 3245,
-          foucs: 0,
-        },
-        {
-          id: 4,
-          avatar: "",
-          nickname: "这里是用户名4",
-          works: 3245,
-          foucs: 0,
-        },
-      ],
     };
   },
   onLoad(options) {
@@ -108,35 +78,61 @@ export default {
     async getOrderList(idx) {
       let params = {
         token: this.vuex_token,
-        page: this.page,
+        page: this.pageIndex[idx],
         limit: this.limit,
         sid: "",
-        type: this.current,
+        type: this.swiperCurrent * 1 + 1,
       };
       let { data } = await getFoucfans(params);
-      console.log(data);
+      let result = data.list;
       if (this.orderList[idx].length >= 30) {
         this.loadStatus.splice(this.current, 1, "nomore");
-        return false;
+        return;
       }
-      this.loadStatus.splice(this.current, 1, "loading");
-      for (let i = 0; i < 15; i++) {
-        let index = this.$u.random(0, this.dataList.length - 1);
-        let data = JSON.parse(JSON.stringify(this.dataList[index]));
-        this.orderList[idx].push(data);
+      this.orderList[idx] = this.orderList[idx].concat(result);
+      this.pageIndex[idx]++;
+      if (result.length < this.limit) {
+        // 一页不足的情况
+        this.loadStatus.splice(idx, 1, "nomore");
+      } else {
+        this.loadStatus.splice(idx, 1, "loadmore");
       }
-      // this.loadStatus.splice(this.current, 1, "loadmore");
+    },
+    // 点击关注取关
+    async goGetFocus(item, index) {
+      let params = {
+        token: this.vuex_token,
+        focus_id: item.id,
+        opt: item.is_focus ? "cancel" : "focus",
+      };
+      let { data } = await getFocus(params);
+      let result = null;
+      item.is_focus ? (result = 0) : (result = 1);
+      item.is_focus = result;
+      let targetArr = this.orderList[this.swiperCurrent];
+      // console.log('item',item);
+      // console.log(targetArr[index]);
+      // this.$set(targetArr[index], "is_focus", result);
+      targetArr.splice(index, 1, item);
+      console.log(targetArr);
     },
     // 触发加载
     reachBottom() {
-      // this.loadStatus.splice(this.current, 1, "loading");
-      setTimeout(() => {
-        this.getOrderList(this.current);
-      }, 1200);
+      let targetArr = this.orderList[this.current];
+      if (targetArr.length >= this.limit) {
+        this.loadStatus.splice(this.current, 1, "loading");
+        setTimeout(() => {
+          this.getOrderList(this.current);
+        }, 600);
+      }
     },
     // tab栏切换
     tabChange(index) {
+      // console.log(index);
       this.swiperCurrent = index;
+      this.pageIndex = this.$options.data().pageIndex;
+      this.limit = this.$options.data().limit;
+      this.orderList = this.$options.data().orderList;
       this.getOrderList(index);
     },
     transition({ detail: { dx } }) {

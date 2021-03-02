@@ -44,6 +44,12 @@ request.interceptors.response.use(
   (response) => {
     if (response.statusCode === 200 && response.data.code === 0) {
       return Promise.resolve(response);
+    } else if (response.statusCode === 200) {
+      uni.showToast({
+        icon: "none",
+        title: response.data.msg,
+      });
+      return Promise.reject(response || "error");
     } else {
       uni.showToast({
         icon: "none",

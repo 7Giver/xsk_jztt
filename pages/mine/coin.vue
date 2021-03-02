@@ -92,10 +92,10 @@ export default {
           name: "金币",
         },
       ],
-      page: 1,
       limit: 10,
       current: 0,
       swiperCurrent: 0,
+      pageIndex: [1, 1],
       orderList: [[], [], []],
       loadStatus: ["loadmore", "loadmore", "loadmore"],
       dataList: [
@@ -140,7 +140,7 @@ export default {
     async getOrderList(idx) {
       let params = {
         token: this.vuex_token,
-        page: this.page,
+        page: this.pageIndex[idx],
         limit: this.limit,
         type: this.swiperCurrent,
       };
@@ -153,7 +153,7 @@ export default {
         return false;
       }
       this.orderList[idx] = targetArr.concat(result);
-      this.page++;
+      this.pageIndex[idx]++;
       if (result.length < this.limit) {
         // 一页不足的情况
         this.loadStatus.splice(idx, 1, "nomore");
@@ -182,8 +182,8 @@ export default {
     // tab栏切换
     tabChange(index) {
       this.swiperCurrent = index;
-      this.page = this.$options.data().page;
       this.limit = this.$options.data().limit;
+      this.pageIndex = this.$options.data().pageIndex;
       this.orderList = this.$options.data().orderList;
       this.getOrderList(index);
     },

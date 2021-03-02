@@ -87,3 +87,22 @@ export function getUserWorks(params) {
 export function getFoucfans(params) {
   return get(`/${version}/user/fan-list`, params);
 }
+
+/**
+ * 用户关注、取消关注
+ * @param {string} token 登录Token (必填)
+ * @param {?number} focus_id 被（取消）关注人id (必填)
+ * @param {?string} opt 操作（必填，focus-关注，cancel-取消关注）
+ */
+export function getFocus(params) {
+  return post(`/${version}/user/focus`, params);
+}
+
+/**
+ * 用户设置字体大小
+ * @param {string} token 登录Token (必填)
+ * @param {string} font 字体大小(大，中，小)
+ */
+export function setFontSize(params) {
+  return post(`/${version}/user/font`, params);
+}

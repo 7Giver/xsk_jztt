@@ -12,9 +12,9 @@
           <u-cell-item title="编辑个人资料" @click="goNext('personal')"></u-cell-item>
         </u-cell-group>
       </view>
-      <view class="u-m-t-10">
+      <view class="u-m-t-10" @click="showFontPicker=true">
         <u-cell-group :border="false">
-          <u-cell-item title="字体大小"></u-cell-item>
+          <u-cell-item title="字体大小" :value="fontText"></u-cell-item>
           <u-cell-item title="非WIFI网络流量" value="最佳效果 (显示大图)"></u-cell-item>
         </u-cell-group>
       </view>
@@ -28,14 +28,44 @@
       <view class="u-m-t-10">
         <view class="login_out">退出登录</view>
       </view>
+      <!-- 设置全局字符大小 -->
+      <u-select
+        v-model="showFontPicker"
+        :list="fontArray"
+        :default-value="fontIndex"
+        @confirm="fontPickerChange"
+      ></u-select>
+      <!-- <view>测试字体</view> -->
     </view>
   </view>
 </template>
 
 <script>
+import { setFontSize } from "api/home.js";
 export default {
   data() {
-    return {};
+    return {
+      fontText: "",
+      fontIndex: [1], //默认下标
+      showFontPicker: false, //字体picker显示
+      fontArray: [
+        {
+          value: 0,
+          label: "小",
+        },
+        {
+          value: 1,
+          label: "中",
+        },
+        {
+          value: 2,
+          label: "大",
+        },
+      ],
+    };
+  },
+  onShow(options) {
+    this.initFontSize();
   },
   methods: {
     // 页面跳转
@@ -50,6 +80,32 @@ export default {
         default:
           break;
       }
+    },
+    // 载入字体大小
+    initFontSize() {
+      this.fontText = this.vuex_setting.font;
+      // console.log(this.vuex_setting.font);
+      let resultIndex = this.fontArray.findIndex(
+        (item) => item.label == this.vuex_setting.font
+      );
+      this.fontIndex = [resultIndex];
+    },
+    // 切换字符大小
+    fontPickerChange(e) {
+      let target = e[0];
+      this.fontIndex = [target.value];
+      this.fontText = target.label;
+      window.document.documentElement.setAttribute("data-size", target.value);
+      this.goSetFont();
+    },
+    // 请求设置字体大小
+    async goSetFont() {
+      let params = {
+        token: this.vuex_token,
+        font: this.fontText,
+      };
+      let { data } = await setFontSize(params);
+      this.$u.vuex('vuex_setting.font', this.fontText);
     },
   },
 };
