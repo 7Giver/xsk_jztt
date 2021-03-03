@@ -42,7 +42,7 @@ export function getTaskList(token) {
  * @param {string} token 登录Token (必填)
  * @param {?number} page 页码 (必填)
  * @param {?number} limit 每页条数（必填，默认10条）
- * @param {?number} type 类型 (必填，0--全部，1--金币变动，2--通宝变动)
+ * @param {?number} type 类型 (必填，0-全部，1-金币变动，2-通宝变动)
  */
 export function getCoinData(params) {
   return get(`/${version}/log/balance`, params);
@@ -70,7 +70,7 @@ export function getUserIndex(token) {
  * @param {?number} page 页码 (必填)
  * @param {?number} limit 每页条数（必填，默认10条）
  * @param {?string} sid 用户加密sid（传空表示查看自己的文章、视频）	
- * @param {?number} type 类型 (必填，0--全部，1--文章，2--视频)
+ * @param {?number} type 类型 (必填，0-全部，1-文章，2-视频)
  */
 export function getUserWorks(params) {
   return get(`/${version}/user/trends`, params);
@@ -82,7 +82,7 @@ export function getUserWorks(params) {
  * @param {?number} page 页码 (必填)
  * @param {?number} limit 每页条数（必填，默认10条）
  * @param {?string} sid 用户加密sid（传空表示查看自己的文章、视频）	
- * @param {?number} type 类型 (必填，1--关注列表，2--粉丝列表)
+ * @param {?number} type 类型 (必填，1-关注列表，2-粉丝列表)
  */
 export function getFoucfans(params) {
   return get(`/${version}/user/fan-list`, params);
@@ -105,4 +105,31 @@ export function getFocus(params) {
  */
 export function setFontSize(params) {
   return post(`/${version}/user/font`, params);
+}
+
+/**
+ * 签到页面信息
+ * @param {string} token 登录Token (必填)
+ * @param {string} date 需要查看的年月 (必填，如：2021-01)
+ */
+export function getSign(params) {
+  return get(`/${version}/sign/index`, params);
+}
+
+/**
+ * 签到请求
+ * @param {string} token 登录Token (必填)
+ */
+export function postSign(params) {
+  return post(`/${version}/sign/sign`, params);
+}
+
+/**
+ * 我的收藏列表
+ * @param {string} token 登录Token (必填)
+ * @param {?number} page 页码 (必填)
+ * @param {?number} limit 每页条数（必填，默认10条）
+ */
+export function getFavor(params) {
+  return get(`/${version}/log/favor`, params);
 }

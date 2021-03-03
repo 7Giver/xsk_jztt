@@ -44,9 +44,12 @@
 </template>
 
 <script>
+import { getFavor } from "api/home.js";
 export default {
   data() {
     return {
+      limit: 10, //分页数量
+      pageIndex: 0, //分页
       showCheck: false, //是否编辑状态
       allChecked: false, //全选状态
       dataList: [
@@ -86,8 +89,33 @@ export default {
       ],
     };
   },
-  onLoad(options) {},
+  onLoad(options) {
+    this.getDataList();
+  },
   methods: {
+    // 页面数据
+    async getDataList(index = 0) {
+      let params = {
+        token: this.vuex_token,
+        page: this.pageIndex,
+        limit: this.limit,
+      };
+      let { data } = await getFavor(params);
+      let result = data.list;
+      // if (data == null || result.length == 0) {
+      //   // 加载结束
+      //   this.loadStatus = "nomore";
+      //   return;
+      // }
+      // this.orderList = this.orderList.concat(result);
+      // this.pageIndex++;
+      // if (result.length < this.limit) {
+      //   // 一页不足的情况
+      //   this.loadStatus = "nomore";
+      // } else {
+      //   this.loadStatus = "loadmore";
+      // }
+    },
     // 编辑收藏
     editCollection() {
       this.showCheck = !this.showCheck;

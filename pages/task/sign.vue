@@ -67,19 +67,19 @@
     <!-- 签到成功弹窗 -->
     <u-popup v-model="showModal" mode="center">
       <view class="sign_dialog">
-        <image class="icon" src="/static/img/task/pic_qdb.png" mode="" />
+        <image class="icon" src="/static/img/task/pic_qdb.png" />
         <view class="container">
           <view class="content">
             <view class="title">
               已连续签到
-              <text>{{9}}</text>天
+              <text>{{series}}</text>天
             </view>
             <view class="bottom_wrap">
               <view class="coin">金币</view>
-              <view class="right">+{{60}}</view>
+              <view class="right">+{{integral}}</view>
             </view>
           </view>
-          <view class="submit" @click="showModal=false">明天签到可获得{{65}}金币</view>
+          <view class="submit" @click="showModal=false">明天签到可获得{{tomorrow}}金币</view>
         </view>
       </view>
     </u-popup>
@@ -87,6 +87,7 @@
 </template>
 
 <script>
+import { getSign, postSign } from "api/home.js";
 export default {
   data() {
     return {
@@ -99,12 +100,36 @@ export default {
       currentYear: 1970,
       currentWeek: 1,
       days: [],
+      integral: 0, //签到获得金币数
+      series: 0, //连续签到天数
+      tomorrow: 0, // 明天可获得的金币数
     };
   },
   onLoad(options) {
     this.initData();
+    this.getSignData();
+    console.log(this.$u.timeFormat(new Date(), "yyyy-mm"));
   },
   methods: {
+    // 获取签到信息
+    async getSignData() {
+      let params = {
+        token: this.vuex_token,
+        date: this.$u.timeFormat(new Date(), "yyyy-mm"),
+      };
+      let { data } = await getSign(params);
+    },
+    // 点击签到
+    async goSign() {
+      let params = {
+        token: this.vuex_token,
+      };
+      let { data } = await postSign(params);
+      this.series = data.series;
+      this.integral = data.integral;
+      this.tomorrow = data.tomorrow;
+      this.showModal = true;
+    },
     // 返回类似 2016-01-02 格式的字符串
     formatDate: function (year, month, day) {
       let y = year;
@@ -166,7 +191,7 @@ export default {
     // 日期点击
     pick(date) {
       // alert(this.formatDate(date.getFullYear(), date.getMonth() + 1, date.getDate()));
-      this.showModal = true;
+      this.goSign();
     },
     // 上一个月
     pickPre(year, month) {
@@ -290,7 +315,7 @@ page {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
-      padding-top: 14rpx;
+      padding: 14rpx 0;
       background: #ffffff;
       view {
         display: flex;
@@ -358,7 +383,7 @@ page {
     position: relative;
     z-index: 2;
     width: 110rpx;
-		height: 120rpx;
+    height: 120rpx;
   }
   .container {
     position: relative;
@@ -366,14 +391,14 @@ page {
     margin-top: -60rpx;
     border-radius: 20rpx;
     background: #fff;
-		overflow: hidden;
+    overflow: hidden;
     .content {
-			width: 430rpx;
+      width: 430rpx;
       padding: 70rpx 30rpx 30rpx;
       .title {
         color: #333333;
         font-size: 30rpx;
-				text-align: center;
+        text-align: center;
         text {
           color: #f04323;
           font-size: 36rpx;
@@ -391,7 +416,7 @@ page {
           justify-content: center;
           color: #ffe985;
           font-size: 24rpx;
-					margin-right: 10rpx;
+          margin-right: 10rpx;
           width: 70rpx;
           height: 70rpx;
           background: url("/static/img/task/pic_coin_on.png");
@@ -400,16 +425,16 @@ page {
           background-size: 100% 100%;
         }
         .right {
-					color: #F04323;
-					font-size: 30rpx;
+          color: #f04323;
+          font-size: 30rpx;
         }
       }
     }
     .submit {
-			color: #fff;
-			font-size: 24rpx;
-			text-align: center;
-			line-height: 80rpx;
+      color: #fff;
+      font-size: 24rpx;
+      text-align: center;
+      line-height: 80rpx;
       background: linear-gradient(90deg, #f04323 0%, #ff983c 100%);
     }
   }
