@@ -56,7 +56,31 @@
 		},
 		{
 			"path": "pages/mine/collection",
-			"name": "collection"
+			"name": "collection",
+			"style": {
+				"enablePullDownRefresh": true,
+				"h5": {
+					"pullToRefresh": {
+						"color": "#f04323"
+					}
+				},
+				"app-plus": {
+					"pullToRefresh": {
+						"support": true,
+						"color": "#ff3333",
+						"style": "default",
+						"contentdown": {
+							"caption": "下拉刷新"
+						},
+						"contentover": {
+							"caption": "释放刷新"
+						},
+						"contentrefresh": {
+							"caption": "正在刷新"
+						}
+					}
+				}
+			}
 		},
 		{
 			"path": "pages/mine/footprint",
@@ -97,11 +121,11 @@
 		{
 			"path": "pages/setting/personal",
 			"style": "personalData"
-		}, 
+		},
 		{
 			"path": "pages/login/tagIndex",
 			"name": "tagIndex"
-		}, 
+		},
 		{
 			"path": "pages/login/tagOff",
 			"name": "tagOff"

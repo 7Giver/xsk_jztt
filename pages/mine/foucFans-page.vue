@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       limit: 10,
-      pageIndex: 0,
+      pageIndex: 1,
       orderList: [],
       loadStatus: "loadmore",
     };

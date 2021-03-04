@@ -19,9 +19,12 @@
 </template>
 
 <script>
+import { getTrack } from "api/home.js";
 export default {
   data() {
     return {
+      pageIndex: 1,
+      limit: 10,
       scrollTop: 0,
       indexList: [
         "A",
@@ -53,7 +56,20 @@ export default {
       ],
     };
   },
+  onLoad(options) {
+    this.getTrackData();
+  },
   methods: {
+    // 获取足迹列表
+    async getTrackData() {
+      let params = {
+        token: this.vuex_token,
+        page: this.pageIndex,
+        limit: this.limit
+      }
+      let { data } = await getTrack(params);
+    },
+    // 监听页面滚动
     onPageScroll(e) {
       this.scrollTop = e.scrollTop;
     },

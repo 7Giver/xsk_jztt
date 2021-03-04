@@ -6,27 +6,32 @@
       </view>
     </u-navbar>
     <view class="main-container">
-      <view :class="[showCheck ? 'content_wrap right_row' : 'content_wrap']">
-        <view class="u-flex item" v-for="(item, index) in dataList" :key="index">
-          <transition name="fade-row">
-            <view class="check_wrap" v-if="showCheck">
-              <u-checkbox v-model="item.checked" size="40" shape="circle" active-color="#F04323"></u-checkbox>
-            </view>
-          </transition>
-          <view class="content">
-            <view class="banner">
-              <image :src="item.img" />
-            </view>
-            <view class="right_wrap">
-              <view class="u-line-2 title">{{item.title}}</view>
-              <view class="u-flex bottom">
-                <view class="nickname">{{item.nickname}}</view>
-                <view class="add_time">收藏于{{item.add_time}}</view>
+      <scroll-view :scroll-y="true" style="height: 100%;width: 100%;" @scrolltolower="reachBottom">
+        <view :class="[showCheck ? 'content_wrap right_row' : 'content_wrap']">
+          <view class="u-flex item" v-for="(item, index) in dataList" :key="index">
+            <transition name="fade-row">
+              <view class="check_wrap" v-if="showCheck">
+                <u-checkbox v-model="item.checked" size="40" shape="circle" active-color="#F04323"></u-checkbox>
+              </view>
+            </transition>
+            <view class="content">
+              <view class="banner">
+                <image :src="item.cover" />
+              </view>
+              <view class="right_wrap">
+                <view class="u-line-2 title">{{item.title}}</view>
+                <view class="u-flex bottom">
+                  <view class="nickname">{{item.author || '暂无作者'}}{{item.id}}</view>
+                  <view class="add_time">收藏于{{item.add_time | date('mm-dd')}}</view>
+                </view>
               </view>
             </view>
           </view>
         </view>
-      </view>
+        <view class="loadmore">
+          <u-loadmore :status="loadStatus"></u-loadmore>
+        </view>
+      </scroll-view>
       <transition name="fade-column">
         <view class="footer" v-if="showCheck">
           <u-checkbox
@@ -36,7 +41,7 @@
             active-color="#F04323"
             @change="checkAllChange"
           >全选</u-checkbox>
-          <view class="dele_btn">删除</view>
+          <view class="dele_btn" @click="goDeleteFavor">删除</view>
         </view>
       </transition>
     </view>
@@ -44,53 +49,25 @@
 </template>
 
 <script>
-import { getFavor } from "api/home.js";
+import { getFavor, deleteFavor } from "api/home.js";
 export default {
   data() {
     return {
       limit: 10, //分页数量
-      pageIndex: 0, //分页
+      pageIndex: 1, //分页
+      loadStatus: "loadmore",
       showCheck: false, //是否编辑状态
       allChecked: false, //全选状态
-      dataList: [
-        {
-          img:
-            "//img13.360buyimg.com/n7/jfs/t1/103005/7/17719/314825/5e8c19faEb7eed50d/5b81ae4b2f7f3bb7.jpg",
-          title:
-            "这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题",
-          nickname: "新闻小助手",
-          add_time: "1-12",
-          checked: false,
-        },
-        {
-          img:
-            "//img13.360buyimg.com/n7/jfs/t1/103005/7/17719/314825/5e8c19faEb7eed50d/5b81ae4b2f7f3bb7.jpg",
-          title: "这边是标题这边是标题这边是标题这边是标题",
-          nickname: "新闻小助手",
-          add_time: "1-13",
-          checked: false,
-        },
-        {
-          img:
-            "//img13.360buyimg.com/n7/jfs/t1/103005/7/17719/314825/5e8c19faEb7eed50d/5b81ae4b2f7f3bb7.jpg",
-          title: "这边是标题这边是标题这边是标题这边是标题",
-          nickname: "新闻小助手",
-          add_time: "1-14",
-          checked: false,
-        },
-        {
-          img:
-            "//img13.360buyimg.com/n7/jfs/t1/103005/7/17719/314825/5e8c19faEb7eed50d/5b81ae4b2f7f3bb7.jpg",
-          title: "这边是标题这边是标题这边是标题这边是标题",
-          nickname: "新闻小助手",
-          add_time: "1-15",
-          checked: false,
-        },
-      ],
+      dataList: [],
     };
   },
-  onLoad(options) {
-    this.getDataList();
+  onReady() {
+    //这里表示当进入页面的时候就开始执行下拉刷新动画
+    uni.startPullDownRefresh({
+      success: function (res) {
+        console.log(res); //success 返回参数说明
+      },
+    });
   },
   methods: {
     // 页面数据
@@ -102,19 +79,74 @@ export default {
       };
       let { data } = await getFavor(params);
       let result = data.list;
-      // if (data == null || result.length == 0) {
-      //   // 加载结束
-      //   this.loadStatus = "nomore";
-      //   return;
-      // }
-      // this.orderList = this.orderList.concat(result);
-      // this.pageIndex++;
-      // if (result.length < this.limit) {
-      //   // 一页不足的情况
-      //   this.loadStatus = "nomore";
-      // } else {
-      //   this.loadStatus = "loadmore";
-      // }
+      if (data == null || result.length == 0) {
+        // 加载结束
+        this.loadStatus = "nomore";
+        return;
+      }
+      if (result.length < this.limit) {
+        // 一页不足的情况
+        this.loadStatus = "nomore";
+      } else {
+        this.loadStatus = "loadmore";
+      }
+      // 处理数据
+      if (this.pageIndex == 1) {
+        this.dataList = result;
+      } else {
+        this.dataList = this.dataList.concat(result);
+      }
+      this.pageIndex++;
+      uni.stopPullDownRefresh();
+    },
+    // 请求批量删除
+    async postDelete(str, arr) {
+      let params = {
+        token: this.vuex_token,
+        id_str: str,
+      };
+      let { data, msg } = await deleteFavor(params);
+      this.doneDelete(arr);
+      this.$u.toast(msg);
+    },
+    // 点击批量删除
+    goDeleteFavor() {
+      let str = "";
+      let arr = [];
+      let resultArr = this.dataList.filter((item) => item.checked);
+      let length = resultArr.length;
+      if (!length) {
+        this.$u.toast("请勾选作品");
+        return;
+      }
+      resultArr.forEach((item, index) => {
+        str += item.id + (index == length - 1 ? "" : ",");
+        arr.push(item.id);
+      });
+      this.postDelete(str, arr);
+    },
+    // 点击删除后处理
+    doneDelete(arr = []) {
+      let target = this.dataList;
+      this.dataList = target.filter((item) => arr.indexOf(item.id) == -1);
+      this.showCheck = false;
+    },
+    // 监听下拉刷新
+    onPullDownRefresh() {
+      this.limit = this.$options.data().limit;
+      this.pageIndex = this.$options.data().pageIndex;
+      this.loadStatus = this.$options.data().loadStatus;
+      this.dataList = this.$options.data().dataList;
+      this.getDataList();
+    },
+    // 触发滚动加载
+    reachBottom() {
+      if (this.dataList.length >= this.limit) {
+        this.loadStatus = "loading";
+        setTimeout(() => {
+          this.getDataList();
+        }, 600);
+      }
     },
     // 编辑收藏
     editCollection() {
@@ -149,7 +181,7 @@ export default {
 .main-container {
   position: relative;
   // height: calc(100vh - 44px - env(safe-area-inset-bottom));
-  padding-bottom: 120rpx;
+  // padding-bottom: 120rpx;
   .content_wrap {
     position: relative;
     right: 0rpx;
@@ -215,6 +247,9 @@ export default {
       border-radius: 12rpx;
       background: #f04323;
     }
+  }
+  .loadmore {
+    padding: 20rpx 0;
   }
 }
 .fade-column-enter-active,

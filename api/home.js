@@ -68,8 +68,8 @@ export function getUserIndex(token) {
  * 用户文章、视频（个人主页）
  * @param {string} token 登录Token (必填)
  * @param {?number} page 页码 (必填)
- * @param {?number} limit 每页条数（必填，默认10条）
- * @param {?string} sid 用户加密sid（传空表示查看自己的文章、视频）	
+ * @param {?number} limit 每页条数 (必填，默认10条)
+ * @param {?string} sid 用户加密sid (传空表示查看自己的文章、视频)	
  * @param {?number} type 类型 (必填，0-全部，1-文章，2-视频)
  */
 export function getUserWorks(params) {
@@ -80,8 +80,8 @@ export function getUserWorks(params) {
  * 用户关注、粉丝列表
  * @param {string} token 登录Token (必填)
  * @param {?number} page 页码 (必填)
- * @param {?number} limit 每页条数（必填，默认10条）
- * @param {?string} sid 用户加密sid（传空表示查看自己的文章、视频）	
+ * @param {?number} limit 每页条数 (必填，默认10条)
+ * @param {?string} sid 用户加密sid (传空表示查看自己的文章、视频)	
  * @param {?number} type 类型 (必填，1-关注列表，2-粉丝列表)
  */
 export function getFoucfans(params) {
@@ -132,4 +132,44 @@ export function postSign(params) {
  */
 export function getFavor(params) {
   return get(`/${version}/log/favor`, params);
+}
+
+/**
+ * 批量删除收藏
+ * @param {string} token 登录Token (必填)
+ * @param {string} id_str id组成的字符串(必填，如：23,44,78)	
+ */
+export function deleteFavor(params) {
+  return post(`/${version}/log/delete-favor`, params);
+}
+
+/**
+ * 我的足迹列表
+ * @param {string} token 登录Token (必填)
+ * @param {?number} page 页码 (必填)
+ * @param {?number} limit 每页条数（必填，默认10条）
+ */
+export function getTrack(params) {
+  return get(`/${version}/log/track`, params);
+}
+
+/**
+ * 完善个人信息
+ * @param {string} token 登录Token (必填)
+ * @param {?string} avatar 头像 (必填)
+ * @param {?string} name 昵称 (必填)
+ * @param {?string} intro 简介 (必填)
+ * @param {?string} address 地址 (必填)
+ * @param {?string} birthday 出生年月 (必填)
+ */
+export function editUser(params) {
+  return post(`/${version}/user/edit`, params);
+}
+
+/**
+ * 图片上传
+ * @param {file} image 二进制图片 (必填)
+ */
+export function uploadImage(file) {
+  return post(`/${version}/default/upload`, file);
 }
