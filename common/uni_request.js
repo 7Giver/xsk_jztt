@@ -132,7 +132,7 @@ export default function({
 						success: async res => {
 							clearTimeout(timer)
 							res.statusCode !== 200 ? await this.onerror(method, url, data, `网络请求异常：服务器响应异常：状态码：${res.statusCode}`) :
-								'',
+							(typeof res.data === 'string' ? res.data = JSON.parse(res.data) : res.data),
 								this.interceptors.response.intercept(res.statusCode === 200 ? resolve : reject, res, method, url, data) // 执行响应拦截器
 						},
 						fail: async res => {

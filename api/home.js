@@ -171,5 +171,5 @@ export function editUser(params) {
  * @param {file} image 二进制图片 (必填)
  */
 export function uploadImage(file) {
-  return post(`/${version}/default/upload`, file);
+  return uploadFile(`/${version}/default/upload`, file);
 }
