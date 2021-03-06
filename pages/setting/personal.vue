@@ -19,13 +19,17 @@
           <u-cell-item title="个人简介" @click="showEdit('intro')">
             <view class="right_title" slot="right-icon">{{userInfo.intro || '请输入个人简介'}}</view>
           </u-cell-item>
-          <u-cell-item title="性别" value="请选择"></u-cell-item>
-          <u-cell-item title="地址" value="请选择"></u-cell-item>
-          <u-cell-item title="出生年月" value="请选择"></u-cell-item>
+          <u-cell-item title="性别" :value="sexLabel" @click="showSexPicker=true"></u-cell-item>
+          <u-cell-item title="地址" :value="userInfo.address || '请选择'" @click="showCityPicker=true"></u-cell-item>
+          <u-cell-item
+            title="出生年月"
+            :value="userInfo.birthday || '请选择'"
+            @click="showDatePicker=true"
+          ></u-cell-item>
         </u-cell-group>
       </view>
       <view class="submit_wrap">
-        <u-button @click="submit">提交</u-button>
+        <u-button @click="postEdit">提交</u-button>
       </view>
     </view>
     <!-- 编辑弹窗 -->
@@ -64,12 +68,23 @@
         </view>
       </view>
     </u-popup>
+    <!-- 性别选择 -->
+    <u-select
+      v-model="showSexPicker"
+      :list="sexList"
+      :default-value="[userInfo.sex]"
+      @confirm="sexConfirm"
+    ></u-select>
+    <!-- 城市选择 -->
+    <u-picker mode="region" v-model="showCityPicker" @confirm="cityConfirm" />
+    <!-- 生日选择 -->
+    <u-picker mode="time" v-model="showDatePicker" @confirm="dateConfim"></u-picker>
   </view>
 </template>
 
 <script>
 // import Cropper from "cropperjs"; // 裁剪需求暂时用uView
-import { editUser, uploadImage } from "api/home.js";
+import { editUser, getCityList, getUserInfo, uploadImage } from "api/home.js";
 export default {
   data() {
     return {
@@ -81,11 +96,25 @@ export default {
         address: "",
         birthday: "",
       },
-      dialogType: "",
-      showDialog: false,
+      dialogType: "", // 编辑弹窗类型
+      showDialog: false, //展示编辑弹窗
+      showSexPicker: false,
+      showCityPicker: false,
+      showDatePicker: false,
       inputStyle: {
         padding: "20rpx 30rpx",
       },
+      sexList: [
+        {
+          value: 1,
+          label: "男",
+        },
+        {
+          value: 2,
+          label: "女",
+        },
+      ],
+      cityList: [],
       // valueStyle: {
       //   "overflow": "hidden",
       //   "word-break": "break-all",
@@ -96,6 +125,16 @@ export default {
       // },
     };
   },
+  computed: {
+    // 性别显示字段
+    sexLabel() {
+      return this.userInfo.sex
+        ? this.userInfo.sex == 1
+          ? "男"
+          : "女"
+        : "请选择";
+    },
+  },
   created() {
     uni.$on("uAvatarCropper", (path) => {
       this.userInfo.avatar = path;
@@ -103,6 +142,7 @@ export default {
     });
   },
   onLoad(options) {
+    // this.getCityData();
     this.initUserData();
   },
   methods: {
@@ -115,7 +155,6 @@ export default {
       this.userInfo.sex = copyUser.sex;
       this.userInfo.address = copyUser.address || "";
       this.userInfo.birthday = copyUser.birthday || "";
-      console.log(this.userInfo);
     },
     // 跳转选择头像
     chooseAvatar() {
@@ -149,17 +188,43 @@ export default {
       this.$u.vuex("vuex_user.intro", this.userInfo.intro);
       this.showDialog = false;
     },
+    // 性别选择确定
+    sexConfirm(e) {
+      this.userInfo.sex = e[0].value;
+    },
+    // 城市选择确定
+    cityConfirm(e) {
+      // console.log(e);
+      this.userInfo.address = `${e.province.label} ${e.city.label}`;
+    },
+    // 日期选择确定
+    dateConfim(e) {
+      // console.log(e);
+      this.userInfo.birthday = `${e.year}-${e.month}-${e.day}`;
+    },
+    // 获取城市列表
+    async getCityData() {
+      let { data } = await getCityList();
+      this.cityList = data;
+    },
+    // 获取用户数据
+    async getUserData() {
+      let { data } = await getUserInfo(this.vuex_token);
+      this.$u.vuex("vuex_user", data);
+    },
     // 提交用户信息
     async postEdit() {
       let params = {
         token: this.vuex_token,
         avatar: this.userInfo.avatar,
         name: this.userInfo.nickname,
+        sex: this.userInfo.sex,
         intro: this.userInfo.intro,
         address: this.userInfo.address,
         birthday: this.userInfo.birthday,
       };
       let { data } = await editUser(params);
+      this.getUserData();
     },
     // 上传裁剪后头像
     async postResultImage(path) {
@@ -168,6 +233,7 @@ export default {
         filePath: path,
       };
       let { data } = await uploadImage(file);
+      this.userInfo.avatar = data.url;
       this.$u.vuex("vuex_user.avatar", data.url);
     },
   },
@@ -184,7 +250,7 @@ page {
 }
 .setting-page {
   /deep/.u-cell_right {
-    max-width:  45%;
+    max-width: 45%;
   }
   .right_title {
     color: #909399;

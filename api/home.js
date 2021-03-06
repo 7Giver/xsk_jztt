@@ -173,3 +173,10 @@ export function editUser(params) {
 export function uploadImage(file) {
   return uploadFile(`/${version}/default/upload`, file);
 }
+
+/**
+ * 获取城市列表
+ */
+ export function getCityList() {
+  return get(`/${version}/default/district`);
+}

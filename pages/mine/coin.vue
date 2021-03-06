@@ -5,17 +5,17 @@
       <view class="header">
         <view class="container">
           <view class="top_wrap">
-            <view class="main_title">
-              <view class="number">{{userInfo.tongbao}}</view>
+            <!-- <view class="main_title">
+              <view class="number">{{vuex_user.money}}</view>
               <view class="text">当前通宝（个）</view>
-            </view>
+            </view> -->
             <view class="bottom_wrap">
               <view class="item">
-                <view class="number">{{userInfo.coin}}</view>
-                <view class="text">今日金币</view>
+                <view class="number">{{vuex_user.money}}</view>
+                <view class="text">当前通宝（个）</view>
               </view>
               <view class="item">
-                <view class="number">{{userInfo.cash}}</view>
+                <view class="number">{{vuex_user.integral}}</view>
                 <view class="text">金币余额</view>
               </view>
             </view>
@@ -213,7 +213,7 @@ export default {
       overflow: hidden;
       color: #fff;
       .top_wrap {
-        padding: 40rpx 0 30rpx;
+        padding: 30rpx 0 30rpx;
         .main_title {
           display: flex;
           align-items: center;
@@ -230,15 +230,15 @@ export default {
           display: flex;
           align-items: center;
           justify-content: space-around;
-          margin: 40rpx auto 10rpx;
+          margin: 30rpx auto;
           > view {
             text-align: center;
           }
           .number {
-            font-size: 32rpx;
+            font-size: 46rpx;
           }
           .text {
-            font-size: 24rpx;
+            font-size: 26rpx;
             margin-top: 12rpx;
             letter-spacing: 1px;
             zoom: 0.9;
