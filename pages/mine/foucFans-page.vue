@@ -28,19 +28,30 @@ export default {
     return {
       limit: 10,
       pageIndex: 1,
+      listType: 0, //列表类型
       orderList: [],
       loadStatus: "loadmore",
     };
   },
   methods: {
+    // 触发滚动加载
+    reachBottom() {
+      if (this.orderList.length >= this.limit) {
+        this.loadStatus = "loading";
+        setTimeout(() => {
+          this.getOrderList(this.listType);
+        }, 500);
+      }
+    },
     // 页面数据
     async getOrderList(index = 0) {
+      this.listType = index * 1 + 1;
       let params = {
         token: this.vuex_token,
         page: this.pageIndex,
         limit: this.limit,
         sid: "",
-        type: index * 1 + 1,
+        type: this.listType,
       };
       let { data } = await getFoucfans(params);
       let result = data.list;

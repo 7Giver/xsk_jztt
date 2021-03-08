@@ -63,10 +63,12 @@ export default {
   },
   onReady() {
     //这里表示当进入页面的时候就开始执行下拉刷新动画
-    uni.startPullDownRefresh({
-      success: function (res) {
-        console.log(res); //success 返回参数说明
-      },
+    this.$nextTick(() => {
+      uni.startPullDownRefresh({
+        success: function (res) {
+          console.log(res); //success 返回参数说明
+        },
+      });
     });
   },
   methods: {

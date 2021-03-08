@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { getNotice } from "api/home.js";
 export default {
   data() {
     return {
@@ -92,7 +93,14 @@ export default {
       ],
     };
   },
+  onLoad(options) {
+    this.getData();
+  },
   methods: {
+    // 获取消息
+    async getData() {
+      let { data } = await getNotice(this.vuex_token);
+    },
     // 设置全部已读
     setAllRead() {},
     // 页面跳转集合

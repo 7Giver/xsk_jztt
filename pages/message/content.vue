@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { noticeList, noticeRead } from "api/home.js";
 export default {
   data() {
     return {
@@ -88,17 +89,50 @@ export default {
   onLoad(options) {
     // console.log(this.$Route.query);
     this.pageType = this.$Route.query.type;
-    if (this.pageType == 1) {
-      this.pageTitle = "系统消息";
-      this.dataList = this.systemList;
-    } else if (this.pageType == 2) {
-      this.pageTitle = "邀请好友通知";
-      this.dataList = this.friendList;
-    }
+    this.setPageType(this.pageType);
   },
   methods: {
+    // 设置页面类型
+    setPageType(type) {
+      switch (type) {
+        case 1:
+          this.pageTitle = "点赞通知";
+          break;
+        case 2:
+          this.pageTitle = "评论通知";
+          break;
+        case 3:
+          this.pageTitle = "关注通知";
+          break;
+        case 5:
+          this.pageTitle = "邀请好友通知";
+          break;
+        case 9:
+          this.pageTitle = "系统消息";
+          break;
+        default:
+          break;
+      }
+      this.getDataList();
+    },
+    // 请求列表
+    async getDataList() {
+      let params = {
+        token: this.vuex_token,
+        type: this.pageType,
+        page: 1,
+        limit: 20,
+      };
+      let { data } = await noticeList(params);
+    },
     // 设置全部已读
-    setAllRead() {},
+    async setAllRead() {
+      let params = {
+        token: this.vuex_token,
+        type: this.pageType,
+      };
+      let { data } = await noticeRead(params);
+    },
   },
 };
 </script>
