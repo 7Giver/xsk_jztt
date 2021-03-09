@@ -15,6 +15,13 @@
 			"name": "404"
 		},
 		{
+			"path": "uview-ui/components/u-avatar-cropper/u-avatar-cropper",
+			"style": {
+				"navigationBarTitleText": "头像裁剪",
+				"navigationBarBackgroundColor": "#000000"
+			}
+		},
+		{
 			"path": "pages/news/news",
 			"name": "news"
 		},
@@ -32,7 +39,31 @@
 		},
 		{
 			"path": "pages/mine/personal",
-			"name": "personal"
+			"name": "personal",
+			"style": {
+				"enablePullDownRefresh": true,
+				"h5": {
+					"pullToRefresh": {
+						"color": "#f04323"
+					}
+				},
+				"app-plus": {
+					"pullToRefresh": {
+						"support": true,
+						"color": "#ff3333",
+						"style": "default",
+						"contentdown": {
+							"caption": "下拉刷新"
+						},
+						"contentover": {
+							"caption": "释放刷新"
+						},
+						"contentrefresh": {
+							"caption": "正在刷新"
+						}
+					}
+				}
+			}
 		},
 		{
 			"path": "pages/news/detail",
@@ -104,7 +135,31 @@
 		},
 		{
 			"path": "pages/mine/drafts",
-			"name": "drafts"
+			"name": "drafts",
+			"style": {
+				"enablePullDownRefresh": true,
+				"h5": {
+					"pullToRefresh": {
+						"color": "#f04323"
+					}
+				},
+				"app-plus": {
+					"pullToRefresh": {
+						"support": true,
+						"color": "#ff3333",
+						"style": "default",
+						"contentdown": {
+							"caption": "下拉刷新"
+						},
+						"contentover": {
+							"caption": "释放刷新"
+						},
+						"contentrefresh": {
+							"caption": "正在刷新"
+						}
+					}
+				}
+			}
 		},
 		{
 			"path": "pages/mine/works",
@@ -144,7 +199,7 @@
 		},
 		{
 			"path": "pages/setting/personal",
-			"style": "personalData"
+			"name": "personalData"
 		},
 		{
 			"path": "pages/login/tagIndex",
@@ -155,10 +210,31 @@
 			"name": "tagOff"
 		},
 		{
-			"path": "uview-ui/components/u-avatar-cropper/u-avatar-cropper",
+			"path": "pages/mine/comment",
+			"name": "comment",
 			"style": {
-				"navigationBarTitleText": "头像裁剪",
-				"navigationBarBackgroundColor": "#000000"
+				"enablePullDownRefresh": true,
+				"h5": {
+					"pullToRefresh": {
+						"color": "#f04323"
+					}
+				},
+				"app-plus": {
+					"pullToRefresh": {
+						"support": true,
+						"color": "#ff3333",
+						"style": "default",
+						"contentdown": {
+							"caption": "下拉刷新"
+						},
+						"contentover": {
+							"caption": "释放刷新"
+						},
+						"contentrefresh": {
+							"caption": "正在刷新"
+						}
+					}
+				}
 			}
 		}
 	],

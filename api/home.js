@@ -226,3 +226,31 @@ export function uploadImage(file) {
  export function getDrafts(params) {
   return get(`/${version}/user/drafts`, params);
 }
+
+/**
+ * 批量删除草稿
+ * @param {string} token 登录Token (必填)
+ * @param {string} ids 文章id组成的字符串 (必填)
+ */
+ export function deleteDrafts(params) {
+  return post(`/${version}/user/delete-draft`, params);
+}
+
+/**
+ * 我的评论
+ * @param {string} token 登录Token (必填)
+ * @param {string} lastid 类似page (必填，上一接口返回的lastid)
+ * @param {string} limit 查询数量 (必填)
+ */
+ export function mineComment(params) {
+  return get(`/${version}/comment/mine`, params);
+}
+
+/**
+ * 删除我的评论
+ * @param {string} token 登录Token (必填)
+ * @param {?string} id 评论id (必填)
+ */
+ export function deleteComment(params) {
+  return post(`/${version}/comment/delete`, params);
+}

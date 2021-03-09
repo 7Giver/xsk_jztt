@@ -2,7 +2,7 @@
   <view id="app">
     <u-navbar title="我的作品" :is-fixed="true" :border-bottom="false">
       <view class="navbar-right" slot="right">
-        <view class="edit_btn" @click="editDrafts">{{showCheck ? '取消' : '编辑'}}</view>
+        <view class="edit_btn" @click="editWorks">{{showCheck ? '取消' : '编辑'}}</view>
       </view>
     </u-navbar>
     <view class="drafts-page">
@@ -72,7 +72,7 @@ export default {
   onLoad(options) {},
   methods: {
     // 编辑收藏
-    editDrafts() {
+    editWorks() {
       let dataList = this.pageList[this.swiperCurrent].dataList;
       this.showCheck = !this.showCheck;
       if (this.showCheck == false) {

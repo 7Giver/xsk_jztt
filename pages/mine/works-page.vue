@@ -73,6 +73,7 @@ export default {
       if (data == null || result.length == 0) {
         // 加载结束
         this.loadStatus = "nomore";
+        uni.stopPullDownRefresh();
         return;
       }
       this.dataList = this.dataList.concat(result);
@@ -83,6 +84,7 @@ export default {
       } else {
         this.loadStatus = "loadmore";
       }
+      uni.stopPullDownRefresh();
     },
   },
 };

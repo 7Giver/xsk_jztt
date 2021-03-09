@@ -35,7 +35,7 @@
             active-color="#F04323"
             @change="checkAllChange"
           >全选</u-checkbox>
-          <view class="dele_btn">删除</view>
+          <view class="dele_btn" @click="goDeleteItem">删除</view>
         </view>
       </transition>
     </view>
@@ -43,11 +43,11 @@
 </template>
 
 <script>
-import { getDrafts } from "api/home.js";
+import { getDrafts, deleteDrafts } from "api/home.js";
 import draftsPage from "./drafts-page";
 export default {
   components: {
-    draftsPage
+    draftsPage,
   },
   data() {
     return {
@@ -70,6 +70,57 @@ export default {
     this.pageList[0].getData();
   },
   methods: {
+    // 编辑收藏
+    editDrafts() {
+      let dataList = this.pageList[this.swiperCurrent].dataList;
+      this.showCheck = !this.showCheck;
+      if (this.showCheck == false) {
+        this.allChecked = false;
+        dataList.forEach((item) => {
+          this.$set(item, "checked", false);
+        });
+      }
+    },
+    // 全选事件
+    checkAllChange(e) {
+      // console.log(e);
+      let dataList = this.pageList[this.swiperCurrent].dataList;
+      if (e.value === true) {
+        dataList.forEach((item) => {
+          this.$set(item, "checked", true);
+        });
+      } else if (e.value === false) {
+        dataList.forEach((item) => {
+          this.$set(item, "checked", false);
+        });
+      }
+    },
+    // 点击批量删除
+    goDeleteItem() {
+      let str = "";
+      let arr = [];
+      let dataList = this.pageList[this.swiperCurrent].dataList;
+      let resultArr = dataList.filter((item) => item.checked);
+      let length = resultArr.length;
+      if (!length) {
+        this.$u.toast("请勾选作品");
+        return;
+      }
+      resultArr.forEach((item, index) => {
+        str += item.id + (index == length - 1 ? "" : ",");
+        arr.push(item.id);
+      });
+      this.postDelete(str, arr);
+      // this.doneDelete(arr, this.swiperCurrent);
+    },
+    // 点击删除后处理
+    doneDelete(arr = [], index) {
+      let dataList = this.pageList[index].dataList;
+      this.pageList[index].dataList = dataList.filter(
+        (item) => arr.indexOf(item.id) == -1
+      );
+      this.showCheck = false;
+    },
     // 监听下拉刷新
     onPullDownRefresh() {
       let target = this.pageList[this.swiperCurrent];
@@ -80,8 +131,13 @@ export default {
     },
     // tab栏切换
     tabChange(index) {
+      this.showCheck = false;
       this.swiperCurrent = index;
-      this.getOrderList(index);
+      let target = this.pageList[index];
+      target.pageIndex = 0;
+      target.dataList = [];
+      target.loadStatus = "loadmore";
+      target.getData(index);
     },
     transition({ detail: { dx } }) {
       this.$refs.tabs.setDx(dx);
@@ -91,31 +147,15 @@ export default {
       this.swiperCurrent = current;
       this.current = current;
     },
-    // 编辑收藏
-    editDrafts() {
-      this.showCheck = !this.showCheck;
-      if (this.showCheck == false) {
-        this.allChecked = false;
-        this.orderList.forEach((list) => {
-          list.forEach((item) => {
-            item.checked = false;
-          });
-        });
-      }
-    },
-    // 全选监听
-    checkAllChange(e) {
-      // console.log(e);
-      let targetArr = this.orderList[this.swiperCurrent];
-      if (e.value === true) {
-        targetArr.forEach((item) => {
-          item.checked = true;
-        });
-      } else if (e.value === false) {
-        targetArr.forEach((item) => {
-          item.checked = false;
-        });
-      }
+    // 请求批量删除
+    async postDelete(str, arr) {
+      let params = {
+        token: this.vuex_token,
+        ids: str,
+      };
+      let { data, msg } = await deleteDrafts(params);
+      this.doneDelete(arr, this.swiperCurrent);
+      this.$u.toast(msg);
     },
   },
 };

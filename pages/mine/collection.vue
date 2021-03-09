@@ -61,15 +61,8 @@ export default {
       dataList: [],
     };
   },
-  onReady() {
-    //这里表示当进入页面的时候就开始执行下拉刷新动画
-    this.$nextTick(() => {
-      uni.startPullDownRefresh({
-        success: function (res) {
-          console.log(res); //success 返回参数说明
-        },
-      });
-    });
+  onLoad(options) {
+    this.getDataList();
   },
   methods: {
     // 页面数据
@@ -84,6 +77,7 @@ export default {
       if (data == null || result.length == 0) {
         // 加载结束
         this.loadStatus = "nomore";
+        uni.stopPullDownRefresh();
         return;
       }
       if (result.length < this.limit) {

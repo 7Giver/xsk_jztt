@@ -15,7 +15,7 @@
       <view class="header">
         <view class="u-flex header_top">
           <view class="u-flex left_wrap">
-            <view class="avatar">
+            <view class="avatar" @click="goNext('setting')">
               <u-avatar :src="vuex_user.avatar" size="100"></u-avatar>
             </view>
             <view class="right">
@@ -36,7 +36,7 @@
           <!-- <view class="item">
             <view class="number">{{ 569 }}</view>
             <text class="title">今日金币</text>
-          </view> -->
+          </view>-->
           <view class="item">
             <view class="number">{{ vuex_user.money }}</view>
             <text class="title">当前价值(元)</text>
@@ -176,6 +176,11 @@ export default {
           icon: "/static/img/mine/icon_xtsz.png",
           title: "系统设置",
         },
+        {
+          id: 10,
+          icon: "/static/img/mine/icon_pl.png",
+          title: "我的评论",
+        },
       ],
     };
   },
@@ -206,6 +211,9 @@ export default {
           break;
         case "message":
           this.$Router.push({ path: "/pages/message/message" });
+          break;
+        case "setting":
+          this.$Router.push({ path: "/pages/setting/personal" });
           break;
         default:
           break;
@@ -241,6 +249,9 @@ export default {
           break;
         case 9:
           this.$Router.push({ path: "/pages/setting/setting" });
+          break;
+        case 10:
+          this.$Router.push({ path: "/pages/mine/comment" });
           break;
         default:
           break;
