@@ -24,205 +24,212 @@
 </template>
 
 <script>
-  import {
-    friendlyDate
-  } from '@/common/util.js';
+import { getArticleList } from "api/home.js";
+import { friendlyDate } from '@/common/util.js';
+import uniRefresh from '@/components/uni-list/uni-refresh.vue';
+import newsItem from './news-item.nvue';
 
-  import uniRefresh from '@/components/uni-list/uni-refresh.vue';
-  import newsItem from './news-item.nvue';
+export default {
+  components: {
+    uniRefresh,
+    newsItem
+  },
+  props: {
+    nid: {
+      type: [Number, String],
+      default: ''
+    }
+  },
+  data() {
+    return {
+      dataList: [],
+      navigateFlag: false,
+      pulling: false,
+      refreshing: false,
+      refreshFlag: false,
+      refreshText: "",
+      isLoading: false,
+      loadingText: '加载中...',
+      isNoData: false,
+      pulling: false,
+      angle: 0,
+      loadingMoreText: {
+        contentdown: '',
+        contentrefresh: '',
+        contentnomore: ''
+      },
+      refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB5QTFRFcHBw3Nzct7e39vb2ycnJioqK7e3tpqam29vb////D8oK7wAAAAp0Uk5T////////////ALLMLM8AAABxSURBVHja7JVBDoAgDASrjqj//7CJBi90iyYeOHTPMwmFZrHjYyyFYYUy1bwUZqtJIYVxhf1a6u0R7iUvWsCcrEtwJHp8MwMdvh2amHduiZD3rpWId9+BgPd7Cc2LIkPyqvlQvKxKBJ//Qwq/CacAAwDUv0a0YuKhzgAAAABJRU5ErkJggg=="
+    }
+  },
+  created() {
+    this.pullTimer = null;
+    this.requestParams = {
+      columnId: this.nid,
+      minId: 0,
+      pageSize: 10,
+      column: 'id,post_id,title,author_name,cover,published_at,comments_count'
+    };
 
-  export default {
-    components: {
-      uniRefresh,
-      newsItem
-    },
-    props: {
-      nid: {
-        type: [Number, String],
-        default: ''
+    this._isWidescreen = false;
+    // #ifdef H5
+    var mediaQueryOb = uni.createMediaQueryObserver(this)
+    mediaQueryOb.observe({
+      minWidth: 768
+    }, matches => {
+      this._isWidescreen = matches;
+    })
+    // #endif
+  },
+  methods: {
+    async loadData(refresh) {
+      if (this.isLoading) {
+        return;
       }
-    },
-    data() {
-      return {
-        dataList: [],
-        navigateFlag: false,
-        pulling: false,
-        refreshing: false,
-        refreshFlag: false,
-        refreshText: "",
-        isLoading: false,
-        loadingText: '加载中...',
-        isNoData: false,
-        pulling: false,
-        angle: 0,
-        loadingMoreText: {
-          contentdown: '',
-          contentrefresh: '',
-          contentnomore: ''
-        },
-        refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB5QTFRFcHBw3Nzct7e39vb2ycnJioqK7e3tpqam29vb////D8oK7wAAAAp0Uk5T////////////ALLMLM8AAABxSURBVHja7JVBDoAgDASrjqj//7CJBi90iyYeOHTPMwmFZrHjYyyFYYUy1bwUZqtJIYVxhf1a6u0R7iUvWsCcrEtwJHp8MwMdvh2amHduiZD3rpWId9+BgPd7Cc2LIkPyqvlQvKxKBJ//Qwq/CacAAwDUv0a0YuKhzgAAAABJRU5ErkJggg=="
-      }
-    },
-    created() {
-      this.pullTimer = null;
-      this.requestParams = {
-        columnId: this.nid,
-        minId: 0,
-        pageSize: 10,
-        column: 'id,post_id,title,author_name,cover,published_at,comments_count'
+      let params = {
+        token: this.vuex_token,
+        page: 1,
+        limit: 20,
+        title: "",
+        cid: 5,
+        type: 0
       };
+      let { data } = await getArticleList(params);
 
-      this._isWidescreen = false;
-      // #ifdef H5
-      var mediaQueryOb = uni.createMediaQueryObserver(this)
-      mediaQueryOb.observe({
-        minWidth: 768
-      }, matches => {
-        this._isWidescreen = matches;
-      })
-      // #endif
-    },
-    methods: {
-      loadData(refresh) {
-        if (this.isLoading) {
-          return;
-        }
+      this.isLoading = true;
+      this.isNoData = false;
+      this.requestParams.time = new Date().getTime() + '';
 
-        this.isLoading = true;
-        this.isNoData = false;
-        this.requestParams.time = new Date().getTime() + '';
+      var startTime = new Date();
+      uni.request({
+        // url: this.$host + 'api/news',
+        url: 'https://unidemo.dcloud.net.cn/api/news',
+        data: this.requestParams,
+        success: (result) => {
+          var endTime = new Date();
+          //console.log("request time " + new Date(endTime - startTime).getTime());
+          const data = result.data;
+          this.isNoData = (data.length <= 0);
 
-        var startTime = new Date();
-        uni.request({
-          // url: this.$host + 'api/news',
-          url: 'https://unidemo.dcloud.net.cn/api/news',
-          data: this.requestParams,
-          success: (result) => {
-            var endTime = new Date();
-            //console.log("request time " + new Date(endTime - startTime).getTime());
-            const data = result.data;
-            this.isNoData = (data.length <= 0);
-
-            const data_list = data.map((news) => {
-              return {
-                id: this.newGuid() + news.id,
-                newsid: news.id,
-                article_type: 1,
-                datetime: friendlyDate(new Date(news.published_at.replace(/\-/g, '/')).getTime()),
-                title: news.title,
-                image_url: news.cover,
-                source: news.author_name,
-                comment_count: news.comments_count,
-                post_id: news.post_id
-              };
-            });
-
-            if (refresh) {
-              this.dataList = data_list;
-              this.requestParams.minId = 0;
-            } else {
-              this.dataList = this.dataList.concat(data_list);
-              this.requestParams.minId = data[data.length - 1].id;
-            }
-
-            if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
-              this.goDetail(this.dataList[0]);
-            }
-          },
-          fail: (err) => {
-            //console.log(err);
-            if (this.dataList.length == 0) {
-              this.isNoData = true;
-            }
-          },
-          complete: (e) => {
-            this.isLoading = false;
-            if (refresh) {
-              this.refreshing = false;
-              this.refreshFlag = false;
-              this.refreshText = "已刷新";
-              if (this.pullTimer) {
-                clearTimeout(this.pullTimer);
-              }
-              this.pullTimer = setTimeout(() => {
-                this.pulling = false;
-              }, 1000);
-            }
-          }
-        });
-      },
-      loadMore(e) {
-        this.loadData();
-      },
-      clear() {
-        this.dataList.length = 0;
-        this.requestParams.minId = 0;
-      },
-      goDetail(detail) {
-        if (this._isWidescreen) { //若为宽屏，则触发右侧详情页的自定义事件
-          uni.$emit('updateDetail', {
-            detail: encodeURIComponent(JSON.stringify(detail))
-          })
-        } else {
-          // uni.navigateTo({
-          //   url: '/pages/news/detail?query=' + encodeURIComponent(JSON.stringify(detail))
-          // });
-          this.$Router.push({
-            path: "/pages/news/detail",
-            query: detail,
+          const data_list = data.map((news) => {
+            return {
+              id: this.newGuid() + news.id,
+              newsid: news.id,
+              article_type: 1,
+              datetime: friendlyDate(new Date(news.published_at.replace(/\-/g, '/')).getTime()),
+              title: news.title,
+              image_url: news.cover,
+              source: news.author_name,
+              comment_count: news.comments_count,
+              post_id: news.post_id
+            };
           });
-        }
-      },
-      closeItem(index) {
-        uni.showModal({
-          content: '不感兴趣？',
-          success: (res) => {
-            if (res.confirm) {
-              this.dataList.splice(index, 1);
-            }
+
+          if (refresh) {
+            this.dataList = data_list;
+            this.requestParams.minId = 0;
+          } else {
+            this.dataList = this.dataList.concat(data_list);
+            this.requestParams.minId = data[data.length - 1].id;
           }
+
+          if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
+            this.goDetail(this.dataList[0]);
+          }
+        },
+        fail: (err) => {
+          //console.log(err);
+          if (this.dataList.length == 0) {
+            this.isNoData = true;
+          }
+        },
+        complete: (e) => {
+          this.isLoading = false;
+          if (refresh) {
+            this.refreshing = false;
+            this.refreshFlag = false;
+            this.refreshText = "已刷新";
+            if (this.pullTimer) {
+              clearTimeout(this.pullTimer);
+            }
+            this.pullTimer = setTimeout(() => {
+              this.pulling = false;
+            }, 1000);
+          }
+        }
+      });
+    },
+    loadMore(e) {
+      this.loadData();
+    },
+    clear() {
+      this.dataList.length = 0;
+      this.requestParams.minId = 0;
+    },
+    goDetail(detail) {
+      if (this._isWidescreen) { //若为宽屏，则触发右侧详情页的自定义事件
+        uni.$emit('updateDetail', {
+          detail: encodeURIComponent(JSON.stringify(detail))
         })
-      },
-      refreshData() {
-        if (this.isLoading) {
-          return;
-        }
-        this.pulling = true;
-        this.refreshing = true;
-        this.refreshText = "正在刷新...";
-        this.loadData(true);
-      },
-      onrefresh(e) {
-        this.refreshData();
-      },
-      onpullingdown(e) {
-        if (this.refreshing) {
-          return;
-        }
-
-        // var angle = (e.pullingDistance) / e.viewHeight * 180;
-        // if (angle > 180) {
-        // 	angle = 180;
-        // }
-        // tab.angle = angle;
-
-        this.pulling = false;
-        if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
-          this.refreshFlag = true;
-          this.refreshText = "释放立即刷新";
-        } else {
-          this.refreshFlag = false;
-          this.refreshText = "下拉可以刷新";
-        }
-      },
-      newGuid() {
-        let s4 = function() {
-          return (65536 * (1 + Math.random()) | 0).toString(16).substring(1);
-        }
-        return (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4()).toUpperCase();
+      } else {
+        // uni.navigateTo({
+        //   url: '/pages/news/detail?query=' + encodeURIComponent(JSON.stringify(detail))
+        // });
+        this.$Router.push({
+          path: "/pages/news/detail",
+          query: detail,
+        });
       }
+    },
+    closeItem(index) {
+      uni.showModal({
+        content: '不感兴趣？',
+        success: (res) => {
+          if (res.confirm) {
+            this.dataList.splice(index, 1);
+          }
+        }
+      })
+    },
+    refreshData() {
+      if (this.isLoading) {
+        return;
+      }
+      this.pulling = true;
+      this.refreshing = true;
+      this.refreshText = "正在刷新...";
+      this.loadData(true);
+    },
+    onrefresh(e) {
+      this.refreshData();
+    },
+    onpullingdown(e) {
+      if (this.refreshing) {
+        return;
+      }
+
+      // var angle = (e.pullingDistance) / e.viewHeight * 180;
+      // if (angle > 180) {
+      // 	angle = 180;
+      // }
+      // tab.angle = angle;
+
+      this.pulling = false;
+      if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
+        this.refreshFlag = true;
+        this.refreshText = "释放立即刷新";
+      } else {
+        this.refreshFlag = false;
+        this.refreshText = "下拉可以刷新";
+      }
+    },
+    newGuid() {
+      let s4 = function() {
+        return (65536 * (1 + Math.random()) | 0).toString(16).substring(1);
+      }
+      return (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4()).toUpperCase();
     }
   }
+}
 </script>
 
 <style scoped>

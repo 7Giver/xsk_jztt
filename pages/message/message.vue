@@ -2,58 +2,61 @@
   <view>
     <u-navbar title="我的消息" :is-fixed="true" :border-bottom="false">
       <view class="navbar-right" slot="right">
-        <view class="edit_btn" @click="setAllRead">全部已读</view>
+        <view class="edit_btn" @click="showModal=true">全部已读</view>
       </view>
     </u-navbar>
     <view class="message-page">
       <view class="header">
-        <view class="item">
+        <view class="item" @click="goNext('likes')">
           <image class="icon" src="/static/img/icon/icon_dz.png" mode="widthFix" />
           <view class="title">点赞</view>
+          <view class="tips" v-if="likes">{{likes}}</view>
         </view>
-        <view class="item">
+        <view class="item" @click="goNext('comments')">
           <image class="icon" src="/static/img/icon/icon_pl.png" mode="widthFix" />
           <view class="title">评论</view>
-          <view class="tips">12</view>
+          <view class="tips" v-if="comments">{{comments}}</view>
         </view>
-        <view class="item">
+        <view class="item" @click="goNext('focus')">
           <image class="icon" src="/static/img/icon/icon_zz.png" mode="widthFix" />
           <view class="title">关注</view>
+          <view class="tips" v-if="focus">{{focus}}</view>
         </view>
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <view class="container">
         <view class="inner_wrap">
-          <view class="item" @click="goNext('system')">
+          <view class="item" @click="goNext('system')" v-if="systems.info.length">
             <view class="left_wrap">
               <image class="icon" src="/static/img/icon/icon_xtxx.png" mode="widthFix" />
-              <view class="point"></view>
+              <view class="point" v-if="systems.unread !== 0"></view>
             </view>
             <view class="right_wrap">
               <view class="top_wrap">
-                <view class="title">系统消息</view>
-                <view class="add_time">2021-02-06</view>
+                <view class="title">{{systems.info.title}}</view>
+                <view class="add_time">{{systems.info.add_time}}</view>
               </view>
-              <view
-                class="bottom u-line-2"
-              >这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行这边最多显示两行</view>
+              <view class="bottom u-line-2">{{systems.info.content}}</view>
             </view>
           </view>
-          <view class="item" @click="goNext('friends')">
+          <view class="item" @click="goNext('friends')" v-if="invites.info.length">
             <view class="left_wrap">
               <image class="icon" src="/static/img/icon/icon_yqhy.png" mode="widthFix" />
-              <view class="point"></view>
+              <view class="point" v-if="invites.unread !== 0"></view>
             </view>
             <view class="right_wrap">
               <view class="top_wrap">
-                <view class="title">邀请好友通知</view>
-                <view class="add_time">2021-02-06</view>
+                <view class="title">{{invites.info.title}}</view>
+                <view class="add_time">{{invites.info.add_time}}</view>
               </view>
-              <view class="bottom u-line-2">[这里是用户]关注了您。</view>
+              <view class="bottom u-line-2">{{invites.info.content}}</view>
             </view>
           </view>
         </view>
-        <view class="message_list">
+        <view class="nodata" v-if="!systems.info.length && !invites.info.length">
+          <u-empty text="暂无数据"></u-empty>
+        </view>
+        <!-- <view class="message_list">
           <view class="item" v-for="(item, index) in messageList" :key="index">
             <view class="top_wrap">
               <u-avatar :src="item.avatar" size="85"></u-avatar>
@@ -70,17 +73,36 @@
               </view>
             </view>
           </view>
-        </view>
+        </view>-->
       </view>
     </view>
+    <u-modal
+      v-model="showModal"
+      :content="modalContent"
+      :show-cancel-button="true"
+      @confirm="modalConfirm"
+    ></u-modal>
   </view>
 </template>
 
 <script>
-import { getNotice } from "api/home.js";
+import { getNotice, noticeRead } from "api/home.js";
 export default {
   data() {
     return {
+      likes: 0,
+      comments: 0,
+      focus: 0,
+      systems: {
+        info: [],
+        unread: 0,
+      }, // 系统消息
+      invites: {
+        info: [],
+        unread: 0,
+      }, // 邀请消息
+      showModal: false, //展示提示窗
+      modalContent: "全部置为已读？",
       messageList: [
         {
           avatar: "",
@@ -100,22 +122,56 @@ export default {
     // 获取消息
     async getData() {
       let { data } = await getNotice(this.vuex_token);
+      this.likes = data.likes;
+      this.comments = data.comments;
+      this.focus = data.focus;
+      this.systems = data.systems;
+      this.invites = data.invites;
     },
     // 设置全部已读
-    setAllRead() {},
+    async postRead() {
+      let params = {
+        token: this.vuex_token,
+        type: "",
+      };
+      let { data } = await noticeRead(params);
+      this.getData();
+    },
+    // 提示窗确认
+    modalConfirm(e) {
+      this.postRead();
+    },
     // 页面跳转集合
     goNext(type) {
       switch (type) {
-        case "system":
+        case "likes":
           this.$Router.push({
             path: "/pages/message/content",
             query: { type: 1 },
           });
           break;
-        case "friends":
+        case "comments":
           this.$Router.push({
             path: "/pages/message/content",
             query: { type: 2 },
+          });
+          break;
+        case "focus":
+          this.$Router.push({
+            path: "/pages/message/content",
+            query: { type: 3 },
+          });
+          break;
+        case "friends":
+          this.$Router.push({
+            path: "/pages/message/content",
+            query: { type: 5 },
+          });
+          break;
+        case "system":
+          this.$Router.push({
+            path: "/pages/message/content",
+            query: { type: 9 },
           });
           break;
         default:
@@ -166,6 +222,7 @@ export default {
     }
   }
   .container {
+    position: relative;
     padding: 0 30rpx;
     .inner_wrap {
       .item {
@@ -268,6 +325,13 @@ export default {
           }
         }
       }
+    }
+    .nodata {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      zoom: 1.15;
     }
   }
 }

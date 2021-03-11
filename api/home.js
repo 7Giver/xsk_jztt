@@ -69,7 +69,7 @@ export function getUserIndex(token) {
  * @param {string} token 登录Token (必填)
  * @param {?number} page 页码 (必填)
  * @param {?number} limit 每页条数 (必填，默认10条)
- * @param {?string} sid 用户加密sid (传空表示查看自己的文章、视频)	
+ * @param {?string} sid 用户加密sid (传空表示查看自己的文章、视频)
  * @param {?number} type 类型 (必填，0-全部，1-文章，2-视频)
  */
 export function getUserWorks(params) {
@@ -81,7 +81,7 @@ export function getUserWorks(params) {
  * @param {string} token 登录Token (必填)
  * @param {string} ids id字符串 (必填，逗号隔开)
  */
- export function deleteWorks(params) {
+export function deleteWorks(params) {
   return post(`/${version}/user/delete-trends`, params);
 }
 
@@ -146,7 +146,7 @@ export function getFavor(params) {
 /**
  * 批量删除收藏
  * @param {string} token 登录Token (必填)
- * @param {string} id_str id组成的字符串(必填，如：23,44,78)	
+ * @param {string} id_str id组成的字符串(必填，如：23,44,78)
  */
 export function deleteFavor(params) {
   return post(`/${version}/log/delete-favor`, params);
@@ -186,7 +186,7 @@ export function uploadImage(file) {
 /**
  * 获取城市列表
  */
- export function getCityList() {
+export function getCityList() {
   return get(`/${version}/default/district`);
 }
 
@@ -194,7 +194,7 @@ export function uploadImage(file) {
  * 消息中心
  * @param {string} token 登录Token (必填)
  */
- export function getNotice(token) {
+export function getNotice(token) {
   return get(`/${version}/log/notice`, { token: token });
 }
 
@@ -205,16 +205,16 @@ export function uploadImage(file) {
  * @param {?number} page 页码 (必填)
  * @param {?number} limit 每页条数（必填，默认20条）
  */
- export function noticeList(params) {
+export function noticeList(params) {
   return get(`/${version}/log/notice-list`, params);
 }
 
 /**
  * 消息已读
  * @param {string} token 登录Token (必填)
- * @param {string} type 类型 (必填，1-点赞，2-评论，3-关注，5-邀请好友通知，9-系统消息)
+ * @param {string} type 类型 (1-点赞，2-评论，3-关注，5-邀请好友通知，9-系统消息，传空表示全部已读)
  */
- export function noticeRead(params) {
+export function noticeRead(params) {
   return get(`/${version}/log/read`, params);
 }
 
@@ -223,7 +223,7 @@ export function uploadImage(file) {
  * @param {string} token 登录Token (必填)
  * @param {string} type 类型 (1-文章，2-视频)
  */
- export function getDrafts(params) {
+export function getDrafts(params) {
   return get(`/${version}/user/drafts`, params);
 }
 
@@ -232,7 +232,7 @@ export function uploadImage(file) {
  * @param {string} token 登录Token (必填)
  * @param {string} ids 文章id组成的字符串 (必填)
  */
- export function deleteDrafts(params) {
+export function deleteDrafts(params) {
   return post(`/${version}/user/delete-draft`, params);
 }
 
@@ -242,7 +242,7 @@ export function uploadImage(file) {
  * @param {string} lastid 类似page (必填，上一接口返回的lastid)
  * @param {string} limit 查询数量 (必填)
  */
- export function mineComment(params) {
+export function mineComment(params) {
   return get(`/${version}/comment/mine`, params);
 }
 
@@ -251,6 +251,29 @@ export function uploadImage(file) {
  * @param {string} token 登录Token (必填)
  * @param {?string} id 评论id (必填)
  */
- export function deleteComment(params) {
+export function deleteComment(params) {
   return post(`/${version}/comment/delete`, params);
+}
+
+/**
+ * 我的好友
+ * @param {string} token 登录Token (必填)
+ * @param {string} page 页码 (必填)
+ * @param {string} limit 查询数量 (必填)
+ */
+ export function getFriend(params) {
+  return get(`/${version}/user/friend`, params);
+}
+
+/**
+ * 文章列表
+ * @param {string} token 登录Token (必填)
+ * @param {string} page 页码 (必填)
+ * @param {string} limit 查询数量 (必填)
+ * @param {string} title 搜索关键词 (必填)
+ * @param {string} cid 分类id (必填)
+ * @param {string} type 类型 (1-文章，2-视频，0或不传混合)
+ */
+ export function getArticleList(params) {
+  return get(`/${version}/article/list`, params);
 }

@@ -123,11 +123,59 @@
 		},
 		{
 			"path": "pages/message/message",
-			"name": "message"
+			"name": "message",
+			"style": {
+				"enablePullDownRefresh": true,
+				"h5": {
+					"pullToRefresh": {
+						"color": "#f04323"
+					}
+				},
+				"app-plus": {
+					"pullToRefresh": {
+						"support": true,
+						"color": "#ff3333",
+						"style": "default",
+						"contentdown": {
+							"caption": "下拉刷新"
+						},
+						"contentover": {
+							"caption": "释放刷新"
+						},
+						"contentrefresh": {
+							"caption": "正在刷新"
+						}
+					}
+				}
+			}
 		},
 		{
 			"path": "pages/message/content",
-			"name": "messageContent"
+			"name": "messageContent",
+			"style": {
+				"enablePullDownRefresh": true,
+				"h5": {
+					"pullToRefresh": {
+						"color": "#f04323"
+					}
+				},
+				"app-plus": {
+					"pullToRefresh": {
+						"support": true,
+						"color": "#ff3333",
+						"style": "default",
+						"contentdown": {
+							"caption": "下拉刷新"
+						},
+						"contentover": {
+							"caption": "释放刷新"
+						},
+						"contentrefresh": {
+							"caption": "正在刷新"
+						}
+					}
+				}
+			}
 		},
 		{
 			"path": "pages/mine/invitePoster",
@@ -236,6 +284,10 @@
 					}
 				}
 			}
+		},
+		{
+			"path": "pages/mine/friend",
+			"name": "friend"
 		}
 	],
 	"globalStyle": {

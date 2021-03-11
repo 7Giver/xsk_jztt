@@ -49,7 +49,12 @@
       </view>
       <view class="container">
         <view class="u-flex share_wrap">
-          <view class="u-flex item" v-for="(item, index) in inviteList" :key="index">
+          <view
+            class="u-flex item"
+            v-for="(item, index) in inviteList"
+            :key="index"
+            @click="innerNext(item.id)"
+          >
             <image class="icon" :src="item.icon" mode="widthFix" />
             <view class="title">{{ item.title }}</view>
           </view>
@@ -72,17 +77,6 @@
           </view>
         </view>
       </view>
-      <!-- 设置全局字符大小 -->
-      <!-- <view class="picker_wrap">
-        <view class="clamp_one">字符大小：</view>
-        <picker
-          @change="fontPickerChange"
-          :value="fontIndex"
-          :range="fontArray"
-        >
-          <view class="uni-input">{{ fontArray[fontIndex] }}</view>
-        </picker>
-      </view>-->
     </view>
   </view>
 </template>
@@ -92,8 +86,6 @@ import { getUserInfo } from "api/home.js";
 export default {
   data() {
     return {
-      fontIndex: 1,
-      fontArray: ["小", "中", "大"],
       inviteList: [
         {
           id: 1,
@@ -185,16 +177,9 @@ export default {
     };
   },
   onShow() {
-    // console.log(window.document.documentElement);
     this.getUserData();
   },
   methods: {
-    // 切换字符大小
-    fontPickerChange(e) {
-      // console.log("picker发送选择改变，携带值为", e.target.value);
-      this.fontIndex = e.target.value;
-      window.document.documentElement.setAttribute("data-size", e.target.value);
-    },
     // 获取用户数据
     async getUserData() {
       let { data } = await getUserInfo(this.vuex_token);
@@ -214,6 +199,16 @@ export default {
           break;
         case "setting":
           this.$Router.push({ path: "/pages/setting/personal" });
+          break;
+        default:
+          break;
+      }
+    },
+    // 区域跳转
+    innerNext(id) {
+      switch (id) {
+        case 4:
+          this.$Router.push({ path: "/pages/mine/friend" });
           break;
         default:
           break;

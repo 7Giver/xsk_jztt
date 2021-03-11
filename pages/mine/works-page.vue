@@ -47,7 +47,6 @@ export default {
       dataList: [],
     };
   },
-  mounted() {},
   methods: {
     // 触发滚动加载
     reachBottom() {
