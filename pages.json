@@ -288,6 +288,10 @@
 		{
 			"path": "pages/mine/friend",
 			"name": "friend"
+		},
+		{
+			"path": "pages/mine/creative",
+			"name": "creative"
 		}
 	],
 	"globalStyle": {
