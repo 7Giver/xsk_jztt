@@ -22,7 +22,12 @@
       </view>
       <view class="list_wrap">
         <view class="main_title">我的作品</view>
-        <view class="data_list">
+        <scroll-view
+          :scroll-y="true"
+          class="data_list"
+          style="height: 100%;width: 100%;"
+          @scrolltolower="reachBottom"
+        >
           <view class="item" v-for="(item, index) in dataList" :key="index">
             <view class="left_wrap">
               <view class="u-line-2 title">{{item.title}}</view>
@@ -36,7 +41,10 @@
               <image :src="item.cover" mode="scaleToFill" />
             </view>
           </view>
-        </view>
+          <view class="loadmore">
+            <u-loadmore :status="loadStatus"></u-loadmore>
+          </view>
+        </scroll-view>
       </view>
       <view class="footer">
         <view class="u-flex item">
@@ -53,26 +61,68 @@
 </template>
 
 <script>
+import { getUserWorks } from "api/home.js";
 export default {
   data() {
     return {
-      dataList: [
-        {
-          title: "测试对象存储VS的发射点范德萨范德萨",
-          shares: 698,
-          comments: 300,
-          likes: 477,
-          cover: "https://cdn.uviewui.com/uview/swiper/1.jpg",
-        },
-      ],
+      limit: 20,
+      pageIndex: 1,
+      loadStatus: "loadmore",
+      dataList: [],
     };
   },
-  methods: {},
+  onLoad(options) {
+    this.getData();
+    // this.getData();
+  },
+  methods: {
+    // 触发滚动加载
+    reachBottom() {
+      // console.log(111);
+      if (this.dataList.length >= this.limit) {
+        this.loadStatus = "loading";
+        setTimeout(() => {
+          this.getData();
+        }, 500);
+      }
+    },
+    async getData() {
+      let params = {
+        token: this.vuex_token,
+        page: this.pageIndex,
+        limit: this.limit,
+        sid: "",
+        type: 0,
+      };
+      let { data } = await getUserWorks(params);
+      let result = data.list;
+      if (data == null || result.length == 0) {
+        // 加载结束
+        this.loadStatus = "nomore";
+        // uni.stopPullDownRefresh();
+        return;
+      }
+      this.dataList = this.dataList.concat(result);
+      this.pageIndex++;
+      if (result.length < this.limit) {
+        // 一页不足的情况
+        this.loadStatus = "nomore";
+      } else {
+        this.loadStatus = "loadmore";
+      }
+      // uni.stopPullDownRefresh();
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+#app {
+  display: flex;
+  flex-direction: column;
+}
 .page-creative {
+  flex: 1;
   .header {
     background: url("/static/img/mine/pic_bg.png");
     background-repeat: no-repeat;
@@ -114,8 +164,11 @@ export default {
     }
   }
   .list_wrap {
+    height: 65vh;
     padding: 0 30rpx;
+    padding-bottom: 135rpx;
     .main_title {
+      width: 100%;
       font-size: 30rpx;
       font-weight: bold;
       margin: 40rpx auto 30rpx;
@@ -124,6 +177,7 @@ export default {
       border-left: 8rpx solid #f04323;
     }
     .data_list {
+      // padding-bottom: 120rpx;
       .item {
         display: flex;
         padding-bottom: 20rpx;
@@ -155,19 +209,24 @@ export default {
       }
     }
   }
+  .loadmore {
+    padding: 20rpx 0;
+  }
   .footer {
     position: fixed;
     bottom: 0;
     width: 100%;
     display: flex;
     align-items: center;
-    border-top: 1px solid #E6E6E6;
+    border-top: 1px solid #e6e6e6;
+    background: #fff;
+    z-index: 99;
     .item {
       position: relative;
       flex: 1;
       display: flex;
       justify-content: center;
-      line-height: 100rpx;
+      line-height: 92rpx;
       .icon {
         width: 38rpx;
         height: 38rpx;
