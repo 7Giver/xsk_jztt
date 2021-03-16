@@ -38,6 +38,36 @@ export function getTaskList(token) {
 }
 
 /**
+ * 图片上传
+ * @param {file} image 二进制图片 (必填)
+ */
+ export function uploadImage(file) {
+  return uploadFile(`/${version}/default/upload`, file);
+}
+
+/**
+ * 获取城市列表
+ */
+export function getCityList() {
+  return get(`/${version}/default/district`);
+}
+
+/**
+ * 文章不喜欢原因
+ */
+ export function getUnlikeList() {
+  return get(`/${version}/default/feedback`);
+}
+
+/**
+ * 消息中心
+ * @param {string} token 登录Token (必填)
+ */
+export function getNotice(token) {
+  return get(`/${version}/log/notice`, { token: token });
+}
+
+/**
  * 金币、通宝详情
  * @param {string} token 登录Token (必填)
  * @param {?number} page 页码 (必填)
@@ -103,7 +133,7 @@ export function getFoucfans(params) {
  * @param {?number} focus_id 被（取消）关注人id (必填)
  * @param {?string} opt 操作（必填，focus-关注，cancel-取消关注）
  */
-export function getFocus(params) {
+export function postUserFocus(params) {
   return post(`/${version}/user/focus`, params);
 }
 
@@ -173,29 +203,6 @@ export function getTrack(params) {
  */
 export function editUser(params) {
   return post(`/${version}/user/edit`, params);
-}
-
-/**
- * 图片上传
- * @param {file} image 二进制图片 (必填)
- */
-export function uploadImage(file) {
-  return uploadFile(`/${version}/default/upload`, file);
-}
-
-/**
- * 获取城市列表
- */
-export function getCityList() {
-  return get(`/${version}/default/district`);
-}
-
-/**
- * 消息中心
- * @param {string} token 登录Token (必填)
- */
-export function getNotice(token) {
-  return get(`/${version}/log/notice`, { token: token });
 }
 
 /**
@@ -276,4 +283,66 @@ export function deleteComment(params) {
  */
  export function getArticleList(params) {
   return get(`/${version}/article/list`, params);
+}
+
+/**
+ * 文章详情
+ * @param {string} token 登录Token (必填)
+ * @param {string} id 文章id (必填)
+ * @param {string} uid 分享人id (必填)
+ */
+ export function getArticleDetail(params) {
+  return get(`/${version}/article/detail`, params);
+}
+
+/**
+ * 文章收藏
+ * @param {string} token 登录Token (必填)
+ * @param {string} id 文章id (必填)
+ * @param {number} type 1-收藏，2-取消收藏 (必填)
+ */
+ export function collectArticle(params) {
+  return post(`/${version}/article/favor`, params);
+}
+
+/**
+ * 文章点赞
+ * @param {string} token 登录Token (必填)
+ * @param {string} id 文章id (必填)
+ * @param {number} type 1-点赞，2-取消点赞 (必填)
+ */
+ export function likeArticle(params) {
+  return post(`/${version}/article/like`, params);
+}
+
+/**
+ * 文章评论
+ * @param {string} token 登录Token (必填)
+ * @param {string} article_id 文章id (必填)
+ * @param {string} page 页码 (必填)
+ * @param {string} limit 查询数量 (必填)
+ */
+ export function articleComment(params) {
+  return get(`/${version}/comment/list`, params);
+}
+
+/**
+ * 提交文章评论
+ * @param {string} token 登录Token (必填)
+ * @param {string} article_id 文章id (必填)
+ * @param {string} parent_id 评论id (如果是评论别人的评论，传入此id)
+ * @param {string} content 评论内容 (必填)
+ */
+ export function commentSubmit(params) {
+  return post(`/${version}/comment/submit`, params);
+}
+
+/**
+ * 提交不喜欢原因
+ * @param {string} token 登录Token (必填)
+ * @param {string} id 文章id (必填)
+ * @param {string} content 不喜欢原因 (必填)
+ */
+ export function postDislike(params) {
+  return post(`/${version}/article/dislike`, params);
 }

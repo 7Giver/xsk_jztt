@@ -2,8 +2,11 @@
   <view id="app">
     <u-navbar :title="detail.title" :border-bottom="false">
       <view class="u-flex navbar-right" slot="right">
-        <u-icon name="star"></u-icon>
-        <u-icon name="share"></u-icon>
+        <view @click="postCollect">
+          <u-icon name="star-fill" color="#F04323" v-if="detail.is_favor == 1"></u-icon>
+          <u-icon name="star" v-else></u-icon>
+        </view>
+        <image class="icon" src="/static/img/icon/icon_fx.png" mode="widthFix" />
       </view>
     </u-navbar>
     <view class="detail-page">
@@ -13,32 +16,41 @@
         <view class="u-flex inner_header">
           <view class="u-flex left_wrap">
             <view class="avatar_wrap">
-              <u-avatar :src="detail.avatar" size="75"></u-avatar>
+              <u-avatar :src="userinfo.avatar" size="75"></u-avatar>
             </view>
             <view class="right">
-              <view class="nickname">{{detail.source}}</view>
-              <view class="date">{{detail.datetime}}</view>
+              <view class="nickname">{{userinfo.name}}</view>
+              <view class="date">{{detail.add_time}}</view>
             </view>
           </view>
-          <view class="right_wrap">
-            <view class="foucs_btn">+关注</view>
+          <view class="right_wrap" @click="postFocus">
+            <view class="foucs_btn on" v-if="!userinfo.is_focus">+关注</view>
+            <view class="foucs_btn" v-else>已关注</view>
           </view>
         </view>
+        <!-- 富文本 -->
         <view class="content_wrap">
-          <u-read-more color="#F04323" show-height="700" :toggle="true">
-            <rich-text :nodes="content"></rich-text>
+          <u-read-more ref="uReadMore" color="#F04323" show-height="800" :toggle="true">
+            <u-parse :html="detail.content"></u-parse>
           </u-read-more>
         </view>
         <view class="handle_wrap">
-          <view class="u-flex item_wrap">
+          <view class="u-flex item_wrap" @click="unlike.showDialog=true">
             <image class="icon" src="/static/img/news/icon_bxh.png" mode="widthFix" />
             <view class="text">不喜欢</view>
           </view>
-          <view class="u-flex item_wrap">
-            <image class="icon" src="/static/img/news/icon_like.png" mode="widthFix" />
-            <view class="text">220</view>
+          <view class="u-flex item_wrap" @click="postLike">
+            <image
+              class="icon"
+              src="/static/img/news/icon_like_on.png"
+              mode="widthFix"
+              v-if="detail.is_like == 1"
+            />
+            <image class="icon" src="/static/img/news/icon_like.png" mode="widthFix" v-else />
+            <view class="text">{{detail.likes || 0}}</view>
           </view>
         </view>
+        <!-- 广告区 -->
         <view class="advert_wrap">
           <u-swiper :list="bannerList" mode="none"></u-swiper>
           <view class="u-flex bottom_wrap">
@@ -88,24 +100,48 @@
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 评论版块 -->
       <view class="comment_wrap">
-        <my-comment></my-comment>
+        <my-comment :commentList="commentList"></my-comment>
       </view>
+      <!-- 底部组件 -->
+      <mix-footer
+        v-if="commentList.length"
+        :detail="detail"
+        :commentNum="commentNum"
+        @emitComment="updateComment"
+      ></mix-footer>
+      <!-- 不喜欢原因 -->
+      <unlike-popup ref="unlike" :articleId="detail.id"></unlike-popup>
     </view>
   </view>
 </template>
 
 <script>
-import myComment from "@/components/my-comment/my-comment";
+import {
+  getArticleDetail,
+  collectArticle,
+  likeArticle,
+  articleComment,
+  postUserFocus,
+  commentSubmit,
+} from "api/home.js";
+import MyComment from "@/components/my-comment/my-comment";
+import MixFooter from "@/components/mix-footer/mix-footer";
+import UnlikePopup from "@/components/unlike-popup/unlike-popup";
 export default {
   components: {
-    myComment,
+    MyComment,
+    MixFooter,
+    UnlikePopup,
   },
   data() {
     return {
-      detail: {},
-      content: `山不在高，有仙则名。水不在深，有龙则灵。斯是陋室，惟吾德馨。
-				苔痕上阶绿，草色入帘青。谈笑有鸿儒，往来无白丁。可以调素琴，阅金经。
-				无丝竹之乱耳，无案牍之劳形。南阳诸葛庐，西蜀子云亭。孔子云：何陋之有？如果按技术含量来说，大家常常把认为没有气垫Dunk是其中最原始的一款。但正确的顺序是，83年NIKE为了打败老对手Converse而推出的Air Force 1 （第一双气垫鞋)让他们在市场上大获全胜，股票也节节攀升。但到了85年adidas卷土重来，运动产品市场大变，Nike面临有史以来最严重的财政危机，股价在同年下跌过半，此时为了扭转逆势，Nike做了一个后来影响全世界的动作，那就以巨资签下了当时的超级新人Michael Jordan，以Air Force One为原型，为他设计了第一双签名鞋Air Jordan One。很快所有的顶级校队都强烈要求拥有自己的队鞋，这正是后来Dunk出现的原因。在Dunk发售时有8种完全不同颜色，分别代表了北卡罗来纳大学、亚利桑那大学及阿肯色大学等八支NCAA顶尖球队。其实在设计方面Dunk是以Air Jordan 1代为设计原型，所以都拥有了极好的抓地性能和场地感，保证了那些优秀的球员在场上可以轻巧且稳定的运动，因此性能也不可挑剔。`,
+      userinfo: {}, // 文章用户信息
+      detail: {}, // 文章详情
+      comment: "", // 传入评论
+      commentNum: 0, // 评论数量
+      limit: 10,
+      pageIndex: 1,
+      commentList: [],
       bannerList: [
         {
           image: "https://cdn.uviewui.com/uview/swiper/1.jpg",
@@ -146,17 +182,123 @@ export default {
       ],
     };
   },
+  onReady() {
+    this.unlike = this.$refs.unlike;
+  },
   onLoad(options) {
-    console.log(this.$Route);
+    // console.log(this.$Route);
     this.getQueryObj();
+    this.getNewsDetail();
   },
   methods: {
     // 获取文章对象
     getQueryObj() {
       let detail = this.$Route.query;
       if (detail.id) {
-        this.detail = detail;
+        // this.detail = detail;
       }
+    },
+    // 获取子组件传值
+    updateComment(data) {
+      this.comment = data;
+      this.postComment();
+    },
+    // 请求文章详情
+    async getNewsDetail() {
+      let params = {
+        token: this.vuex_token,
+        id: 1,
+        uid: this.vuex_user.id,
+      };
+      let { data } = await getArticleDetail(params);
+      this.userinfo = data.userinfo;
+      this.detail = data;
+      this.$nextTick(() => {
+        this.$refs.uReadMore.init();
+      });
+      this.getComment();
+    },
+    // 收藏文章
+    async postCollect() {
+      let params = {
+        token: this.vuex_token,
+        id: this.detail.id,
+        type: this.detail.is_favor ? 2 : 1,
+      };
+      let { data } = await collectArticle(params);
+      if (this.detail.is_favor == 1) {
+        this.detail.is_favor = 0;
+        this.$u.toast("取消成功");
+      } else {
+        this.detail.is_favor = 1;
+        this.$u.toast("收藏成功");
+      }
+    },
+    // 点赞文章
+    async postLike() {
+      let params = {
+        token: this.vuex_token,
+        id: this.detail.id,
+        type: this.detail.is_like ? 2 : 1,
+      };
+      let { data } = await likeArticle(params);
+      if (this.detail.is_like == 1) {
+        this.detail.is_like = 0;
+        --this.detail.likes;
+        this.$u.toast("取消成功");
+      } else {
+        this.detail.is_like = 1;
+        ++this.detail.likes;
+        this.$u.toast("点赞成功");
+      }
+    },
+    // 获取文章评论
+    async getComment() {
+      let params = {
+        token: this.vuex_token,
+        article_id: this.detail.id,
+        page: this.pageIndex,
+        limit: this.limit,
+      };
+      let { data } = await articleComment(params);
+      this.commentList = data.list;
+      this.commentNum = data.list.length;
+    },
+    // 请求用户关注
+    async postFocus() {
+      if (this.userinfo.id == this.vuex_user.id) {
+        this.$u.toast("不能关注自己哦");
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        focus_id: this.userinfo.id,
+        opt: this.userinfo.is_focus ? "cancel" : "focus",
+      };
+      let { data } = await postUserFocus(params);
+      if (this.userinfo.is_focus == 1) {
+        this.userinfo.is_focus = 0;
+        this.$u.toast("取关成功");
+      } else {
+        this.userinfo.is_focus = 1;
+        this.$u.toast("关注成功");
+      }
+    },
+    // 提交评论
+    async postComment(id) {
+      let str = this.$u.trim(this.comment); //去除两端空格
+      if (!str) {
+        this.$u.toast("评论不能为空");
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        article_id: this.detail.id,
+        parent_id: id || "",
+        content: str,
+      };
+      let { data } = await commentSubmit(params);
+      this.$u.toast("评论成功");
     },
   },
 };
@@ -169,8 +311,12 @@ export default {
     color: #666666;
     font-size: 42rpx;
     &:first-child {
-      margin-right: 15rpx;
+      margin-right: 30rpx;
     }
+  }
+  .icon {
+    width: 38rpx;
+    margin-top: 6rpx;
   }
 }
 .detail-page {
@@ -179,7 +325,7 @@ export default {
     .main_title {
       margin: 10rpx auto 0;
       color: #333333;
-      font-size: 40rpx;
+      font-size: 38rpx;
     }
     .inner_header {
       justify-content: space-between;
@@ -203,12 +349,16 @@ export default {
       .right_wrap {
         .foucs_btn {
           width: 120rpx;
-          color: #fff;
+          color: #999999;
           font-size: 26rpx;
           text-align: center;
           line-height: 48rpx;
           border-radius: 13rpx;
           letter-spacing: 1px;
+          background-color: #f0f0f0;
+        }
+        .on {
+          color: #fff;
           background-color: #f04323;
         }
       }
@@ -281,7 +431,7 @@ export default {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 display: -webkit-box;
-                -webkit-line-clamp:1;
+                -webkit-line-clamp: 1;
                 line-clamp: 1;
                 -webkit-box-orient: vertical;
                 word-break: break-all;
@@ -303,6 +453,9 @@ export default {
         }
       }
     }
+  }
+  .comment_wrap {
+    padding-bottom: 140rpx;
   }
 }
 </style>

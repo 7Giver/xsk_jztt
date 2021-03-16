@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getFoucfans, getFocus } from "api/home.js";
+import { getFoucfans, postUserFocus } from "api/home.js";
 export default {
   data() {
     return {
@@ -76,7 +76,7 @@ export default {
         focus_id: item.id,
         opt: item.is_focus ? "cancel" : "focus",
       };
-      let { data } = await getFocus(params);
+      let { data } = await postUserFocus(params);
       let result = null;
       item.is_focus ? (result = 0) : (result = 1);
       item.is_focus = result;

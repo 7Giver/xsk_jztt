@@ -1,156 +1,109 @@
 <template>
-	<view>
-		<view class="comment" v-for="(res, index) in commentList" :key="res.id">
-			<view class="left"><image :src="res.url" mode="aspectFill"></image></view>
-			<view class="right">
-				<view class="top">
-					<view class="name">{{ res.name }}</view>
-					<view class="like" :class="{ highlight: res.isLike }">
-						<view class="num">{{ res.likeNum }}</view>
-						<u-icon v-if="!res.isLike" name="thumb-up" :size="30" color="#9a9a9a" @click="getLike(index)"></u-icon>
-						<u-icon v-if="res.isLike" name="thumb-up-fill" :size="30" @click="getLike(index)"></u-icon>
+	<view class="my-comment">
+		<view class="main_title">全部评论</view>
+		<template v-if="commentList.length">
+			<view class="comment" v-for="(res, index) in commentList" :key="res.id">
+				<view class="left"><image :src="res.avatar" mode="aspectFill"></image></view>
+				<view class="right">
+					<view class="top">
+						<view class="name">{{ res.name }}</view>
+						<view class="like" :class="{ highlight: res.is_like }" @click="getLike(index)">
+							<view class="num">{{ res.likes }}</view>
+							<u-icon v-if="!res.is_like" name="thumb-up" :size="30" color="#9a9a9a"></u-icon>
+							<u-icon v-if="res.is_like" name="thumb-up-fill" :size="30"></u-icon>
+						</view>
 					</view>
-				</view>
-				<view class="content">{{ res.contentText }}</view>
-				<view class="reply-box">
-					<view class="item" v-for="(item, index) in res.replyList" :key="item.index">
-						<view class="username">{{ item.name }}</view>
-						<view class="text">{{ item.contentStr }}</view>
+					<view class="content">{{ res.content }}</view>
+					<view class="reply-box" v-if="res.subs.length">
+						<view class="item" v-for="(item, index) in res.subs" :key="item.index">
+							<view class="username">{{ item.name }}</view>
+							<view class="text">{{ item.content }}</view>
+						</view>
+						<view class="all-reply" @tap="toAllReply" v-if="res.subs != undefined">
+							共{{ res.allReply }}条回复
+							<u-icon class="more" name="arrow-right" :size="26"></u-icon>
+						</view>
 					</view>
-					<view class="all-reply" @tap="toAllReply" v-if="res.replyList != undefined">
-						共{{ res.allReply }}条回复
-						<u-icon class="more" name="arrow-right" :size="26"></u-icon>
+					<view class="bottom">
+						{{ res.time_stamp | timeFrom }}
+						<view class="reply">回复TA</view>
 					</view>
-				</view>
-				<view class="bottom">
-					{{ res.date }}
-					<view class="reply">回复</view>
 				</view>
 			</view>
-		</view>
+		</template>
+		<u-empty v-else text="暂无评论，快来抢沙发"></u-empty>
 	</view>
 </template>
 
 <script>
+/**
+ * myComment 文章视频评论
+ * @description 文章或视频底部评论区
+ * @property {Array} commentList 评论数组
+ * @event {Function} toAllReply 跳转评论详情
+ * @event {Function} getLike 点赞/取消点赞
+ */
 export default {
   name: 'myComment',
-	data() {
-		return {
-			commentList: []
-		};
-	},
-	mounted() {
-		this.getComment();
+	props: {
+		commentList: {
+			type: Array,
+			default () {
+				return []
+			}
+		}
 	},
 	methods: {
-		// 跳转到全部回复
 		toAllReply() {
 			this.$Router.push({ path: "/pages/comment/reply" });
 			// uni.navigateTo({
 			// 	url: '/pages/template/comment/reply'
 			// });
 		},
-		// 点赞
 		getLike(index) {
-			this.commentList[index].isLike = !this.commentList[index].isLike;
-			if (this.commentList[index].isLike == true) {
-				this.commentList[index].likeNum++;
+			this.commentList[index].is_like = !this.commentList[index].is_like;
+			if (this.commentList[index].is_like == 1) {
+				this.commentList[index].likes++;
 			} else {
-				this.commentList[index].likeNum--;
+				this.commentList[index].likes--;
 			}
 		},
-		// 评论列表
-		getComment() {
-			this.commentList = [
-				{
-					id: 1,
-					name: '叶轻眉',
-					date: '12-25 18:58',
-					contentText: '我不信伊朗会没有后续反应，美国肯定会为今天的事情付出代价的',
-					url: 'https://cdn.uviewui.com/uview/template/SmilingDog.jpg',
-					allReply: 12,
-					likeNum: 33,
-					isLike: false,
-					replyList: [
-						{
-							name: 'uview',
-							contentStr: 'uview是基于uniapp的一个UI框架，代码优美简洁，宇宙超级无敌彩虹旋转好用，用它！'
-						},
-						{
-							name: '粘粘',
-							contentStr: '今天吃什么，明天吃什么，晚上吃什么，我只是一只小猫咪为什么要烦恼这么多'
-						}
-					]
-				},
-				{
-					id: 2,
-					name: '叶轻眉1',
-					date: '01-25 13:58',
-					contentText: '我不信伊朗会没有后续反应，美国肯定会为今天的事情付出代价的',
-					allReply: 0,
-					likeNum: 11,
-					isLike: false,
-					url: 'https://cdn.uviewui.com/uview/template/niannian.jpg',
-				},
-				{
-					id: 3,
-					name: '叶轻眉2',
-					date: '03-25 13:58',
-					contentText: '我不信伊朗会没有后续反应，美国肯定会为今天的事情付出代价的',
-					allReply: 0,
-					likeNum: 21,
-					isLike: false,
-					allReply: 2,
-					url: '../../../static/logo.png',
-					replyList: [
-						{
-							name: 'uview',
-							contentStr: 'uview是基于uniapp的一个UI框架，代码优美简洁，宇宙超级无敌彩虹旋转好用，用它！'
-						},
-						{
-							name: '豆包',
-							contentStr: '想吃冰糖葫芦粘豆包，但没钱5555.........'
-						}
-					]
-				},
-				{
-					id: 4,
-					name: '叶轻眉3',
-					date: '06-20 13:58',
-					contentText: '我不信伊朗会没有后续反应，美国肯定会为今天的事情付出代价的',
-					url: 'https://cdn.uviewui.com/uview/template/SmilingDog.jpg',
-					allReply: 0,
-					likeNum: 150,
-					isLike: false
-				}
-			];
-		}
 	}
 };
 </script>
 
 <style lang="scss" scoped>
-$mianColor: #f04323;
+$mianColor: #F04323;
+.main_title {
+	color: #333333;
+	font-size: 30rpx;
+	font-weight: bold;
+	padding: 20rpx 0 0 30rpx;
+}
+.u-empty {
+	padding-top: 90rpx;
+	zoom: 1.15;
+}
 .comment {
 	display: flex;
 	padding: 30rpx;
 	.left {
 		image {
-			width: 64rpx;
-			height: 64rpx;
+			width: 62rpx;
+			height: 62rpx;
 			border-radius: 50%;
 			background-color: #f2f2f2;
 		}
 	}
 	.right {
 		flex: 1;
-		padding-left: 20rpx;
+		padding-left: 24rpx;
 		font-size: 30rpx;
 		.top {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom: 10rpx;
+			margin: 10rpx auto;
 			.name {
 				color: #333333;
 				font-weight: bold;
@@ -203,7 +156,7 @@ $mianColor: #f04323;
 			color: #9a9a9a;
 			.reply {
 				color: $mianColor;
-				margin-left: 10rpx;
+				margin-left: 20rpx;
 			}
 		}
 	}

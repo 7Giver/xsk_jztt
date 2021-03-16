@@ -1,0 +1,103 @@
+<template>
+  <view class="min-footer">
+    <view class="comment_wrap">
+      <image class="icon" src="/static/img/icon/icon_xpl.png" mode="widthFix" />
+      <u-input v-model="comment" height="40" placeholder="写评论..."></u-input>
+    </view>
+    <view class="mix_wrap">
+      <view class="item" @click="emitComment">
+        <image src="/static/img/icon/icon_comment.png" mode="widthFix" />
+        <u-badge type="error" size="mini" :count="commentNum" :is-center="true"></u-badge>
+      </view>
+      <view class="item">
+        <image v-if="detail.is_favor" src="/static/img/icon/icon_sc_on.png" mode="widthFix" />
+        <image v-else src="/static/img/icon/icon_sc.png" mode="widthFix" />
+      </view>
+      <view class="item">
+        <image v-if="detail.is_like" src="/static/img/news/icon_dz_on.png" mode="widthFix" />
+        <image v-else src="/static/img/news/icon_dz.png" mode="widthFix" />
+      </view>
+      <view class="item">
+        <image src="/static/img/icon/icon_fx.png" mode="widthFix" />
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+/**
+ * minFooter 文章视频底部功能
+ * @description 集合评论、转发、收藏、点赞等功能
+ * @property {Object} detail 文章详情对象
+ * @property {Number String} commentNum 显示评论数量
+ * @event {Function} emitComment 传输评论内容
+ */
+export default {
+  name: "mixFooter",
+  props: {
+    detail: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    commentNum: {
+      type: [Number, String],
+      default: 0,
+    },
+  },
+  // mounted() {
+  //   console.log(this.detail);
+  //   console.log(this.commentNum);
+  // },
+  data() {
+    return {
+      comment: "",
+    };
+  },
+  methods: {
+    emitComment() {
+      this.$emit("emitComment", this.comment);
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.min-footer {
+  position: fixed;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 20rpx 34rpx;
+  background: #fff;
+  border-top: 1px solid #e6e6e6;
+  .comment_wrap {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    padding: 12rpx 24rpx;
+    background: #f2f2f2;
+    border-radius: 120rpx;
+    .icon {
+      width: 26rpx;
+      margin-right: 10rpx;
+    }
+  }
+  .mix_wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 44rpx;
+    .item {
+      position: relative;
+      image {
+        width: 38rpx;
+      }
+    }
+  }
+}
+</style>
