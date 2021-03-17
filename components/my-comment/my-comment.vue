@@ -7,7 +7,7 @@
 				<view class="right">
 					<view class="top">
 						<view class="name">{{ res.name }}</view>
-						<view class="like" :class="{ highlight: res.is_like }" @click="getLike(index)">
+						<view class="like" :class="{ highlight: res.is_like }" @click="postLike(res)">
 							<view class="num">{{ res.likes }}</view>
 							<u-icon v-if="!res.is_like" name="thumb-up" :size="30" color="#9a9a9a"></u-icon>
 							<u-icon v-if="res.is_like" name="thumb-up-fill" :size="30"></u-icon>
@@ -19,14 +19,14 @@
 							<view class="username">{{ item.name }}</view>
 							<view class="text">{{ item.content }}</view>
 						</view>
-						<view class="all-reply" @tap="toAllReply" v-if="res.subs != undefined">
-							共{{ res.allReply }}条回复
+						<view class="all-reply" @click="toAllReply" v-if="res.subs.length">
+							共{{ res.subs.length }}条回复
 							<u-icon class="more" name="arrow-right" :size="26"></u-icon>
 						</view>
 					</view>
 					<view class="bottom">
 						{{ res.time_stamp | timeFrom }}
-						<view class="reply">回复TA</view>
+						<view class="reply" @click="toAllReply">回复TA</view>
 					</view>
 				</view>
 			</view>
@@ -37,12 +37,13 @@
 
 <script>
 /**
- * myComment 文章视频评论
+ * myComment 文章视频评论列表
  * @description 文章或视频底部评论区
  * @property {Array} commentList 评论数组
  * @event {Function} toAllReply 跳转评论详情
  * @event {Function} getLike 点赞/取消点赞
  */
+import { likeComment } from "api/home.js";
 export default {
   name: 'myComment',
 	props: {
@@ -56,18 +57,24 @@ export default {
 	methods: {
 		toAllReply() {
 			this.$Router.push({ path: "/pages/comment/reply" });
-			// uni.navigateTo({
-			// 	url: '/pages/template/comment/reply'
-			// });
 		},
-		getLike(index) {
-			this.commentList[index].is_like = !this.commentList[index].is_like;
-			if (this.commentList[index].is_like == 1) {
-				this.commentList[index].likes++;
+		getLike(item) {
+			item.is_like = !item.is_like;
+			if (item.is_like == 1) {
+				item.likes++;
 			} else {
-				this.commentList[index].likes--;
+				item.likes--;
 			}
 		},
+		async postLike(item) {
+			let params = {
+				token: this.vuex_token,
+				id: item.id,
+				type: item.is_like ? 2 : 1
+			}
+			let { data } = await likeComment(params);
+			this.getLike(item);
+		}
 	}
 };
 </script>

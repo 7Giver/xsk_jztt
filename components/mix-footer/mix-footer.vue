@@ -1,19 +1,20 @@
 <template>
   <view class="min-footer">
-    <view class="comment_wrap">
+    <view class="comment_wrap" @click="emitShowReport">
       <image class="icon" src="/static/img/icon/icon_xpl.png" mode="widthFix" />
-      <u-input v-model="comment" height="40" placeholder="写评论..."></u-input>
+      <!-- <u-input v-model="comment" height="40" placeholder="写评论..." disabled></u-input> -->
+      <view class="title">写评论...</view>
     </view>
     <view class="mix_wrap">
-      <view class="item" @click="emitComment">
+      <view class="item" @click="emitScroll">
         <image src="/static/img/icon/icon_comment.png" mode="widthFix" />
         <u-badge type="error" size="mini" :count="commentNum" :is-center="true"></u-badge>
       </view>
-      <view class="item">
+      <view class="item" @click="emitCollect">
         <image v-if="detail.is_favor" src="/static/img/icon/icon_sc_on.png" mode="widthFix" />
         <image v-else src="/static/img/icon/icon_sc.png" mode="widthFix" />
       </view>
-      <view class="item">
+      <view class="item" @click="emitLike">
         <image v-if="detail.is_like" src="/static/img/news/icon_dz_on.png" mode="widthFix" />
         <image v-else src="/static/img/news/icon_dz.png" mode="widthFix" />
       </view>
@@ -30,7 +31,9 @@
  * @description 集合评论、转发、收藏、点赞等功能
  * @property {Object} detail 文章详情对象
  * @property {Number String} commentNum 显示评论数量
- * @event {Function} emitComment 传输评论内容
+ * @event {Function} emitShowReport 派送展示评论组件
+ * @event {Function} emitLike 派送点赞事件
+ * @event {Function} emitCollect 派送点赞事件
  */
 export default {
   name: "mixFooter",
@@ -56,8 +59,17 @@ export default {
     };
   },
   methods: {
-    emitComment() {
-      this.$emit("emitComment", this.comment);
+    emitShowReport() {
+      this.$emit("emitShowReport");
+    },
+    emitScroll() {
+      this.$emit("emitScroll");
+    },
+    emitLike() {
+      this.$emit("emitLike");
+    },
+    emitCollect() {
+      this.$emit("emitCollect");
     },
   },
 };
@@ -84,6 +96,10 @@ export default {
     .icon {
       width: 26rpx;
       margin-right: 10rpx;
+    }
+    .title {
+      color: #999999;
+      font-size: 28rpx;
     }
   }
   .mix_wrap {

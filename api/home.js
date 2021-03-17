@@ -338,6 +338,16 @@ export function deleteComment(params) {
 }
 
 /**
+ * 评论点赞
+ * @param {string} token 登录Token (必填)
+ * @param {string} id 评论id (必填)
+ * @param {string} type (必填，1-点赞，2-取消点赞)
+ */
+ export function likeComment(params) {
+  return post(`/${version}/comment/likes`, params);
+}
+
+/**
  * 提交不喜欢原因
  * @param {string} token 登录Token (必填)
  * @param {string} id 文章id (必填)

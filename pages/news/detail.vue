@@ -6,7 +6,12 @@
           <u-icon name="star-fill" color="#F04323" v-if="detail.is_favor == 1"></u-icon>
           <u-icon name="star" v-else></u-icon>
         </view>
-        <image class="icon" src="/static/img/icon/icon_fx.png" mode="widthFix" />
+        <image
+          class="icon"
+          src="/static/img/icon/icon_fx.png"
+          mode="widthFix"
+          @click="scrollToBottom"
+        />
       </view>
     </u-navbar>
     <view class="detail-page">
@@ -99,7 +104,7 @@
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 评论版块 -->
-      <view class="comment_wrap">
+      <view class="comment_wrap" ref="comment">
         <my-comment :commentList="commentList"></my-comment>
       </view>
       <!-- 底部组件 -->
@@ -107,8 +112,18 @@
         v-if="commentList.length"
         :detail="detail"
         :commentNum="commentNum"
-        @emitComment="updateComment"
+        @emitScroll="scrollComment"
+        @emitShowReport="goShowReport"
+        @emitLike="postLike"
+        @emitCollect="postCollect"
       ></mix-footer>
+      <!-- 评论组件 -->
+      <comment-report
+        v-show="showReport"
+        :articleId="detail.id"
+        :parentId="parentId"
+        @emitShowReport="goShowReport"
+      ></comment-report>
       <!-- 不喜欢原因 -->
       <unlike-popup ref="unlike" :articleId="detail.id"></unlike-popup>
     </view>
@@ -122,16 +137,17 @@ import {
   likeArticle,
   articleComment,
   postUserFocus,
-  commentSubmit,
 } from "api/home.js";
 import MyComment from "@/components/my-comment/my-comment";
 import MixFooter from "@/components/mix-footer/mix-footer";
 import UnlikePopup from "@/components/unlike-popup/unlike-popup";
+import CommentReport from "@/components/comment-report/comment-report";
 export default {
   components: {
     MyComment,
     MixFooter,
     UnlikePopup,
+    CommentReport,
   },
   data() {
     return {
@@ -139,6 +155,8 @@ export default {
       detail: {}, // 文章详情
       comment: "", // 传入评论
       commentNum: 0, // 评论数量
+      parentId: "", // 父级评论Id
+      showReport: false, //评论组件
       limit: 10,
       pageIndex: 1,
       commentList: [],
@@ -198,10 +216,26 @@ export default {
         // this.detail = detail;
       }
     },
-    // 获取子组件传值
-    updateComment(data) {
-      this.comment = data;
-      this.postComment();
+    // 滚动到评论区
+    scrollComment() {
+      let dom = this.$refs.comment.$el;
+      uni.pageScrollTo({
+        scrollTop: dom.offsetTop,
+        duration: 300, // 动画默认300ms
+      });
+    },
+    // 滚动到底部
+    scrollToBottom() {
+      uni.pageScrollTo({
+        scrollTop: Number.MAX_SAFE_INTEGER,
+        duration: 250,
+      });
+    },
+    // 展示评论组件
+    goShowReport(data) {
+      this.showReport = !this.showReport;
+      // 接收到data则刷新评论区视图
+      data && this.getComment({ bottom: 1 });
     },
     // 请求文章详情
     async getNewsDetail() {
@@ -253,7 +287,7 @@ export default {
       }
     },
     // 获取文章评论
-    async getComment() {
+    async getComment(bottom) {
       let params = {
         token: this.vuex_token,
         article_id: this.detail.id,
@@ -263,6 +297,9 @@ export default {
       let { data } = await articleComment(params);
       this.commentList = data.list;
       this.commentNum = data.list.length;
+      this.$nextTick(() => {
+        bottom && this.scrollToBottom();
+      });
     },
     // 请求用户关注
     async postFocus() {
@@ -283,22 +320,6 @@ export default {
         this.userinfo.is_focus = 1;
         this.$u.toast("关注成功");
       }
-    },
-    // 提交评论
-    async postComment(id) {
-      let str = this.$u.trim(this.comment); //去除两端空格
-      if (!str) {
-        this.$u.toast("评论不能为空");
-        return;
-      }
-      let params = {
-        token: this.vuex_token,
-        article_id: this.detail.id,
-        parent_id: id || "",
-        content: str,
-      };
-      let { data } = await commentSubmit(params);
-      this.$u.toast("评论成功");
     },
   },
 };
