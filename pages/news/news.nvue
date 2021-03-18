@@ -25,9 +25,7 @@
             <text
               class="uni-tab-item-title"
               :class="tabIndex == index ? 'uni-tab-item-title-active' : ''"
-            >
-              {{ tab.name }}
-            </text>
+            >{{ tab.name }}</text>
           </view>
         </view>
         <view class="scroll-view-indicator">
@@ -54,14 +52,12 @@
       @animationfinish="animationfinish"
       @onAnimationEnd="animationfinish"
     >
-      <swiper-item
-        class="swiper-item"
-        v-for="(page, index) in tabList"
-        :key="index"
-      >
+      <swiper-item class="swiper-item" v-for="(page, index) in tabList" :key="index">
         <newsPage class="page-item" :nid="page.newsid" ref="page"></newsPage>
       </swiper-item>
     </swiper>
+    <!-- 红包组件 -->
+    <red-bag v-if="showBag" @emitClose="showBag=false"></red-bag>
   </view>
 </template>
 
@@ -71,6 +67,7 @@ const dom = weex.requireModule("dom");
 // #endif
 
 import newsPage from "./news-page.nvue";
+import redBag from "@/components/red-bag/red-bag";
 
 // 缓存每页最多
 const MAX_CACHE_DATA = 100;
@@ -80,6 +77,7 @@ const TAB_PRELOAD_OFFSET = 1;
 export default {
   components: {
     newsPage,
+    redBag,
   },
   data() {
     return {
@@ -91,6 +89,7 @@ export default {
       indicatorLineLeft: 0,
       indicatorLineWidth: 0,
       isTap: false,
+      showBag: false, // 显示红包
       tabList: [
         {
           id: "tab01",
@@ -146,6 +145,7 @@ export default {
   },
   onShow(...options) {
     // console.log(this.$Route);
+    this.showBag = true;
   },
   methods: {
     ontabtap(e) {

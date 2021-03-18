@@ -105,7 +105,7 @@
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 评论版块 -->
       <view class="comment_wrap" ref="comment">
-        <my-comment :commentList="commentList"></my-comment>
+        <my-comment :commentList="commentList" @emitShowReport="goShowReport"></my-comment>
       </view>
       <!-- 底部组件 -->
       <mix-footer
@@ -234,8 +234,12 @@ export default {
     // 展示评论组件
     goShowReport(data) {
       this.showReport = !this.showReport;
-      // 接收到data则刷新评论区视图
-      data && this.getComment({ bottom: 1 });
+      // data是Boolean刷新评论视图，是string则传入父级评论id
+      if (typeof data === "boolean") {
+        this.getComment({ bottom: 1 });
+      } else if (typeof data === "string") {
+        this.parentId = data;
+      }
     },
     // 请求文章详情
     async getNewsDetail() {

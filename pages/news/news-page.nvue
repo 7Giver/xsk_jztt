@@ -93,7 +93,7 @@ export default {
         cid: 5,
         type: 0
       };
-      let { data } = await getArticleList(params);
+      // let { data } = await getArticleList(params);
 
       this.isLoading = true;
       this.isNoData = false;

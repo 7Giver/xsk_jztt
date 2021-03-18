@@ -2,7 +2,7 @@
 	<view class="my-comment">
 		<view class="main_title">全部评论</view>
 		<template v-if="commentList.length">
-			<view class="comment" v-for="(res, index) in commentList" :key="res.id">
+			<view class="comment" v-for="(res, index) in commentList" :key="index">
 				<view class="left"><image :src="res.avatar" mode="aspectFill"></image></view>
 				<view class="right">
 					<view class="top">
@@ -26,7 +26,7 @@
 					</view>
 					<view class="bottom">
 						{{ res.time_stamp | timeFrom }}
-						<view class="reply" @click="toAllReply">回复TA</view>
+						<view class="reply" @click="emitShowReport(res.id)">回复TA</view>
 					</view>
 				</view>
 			</view>
@@ -40,8 +40,7 @@
  * myComment 文章视频评论列表
  * @description 文章或视频底部评论区
  * @property {Array} commentList 评论数组
- * @event {Function} toAllReply 跳转评论详情
- * @event {Function} getLike 点赞/取消点赞
+ * @event {Function} emitShowReport 派送父级id并展示评论组件
  */
 import { likeComment } from "api/home.js";
 export default {
@@ -58,6 +57,9 @@ export default {
 		toAllReply() {
 			this.$Router.push({ path: "/pages/comment/reply" });
 		},
+		emitShowReport(id) {
+      this.$emit("emitShowReport", id);
+    },
 		getLike(item) {
 			item.is_like = !item.is_like;
 			if (item.is_like == 1) {
