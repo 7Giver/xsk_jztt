@@ -41,7 +41,7 @@ export function getTaskList(token) {
  * 图片上传
  * @param {file} image 二进制图片 (必填)
  */
- export function uploadImage(file) {
+export function uploadImage(file) {
   return uploadFile(`/${version}/default/upload`, file);
 }
 
@@ -55,7 +55,7 @@ export function getCityList() {
 /**
  * 文章不喜欢原因
  */
- export function getUnlikeList() {
+export function getUnlikeList() {
   return get(`/${version}/default/feedback`);
 }
 
@@ -268,7 +268,7 @@ export function deleteComment(params) {
  * @param {string} page 页码 (必填)
  * @param {string} limit 查询数量 (必填)
  */
- export function getFriend(params) {
+export function getFriend(params) {
   return get(`/${version}/user/friend`, params);
 }
 
@@ -281,7 +281,7 @@ export function deleteComment(params) {
  * @param {string} cid 分类id (必填)
  * @param {string} type 类型 (1-文章，2-视频，0或不传混合)
  */
- export function getArticleList(params) {
+export function getArticleList(params) {
   return get(`/${version}/article/list`, params);
 }
 
@@ -291,7 +291,7 @@ export function deleteComment(params) {
  * @param {string} id 文章id (必填)
  * @param {string} uid 分享人id (必填)
  */
- export function getArticleDetail(params) {
+export function getArticleDetail(params) {
   return get(`/${version}/article/detail`, params);
 }
 
@@ -301,7 +301,7 @@ export function deleteComment(params) {
  * @param {string} id 文章id (必填)
  * @param {number} type 1-收藏，2-取消收藏 (必填)
  */
- export function collectArticle(params) {
+export function collectArticle(params) {
   return post(`/${version}/article/favor`, params);
 }
 
@@ -311,7 +311,7 @@ export function deleteComment(params) {
  * @param {string} id 文章id (必填)
  * @param {number} type 1-点赞，2-取消点赞 (必填)
  */
- export function likeArticle(params) {
+export function likeArticle(params) {
   return post(`/${version}/article/like`, params);
 }
 
@@ -322,8 +322,20 @@ export function deleteComment(params) {
  * @param {string} page 页码 (必填)
  * @param {string} limit 查询数量 (必填)
  */
- export function articleComment(params) {
+export function articleComment(params) {
   return get(`/${version}/comment/list`, params);
+}
+
+/**
+ * 文章二级评论
+ * @param {string} token 登录Token (必填)
+ * @param {string} article_id 文章id (必填)
+ * @param {string} page 页码 (必填)
+ * @param {string} limit 查询数量 (必填)
+ * @param {string} comment_id 父级评论id (必填)
+ */
+ export function secondComment(params) {
+  return get(`/${version}/comment/sub-list`, params);
 }
 
 /**
@@ -333,7 +345,7 @@ export function deleteComment(params) {
  * @param {string} parent_id 评论id (如果是评论别人的评论，传入此id)
  * @param {string} content 评论内容 (必填)
  */
- export function commentSubmit(params) {
+export function commentSubmit(params) {
   return post(`/${version}/comment/submit`, params);
 }
 
@@ -343,7 +355,7 @@ export function deleteComment(params) {
  * @param {string} id 评论id (必填)
  * @param {string} type (必填，1-点赞，2-取消点赞)
  */
- export function likeComment(params) {
+export function likeComment(params) {
   return post(`/${version}/comment/likes`, params);
 }
 
@@ -353,6 +365,23 @@ export function deleteComment(params) {
  * @param {string} id 文章id (必填)
  * @param {string} content 不喜欢原因 (必填)
  */
- export function postDislike(params) {
+export function postDislike(params) {
   return post(`/${version}/article/dislike`, params);
+}
+
+/**
+ * 首页红包数据
+ * @param {string} token 登录Token (必填)
+ */
+export function getRedBag(token) {
+  return get(`/${version}/index/pop`, { token: token });
+}
+
+/**
+ * 领取新人奖励
+ * @param {string} token 登录Token (必填)
+ * @param {?number} type 红包类型 (必填，1-新人红包)
+ */
+export function receiveReward(params) {
+  return post(`/${version}/index/receive`, params);
 }

@@ -8,7 +8,7 @@
     <view class="mix_wrap">
       <view class="item" @click="emitScroll">
         <image src="/static/img/icon/icon_comment.png" mode="widthFix" />
-        <u-badge type="error" size="mini" :count="commentNum" :is-center="true"></u-badge>
+        <u-badge type="error" size="mini" :count="detail.comments || 0" :is-center="true"></u-badge>
       </view>
       <view class="item" @click="emitCollect">
         <image v-if="detail.is_favor" src="/static/img/icon/icon_sc_on.png" mode="widthFix" />
@@ -30,7 +30,6 @@
  * minFooter 文章视频底部功能
  * @description 集合评论、转发、收藏、点赞等功能
  * @property {Object} detail 文章详情对象
- * @property {Number String} commentNum 显示评论数量
  * @event {Function} emitShowReport 派送展示评论组件
  * @event {Function} emitLike 派送点赞事件
  * @event {Function} emitCollect 派送点赞事件
@@ -43,10 +42,6 @@ export default {
       default() {
         return {};
       },
-    },
-    commentNum: {
-      type: [Number, String],
-      default: 0,
     },
   },
   // mounted() {

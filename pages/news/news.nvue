@@ -57,7 +57,7 @@
       </swiper-item>
     </swiper>
     <!-- 红包组件 -->
-    <red-bag v-if="showBag" @emitClose="showBag=false"></red-bag>
+    <red-bag v-if="showBag" :detail="bagDetail" @emitClose="showBag=false"></red-bag>
   </view>
 </template>
 
@@ -66,6 +66,7 @@
 const dom = weex.requireModule("dom");
 // #endif
 
+import { getRedBag } from "api/home.js";
 import newsPage from "./news-page.nvue";
 import redBag from "@/components/red-bag/red-bag";
 
@@ -90,6 +91,7 @@ export default {
       indicatorLineWidth: 0,
       isTap: false,
       showBag: false, // 显示红包
+      bagDetail: {}, // 红包详情
       tabList: [
         {
           id: "tab01",
@@ -145,7 +147,7 @@ export default {
   },
   onShow(...options) {
     // console.log(this.$Route);
-    this.showBag = true;
+    this.getMyRedBag();
   },
   methods: {
     ontabtap(e) {
@@ -330,6 +332,15 @@ export default {
     },
     clearTabData(index) {
       this.pageList[index].clear();
+    },
+    // 获取红包信息
+    async getMyRedBag() {
+      let { data } = await getRedBag(this.vuex_token);
+      if (!data.register.money) {
+        return
+      }
+      this.bagDetail = data.register;
+      this.showBag = true;
     },
   },
 };

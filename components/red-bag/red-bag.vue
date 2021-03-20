@@ -11,27 +11,29 @@
               class="button"
               src="/static/img/redBag/button.png"
               mode="widthFix"
-              @click="isOpen=true"
+              @click="openBag"
             />
           </view>
           <view class="title_wrap">
-            <view class="main">恭喜您获得一个新人红包</view>
-            <view class="off">（仅限新注册用户领取）</view>
+            <view class="main">{{ detail.title }}</view>
+            <view class="off">{{ detail.desc }}</view>
+            <view class="cash">打开得{{ detail.money }}元</view>
           </view>
-          <view class="bottom_text">当天可提现</view>
+          <view class="bottom_text" v-if="detail.can_draw">{{ detail.can_draw }}</view>
         </view>
       </transition>
       <!-- 打开状态 -->
       <view class="wrap open_status" v-show="isOpen">
         <image class="bag" src="/static/img/redBag/pic_hb4.png" mode="widthFix" />
         <image class="bag bottom_card" src="/static/img/redBag/pic_hb2.png" mode="widthFix" />
-        <view class="inner_card">
+        <view class="inner_card" :class="{ up: startAnime }">
           <view class="title_wrap">
-            <view class="main">恭喜您获得新人红包</view>
-            <view class="off">（当天可提现）</view>
+            <view class="main">{{ detail.title }}</view>
+            <view class="off">{{ detail.desc }}</view>
           </view>
-          <view class="cash">2元</view>
+          <view class="cash">{{ detail.money }}元</view>
         </view>
+        <view class="get_btn" @click="postReceive">开心收下</view>
       </view>
     </view>
   </view>
@@ -41,21 +43,25 @@
 /**
  * redBag 红包
  * @description 新用户或活动红包
- * @property {Boolean} showBag 显示红包组件
+ * @property {Object} detail 红包详情
  * @event {Function} emitClose 派送关闭组件
  */
+import { receiveReward } from "api/home.js";
 export default {
   name: "redBag",
   props: {
-    // showBag: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    detail: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
   data() {
     return {
       showBag: false,
       isOpen: false, // 是否打开红包
+      startAnime: false, // 开始动画
     };
   },
   created() {
@@ -67,6 +73,20 @@ export default {
       setTimeout(() => {
         this.$emit("emitClose");
       }, 150);
+    },
+    openBag() {
+      this.isOpen = true;
+      setTimeout(() => {
+        this.startAnime = true;
+      }, 100);
+    },
+    async postReceive() {
+      let params = {
+        token: this.vuex_token,
+        type: this.detail.type,
+      };
+      let { data } = await receiveReward(params);
+      this.emitClose();
     },
   },
 };
@@ -93,6 +113,18 @@ export default {
   .bag {
     width: 450rpx;
   }
+  .title_wrap {
+    text-align: center;
+    letter-spacing: 2rpx;
+    .main {
+      font-size: 30rpx;
+      font-weight: bold;
+    }
+    .off {
+      font-size: 24rpx;
+      margin-top: 10rpx;
+    }
+  }
 }
 .close_status {
   color: #fff1c5;
@@ -115,13 +147,10 @@ export default {
     transform: translate(-50%, 0);
     width: 100%;
     text-align: center;
-    letter-spacing: 2rpx;
-    .main {
-      font-size: 30rpx;
-    }
-    .off {
-      font-size: 24rpx;
-      margin-top: 10rpx;
+    .cash {
+      font-size: 44rpx;
+      letter-spacing: 4rpx;
+      margin-top: 38rpx;
     }
   }
   .bottom_text {
@@ -134,12 +163,48 @@ export default {
 }
 .open_status {
   color: #d44a1d;
+  overflow: hidden;
   .bottom_card {
+    z-index: 1;
     margin-top: -88rpx;
   }
   .inner_card {
-    position: relative;
-    display: none;
+    position: absolute;
+    top: 326rpx;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background: url("/static/img/redBag/pic_hb3.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    width: 86%;
+    height: 340rpx;
+    padding-top: 54rpx;
+    text-align: center;
+    transition: 0.5s;
+    .cash {
+      font-size: 56rpx;
+      margin-top: 36rpx;
+      letter-spacing: 4rpx;
+    }
+  }
+  .get_btn {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 2;
+    color: #d4161a;
+    width: 80%;
+    font-size: 30rpx;
+    font-weight: bold;
+    line-height: 76rpx;
+    text-align: center;
+    border-radius: 200rpx;
+    background: linear-gradient(0deg, #ea7850 0%, #fee7c1 100%);
+  }
+  .up {
+    top: 0rpx;
   }
 }
 /deep/.u-mode-center-box {

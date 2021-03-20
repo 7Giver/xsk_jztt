@@ -102,7 +102,7 @@ export default {
     tabChange(index) {
       this.swiperCurrent = index;
       let target = this.pageList[index];
-      target.pageIndex = 0;
+      target.pageIndex = 1;
       target.dataList = [];
       target.loadStatus = "loadmore";
       target.getData(index);

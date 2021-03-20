@@ -104,20 +104,19 @@
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 评论版块 -->
-      <view class="comment_wrap" ref="comment">
-        <my-comment :commentList="commentList" @emitShowReport="goShowReport"></my-comment>
+      <view class="comment_wrap">
+        <my-comment ref="myComment" @emitShowReport="goShowReport" @scrollToBottom="scrollToBottom"></my-comment>
       </view>
-      <!-- 底部组件 -->
+      <!-- 底部功能组件 -->
       <mix-footer
-        v-if="commentList.length"
+        ref="mixFooter"
         :detail="detail"
-        :commentNum="commentNum"
         @emitScroll="scrollComment"
         @emitShowReport="goShowReport"
         @emitLike="postLike"
         @emitCollect="postCollect"
       ></mix-footer>
-      <!-- 评论组件 -->
+      <!-- 发表评论组件 -->
       <comment-report
         v-show="showReport"
         :articleId="detail.id"
@@ -135,7 +134,6 @@ import {
   getArticleDetail,
   collectArticle,
   likeArticle,
-  articleComment,
   postUserFocus,
 } from "api/home.js";
 import MyComment from "@/components/my-comment/my-comment";
@@ -153,12 +151,9 @@ export default {
     return {
       userinfo: {}, // 文章用户信息
       detail: {}, // 文章详情
-      comment: "", // 传入评论
       commentNum: 0, // 评论数量
       parentId: "", // 父级评论Id
       showReport: false, //评论组件
-      limit: 10,
-      pageIndex: 1,
       commentList: [],
       bannerList: [
         {
@@ -202,11 +197,13 @@ export default {
   },
   onReady() {
     this.unlike = this.$refs.unlike;
+    this.myComment = this.$refs.myComment;
+    this.mixFooter = this.$refs.mixFooter;
+    this.getNewsDetail();
   },
   onLoad(options) {
     // console.log(this.$Route);
     this.getQueryObj();
-    this.getNewsDetail();
   },
   methods: {
     // 获取文章对象
@@ -218,7 +215,7 @@ export default {
     },
     // 滚动到评论区
     scrollComment() {
-      let dom = this.$refs.comment.$el;
+      let dom = this.myComment.$el;
       uni.pageScrollTo({
         scrollTop: dom.offsetTop,
         duration: 300, // 动画默认300ms
@@ -236,10 +233,18 @@ export default {
       this.showReport = !this.showReport;
       // data是Boolean刷新评论视图，是string则传入父级评论id
       if (typeof data === "boolean") {
-        this.getComment({ bottom: 1 });
+        this.detail.comments++;
+        this.refreshComment();
       } else if (typeof data === "string") {
         this.parentId = data;
       }
+    },
+    // 刷新评论区
+    refreshComment() {
+      this.myComment.limit = 10;
+      this.myComment.pageIndex = 1;
+      this.myComment.commentList = [];
+      this.myComment.getComment(this.detail.id);
     },
     // 请求文章详情
     async getNewsDetail() {
@@ -254,7 +259,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.uReadMore.init();
       });
-      this.getComment();
+      this.refreshComment();
     },
     // 收藏文章
     async postCollect() {
@@ -289,21 +294,6 @@ export default {
         ++this.detail.likes;
         this.$u.toast("点赞成功");
       }
-    },
-    // 获取文章评论
-    async getComment(bottom) {
-      let params = {
-        token: this.vuex_token,
-        article_id: this.detail.id,
-        page: this.pageIndex,
-        limit: this.limit,
-      };
-      let { data } = await articleComment(params);
-      this.commentList = data.list;
-      this.commentNum = data.list.length;
-      this.$nextTick(() => {
-        bottom && this.scrollToBottom();
-      });
     },
     // 请求用户关注
     async postFocus() {
@@ -478,9 +468,6 @@ export default {
         }
       }
     }
-  }
-  .comment_wrap {
-    padding-bottom: 140rpx;
   }
 }
 </style>
