@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { getDrafts, deleteDrafts } from "api/home.js";
+import { getDrafts, deleteDrafts } from "@/api/home.js";
 import draftsPage from "./drafts-page";
 export default {
   components: {

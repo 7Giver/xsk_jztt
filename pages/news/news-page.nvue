@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { getArticleList } from "api/home.js";
+import { getArticleList } from "@/api/home.js";
 import { friendlyDate } from '@/common/util.js';
 import uniRefresh from '@/components/uni-list/uni-refresh.vue';
 import newsItem from './news-item.nvue';
@@ -174,9 +174,8 @@ export default {
         // uni.navigateTo({
         //   url: '/pages/news/detail?query=' + encodeURIComponent(JSON.stringify(detail))
         // });
-        this.$Router.push({
-          path: "/pages/news/detail",
-          query: detail,
+        uni.navigateTo({
+          url: '/pages/news/detail'
         });
       }
     },

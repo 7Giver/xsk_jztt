@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { getTaskList } from "api/home.js";
+import { getTaskList } from "@/api/home.js";
 export default {
   data() {
     return {

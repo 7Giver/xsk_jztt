@@ -11,6 +11,7 @@
           :height="120"
           :maxlength="100"
           @input="inputChange"
+          @blur="emitShowReport"
         />
         <view class="right_wrap">
           <u-icon name="arrow-up" color="#999999"></u-icon>
@@ -34,7 +35,7 @@
  * @property {Number String} parentId 父级评论Id
  * @event {Function} emitShowReport 派送关闭组件
  */
-import { commentSubmit } from "api/home.js";
+import { commentSubmit } from "@/api/home.js";
 export default {
   name: "commentReport",
   props: {

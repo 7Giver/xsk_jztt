@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { getTrack } from "api/home.js";
+import { getTrack } from "@/api/home.js";
 export default {
   data() {
     return {

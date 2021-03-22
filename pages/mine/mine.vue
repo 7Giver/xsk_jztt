@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { getUserInfo } from "api/home.js";
+import { getUserInfo } from "@/api/home.js";
 export default {
   data() {
     return {
@@ -189,7 +189,7 @@ export default {
     goNext(type) {
       switch (type) {
         case "personal":
-          this.$Router.push({ path: "/pages/mine/personal" });
+          this.$Router.push({ name: "personal" });
           break;
         case "coin":
           this.$Router.push({ path: "/pages/mine/coin" });

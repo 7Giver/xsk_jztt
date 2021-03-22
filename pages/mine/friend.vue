@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { getFriend } from "api/home.js";
+import { getFriend } from "@/api/home.js";
 export default {
   data() {
     return {

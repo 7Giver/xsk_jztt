@@ -48,7 +48,7 @@
  * @property {Array} commentList 评论数组
  * @event {Function} emitShowReport 派送父级id并展示评论组件
  */
-import { articleComment, likeComment } from "api/home.js";
+import { articleComment, likeComment } from "@/api/home.js";
 export default {
   name: 'myComment',
 	data() {

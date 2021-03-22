@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { getSign, postSign } from "api/home.js";
+import { getSign, postSign } from "@/api/home.js";
 export default {
   data() {
     return {

@@ -1,5 +1,5 @@
 <template>
-  <view id="app" :style="{'min-height': innerPage}">
+  <view id="app">
     <u-navbar :is-fixed="false" :border-bottom="false" title="生成专属邀请海报" title-width="300"></u-navbar>
     <view class="poster-page">
       <view class="poster_wrap" id="poster">
@@ -25,11 +25,6 @@ export default {
       resultSrc: "", //输出的海报图片
       inviteCode: 4561523,
     };
-  },
-  computed: {
-    innerPage() {
-      return window.innerHeight + "px";
-    },
   },
   methods: {
     // 生成海报

@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { getCoinData } from "api/home.js";
+import { getCoinData } from "@/api/home.js";
 export default {
   data() {
     return {

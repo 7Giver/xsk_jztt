@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { getUserIndex, getUserWorks } from "api/home.js";
+import { getUserIndex, getUserWorks } from "@/api/home.js";
 import personalPage from "./personal-page";
 export default {
   components: {

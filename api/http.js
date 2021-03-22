@@ -1,5 +1,5 @@
 import Vue from "vue";
-import uni_request from "common/uni_request.js";
+import uni_request from "@/common/uni_request.js";
 import QS from "qs";
 
 const dataURL = "http://cdn.blackhw.com"; // 引用资源地址
@@ -44,6 +44,14 @@ request.interceptors.response.use(
   (response) => {
     if (response.statusCode === 200 && response.data.code === 0) {
       return Promise.resolve(response);
+    } else if (response.statusCode === 200 && response.data.code == -1) {
+      uni.showToast({
+        icon: "none",
+        title: "登录失败",
+      });
+      uni.clearStorageSync();
+      uni.navigateTo({ url: "/pages/login/login" });
+      return Promise.reject(response || "error");
     } else if (response.statusCode === 200 && response.data.code !== 0) {
       uni.showToast({
         icon: "none",

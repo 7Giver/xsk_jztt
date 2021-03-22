@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { setFontSize } from "api/home.js";
+import { setFontSize } from "@/api/home.js";
 export default {
   data() {
     return {

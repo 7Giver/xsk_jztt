@@ -46,7 +46,7 @@
  * @property {Object} detail 红包详情
  * @event {Function} emitClose 派送关闭组件
  */
-import { receiveReward } from "api/home.js";
+import { receiveReward } from "@/api/home.js";
 export default {
   name: "redBag",
   props: {

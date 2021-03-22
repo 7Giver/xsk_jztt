@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { secondComment, likeComment } from "api/home.js";
+import { secondComment, likeComment } from "@/api/home.js";
 export default {
 	data() {
 		return {

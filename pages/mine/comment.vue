@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mineComment, deleteComment } from "api/home.js";
+import { mineComment, deleteComment } from "@/api/home.js";
 export default {
   data() {
     return {

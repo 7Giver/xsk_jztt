@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { deleteWorks } from "api/home.js";
+import { deleteWorks } from "@/api/home.js";
 import worksPage from "./works-page";
 export default {
   components: {

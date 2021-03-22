@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { noticeList } from "api/home.js";
+import { noticeList } from "@/api/home.js";
 import commentPage from "./comment-page";
 export default {
   components: {

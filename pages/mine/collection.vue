@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { getFavor, deleteFavor } from "api/home.js";
+import { getFavor, deleteFavor } from "@/api/home.js";
 export default {
   data() {
     return {

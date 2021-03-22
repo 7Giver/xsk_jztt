@@ -1,9 +1,14 @@
 <template>
-  <view id="app" :style="{ 'min-height': innerPage }" v-cloak>
-    <view class="u-flex header">
+  <view id="app">
+    <u-navbar :is-back="false" :border-bottom="false">
+      <view class="navbar-right" slot="right">
+        <view>遇到问题</view>
+      </view>
+    </u-navbar>
+    <!-- <view class="u-flex header">
       <u-icon name="close" @click="closeLogin"></u-icon>
       <view>遇到问题</view>
-    </view>
+    </view> -->
     <view class="container">
       <view class="top_wrap">
         <view class="u-flex title_wrap">
@@ -83,7 +88,7 @@
 </template>
 
 <script>
-import { getOauthCode } from "api/home.js";
+import { getOauthCode } from "@/api/home.js";
 export default {
   data() {
     return {
@@ -112,12 +117,7 @@ export default {
   onLoad(options) {
     // console.log(this.$Route.query);
     // console.log(this.$u.vuex);
-    console.log(this.$http);
-  },
-  computed: {
-    innerPage() {
-      return window.innerHeight + "px";
-    },
+    // console.log(this.$http);
   },
   methods: {
     // 关闭登录
@@ -152,7 +152,7 @@ export default {
     // 点击下一步
     goReadyTo() {
       if (this.sendCode) {
-        this.$Router.push({ path: "/pages/login/tagIndex" });
+        this.$Router.push({ name: "tagIndex" });
       } else {
         this.sendCode = true;
       }
@@ -173,6 +173,7 @@ export default {
       });
       let { data } = await getOauthCode(this.phoneNumber);
       uni.hideLoading();
+      this.sendCode = true;
       this.$u.toast("验证码已发送");
       this.$refs.uCode.start();
     },
@@ -183,6 +184,10 @@ export default {
 <style lang="scss" scoped>
 page {
   // position: relative;
+}
+.navbar-right {
+  margin-right: 30rpx;
+  display: flex;
 }
 .header {
   justify-content: space-between;

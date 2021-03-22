@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { noticeList, noticeRead } from "api/home.js";
+import { noticeList, noticeRead } from "@/api/home.js";
 import contentPage from "./content-page";
 export default {
   components: {

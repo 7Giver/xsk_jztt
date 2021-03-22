@@ -4,7 +4,7 @@
       <view class="title_wrap">
         <view class="title">{{videoItem.title}}</view>
       </view>
-      <!-- <video id="myVideo" :src="videoItem.video_link" @error="videoErrorCallback" controls></video> -->
+      <!-- <video class="myVideo" :src="videoItem.video_link" @error="videoErrorCallback" controls></video> -->
       <image class="banner" :src="videoItem.banner" />
       <view class="play_wrap">
         <u-icon name="play-right-fill"></u-icon>
@@ -91,7 +91,7 @@ export default {
 }
 .video_view {
   position: relative;
-  #myVideo {
+  .myVideo {
     width: 100%;
   }
   .title_wrap {

@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { getUserWorks } from "api/home.js";
+import { getUserWorks } from "@/api/home.js";
 export default {
   data() {
     return {

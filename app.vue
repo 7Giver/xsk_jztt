@@ -1,6 +1,6 @@
 <script>
 import store from "@/store";
-import { getSystemConfig } from "api/home.js";
+import { getSystemConfig } from "@/api/home.js";
 export default {
   onLaunch: function () {
     // console.log('App Launch');
@@ -66,8 +66,8 @@ export default {
 <style lang="scss">
 /*每个页面公共css */
 @import "uview-ui/index.scss";
-@import "@/static/css/app.scss";
-html {
-  @include add-size($uni-font-size-base);
-}
+// @import "@/static/css/app.scss";
+// html {
+//   @include add-size($uni-font-size-base);
+// }
 </style>

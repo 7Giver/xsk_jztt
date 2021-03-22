@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { userLogin } from "api/home.js";
+import { userLogin } from "@/api/home.js";
 export default {
   data() {
     return {
@@ -217,7 +217,8 @@ export default {
       this.$u.vuex("vuex_token", data.token);
       this.$u.toast("登录成功");
       setTimeout(() => {
-        this.$Router.push({ path: "/pages/news/news" });
+        // this.$Router.push({ name: "mine" });
+        uni.switchTab({ url: "/pages/mine/mine" });
       }, 800);
     },
     // 选中标签

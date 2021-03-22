@@ -84,7 +84,7 @@
 
 <script>
 // import Cropper from "cropperjs"; // 裁剪需求暂时用uView
-import { editUser, getCityList, getUserInfo, uploadImage } from "api/home.js";
+import { editUser, getCityList, getUserInfo, uploadImage } from "@/api/home.js";
 export default {
   data() {
     return {

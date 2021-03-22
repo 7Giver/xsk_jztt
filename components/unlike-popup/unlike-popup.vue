@@ -28,7 +28,7 @@
  * @property {Number String} articleId 文章Id
  * @event {Function} submit 点击完成
  */
-import { getUnlikeList, postDislike } from "api/home.js";
+import { getUnlikeList, postDislike } from "@/api/home.js";
 export default {
   name: "unlikePopup",
   props: {

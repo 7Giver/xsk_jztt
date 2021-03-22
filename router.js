@@ -18,7 +18,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const hasToken = store.state.vuex_token;
   if (hasToken) {
-    if (to.name === "login") {
+    if (to.name === "login" || to.name === "index") {
       // if is logged in, redirect to the home page
       return next({ name: "news" });
     } else {
@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   /* has no token*/
-  if (to.name !== "login") {
+  if (to.name !== "login" && to.name !== "tagIndex" && to.name !== "tagOff") {
     return next({ name: "login" });
   }
   next();

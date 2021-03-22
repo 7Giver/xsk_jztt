@@ -4,7 +4,8 @@
     <view class="text-area">
       <text class="title" @click="toggleMessage('info')">{{ title }}</text>
     </view>
-    <view @click="goLogin">登录</view>
+    <view @click="goToLogin">登录</view>
+    <view class="">token：{{vuex_token}}</view>
     <!-- 对话框 -->
     <uni-popup
       id="popupDialog"
@@ -26,7 +27,7 @@
 </template>
 
 <script>
-import { getAreaList } from "api/home.js";
+import { getAreaList } from "@/api/home.js";
 export default {
   data() {
     return {
@@ -48,13 +49,9 @@ export default {
       //   console.log(res);
       // });
     },
-    goLogin() {
+    goToLogin() {
       this.$Router.push({
-        path: "/pages/login/login",
-        query: {
-          userId: "123",
-          list: [11, 33, 55],
-        },
+        name: "mine"
       });
     },
     /**

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { getDrafts } from "api/home.js";
+import { getDrafts } from "@/api/home.js";
 export default {
   props: {
     showCheck: {

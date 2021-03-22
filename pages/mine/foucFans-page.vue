@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getFoucfans, postUserFocus } from "api/home.js";
+import { getFoucfans, postUserFocus } from "@/api/home.js";
 export default {
   data() {
     return {

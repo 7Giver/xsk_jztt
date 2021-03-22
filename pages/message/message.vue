@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { getNotice, noticeRead } from "api/home.js";
+import { getNotice, noticeRead } from "@/api/home.js";
 export default {
   data() {
     return {

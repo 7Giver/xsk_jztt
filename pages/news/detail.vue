@@ -135,7 +135,7 @@ import {
   collectArticle,
   likeArticle,
   postUserFocus,
-} from "api/home.js";
+} from "@/api/home.js";
 import MyComment from "@/components/my-comment/my-comment";
 import MixFooter from "@/components/mix-footer/mix-footer";
 import UnlikePopup from "@/components/unlike-popup/unlike-popup";
