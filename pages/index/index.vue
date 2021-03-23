@@ -50,9 +50,7 @@ export default {
       // });
     },
     goToLogin() {
-      this.$Router.push({
-        name: "mine"
-      });
+      uni.switchTab({ url: '/pages/news/news' });
     },
     /**
      * 打开消息提示

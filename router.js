@@ -16,7 +16,11 @@ const router = createRouter({
 
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-  const hasToken = store.state.vuex_token;
+  let lifeData = {};
+  try {
+    lifeData = uni.getStorageSync("lifeData");
+  } catch (e) {}
+  const hasToken = lifeData.vuex_token;
   if (hasToken) {
     if (to.name === "login" || to.name === "index") {
       // if is logged in, redirect to the home page

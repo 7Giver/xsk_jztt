@@ -4,9 +4,16 @@
     <view class="tag-page">
       <view class="mian_title">选择你感兴趣的东西</view>
       <view class="tag_wrap">
-        <view class="u-flex item" v-for="(item, index) in tagList" :key="index">
+        <view
+          class="u-flex item"
+          v-for="(item, index) in tagList"
+          :key="index"
+          @click="checkItem(item)"
+        >
           <view class="title">{{item.title}}</view>
-          <u-checkbox v-model="item.checked" size="40" shape="circle" active-color="#F04323"></u-checkbox>
+          <view class="right_wrap" :class="{ check: item.checked }">
+            <u-icon name="checkbox-mark" color="#fff"></u-icon>
+          </view>
         </view>
       </view>
       <view class="next_btn" @click="goNext('tagOff')">下一步</view>
@@ -43,7 +50,11 @@ export default {
     };
   },
   methods: {
-    // 选中某个单选框时，由radio时触发
+    // 点击选中
+    checkItem(item) {
+      item.checked = !item.checked;
+    },
+    // 跳转页面
     goNext(type) {
       switch (type) {
         case "tagOff":
@@ -58,6 +69,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$mianColor: #f04323;
 .navbar-right {
   margin-right: 30rpx;
   display: flex;
@@ -78,15 +90,22 @@ export default {
       margin-bottom: 30rpx;
       background: #f8f8f8;
       border-radius: 10rpx;
-      /deep/.u-checkbox__icon-wrap {
-        background: #fff;
-      }
-      /deep/.u-checkbox__label {
-        display: none;
-      }
       .title {
         font-size: 30rpx;
         font-weight: bold;
+      }
+      .right_wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46rpx;
+        height: 46rpx;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid #f0f0f0;
+      }
+      .check {
+        background: $mianColor;
       }
     }
   }
@@ -101,7 +120,7 @@ export default {
     line-height: 80rpx;
     text-align: center;
     border-radius: 10rpx;
-    background: #f04323;
+    background: $mianColor;
   }
 }
 </style>

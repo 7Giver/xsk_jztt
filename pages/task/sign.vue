@@ -1,6 +1,6 @@
 <template>
-  <view>
-    <u-navbar title="签到详情" :is-fixed="false" :border-bottom="false">
+  <view class="taskSign">
+    <u-navbar title="签到详情" :border-bottom="false">
       <view class="navbar-right" slot="right">
         <u-icon name="more-dot-fill" size="43" color="#333"></u-icon>
       </view>
@@ -239,8 +239,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-page {
-  background: #f04323;
+.taskSign {
+  height: 100vh;
+  background-color: #f04323;
 }
 .navbar-right {
   margin-right: 30rpx;

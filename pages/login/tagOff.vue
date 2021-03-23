@@ -206,20 +206,12 @@ export default {
         invite: "",
         openid: "",
       };
-      let { code, data, msg } = await userLogin(params);
-      if (code !== 0) {
-        this.$u.toast(msg);
-        setTimeout(() => {
-          this.$Router.push({ path: "/pages/login/login" });
-        }, 800);
-        return;
-      }
+      let { data } = await userLogin(params);
       this.$u.vuex("vuex_token", data.token);
       this.$u.toast("登录成功");
       setTimeout(() => {
-        // this.$Router.push({ name: "mine" });
-        uni.switchTab({ url: "/pages/mine/mine" });
-      }, 800);
+        uni.switchTab({ url: "/pages/news/news" });
+      }, 700);
     },
     // 选中标签
     taggleTag(item, tag) {

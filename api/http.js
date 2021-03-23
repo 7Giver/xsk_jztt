@@ -1,4 +1,5 @@
 import Vue from "vue";
+import store from "@/store";
 import uni_request from "@/common/uni_request.js";
 import QS from "qs";
 
@@ -49,8 +50,13 @@ request.interceptors.response.use(
         icon: "none",
         title: "登录失败",
       });
-      uni.clearStorageSync();
-      uni.navigateTo({ url: "/pages/login/login" });
+      store.commit("$uStore", {
+        name: "vuex_token",
+        value: "",
+      });
+      console.log('>>>>>>>>>>>>Clear token!');
+      console.log('NowToken:', store.state.vuex_token);
+      uni.reLaunch({ url: "/pages/login/login" });
       return Promise.reject(response || "error");
     } else if (response.statusCode === 200 && response.data.code !== 0) {
       uni.showToast({
@@ -67,7 +73,7 @@ request.interceptors.response.use(
     }
   },
   (error) => {
-    console.log(error); // for debug
+    console.log(error);
   }
 );
 

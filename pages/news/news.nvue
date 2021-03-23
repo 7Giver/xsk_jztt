@@ -1,6 +1,23 @@
 <template>
   <view class="tabs">
-    <!-- <u-navbar back-icon-color="#fff" :background="navbarBg"></u-navbar> -->
+    <nav-bar :bgColor="mainColor" :titleCenter="false">
+      <view slot="left" class="navbar-left" @click="goNextPage('sign')">
+        <image class="navbar-left-icon" src="/static/img/news/icon_qd.png" mode="scaleToFill" />
+      </view>
+      <view slot="default" class="search-wrap">
+        <image class="search-icon" src="/static/img/news/icon_ss.png" mode="scaleToFill" />
+        <input
+          class="search-input"
+          type="text"
+          v-model="searchStr"
+          :placeholder-style="inputStyle"
+          placeholder="输入关键字"
+        />
+      </view>
+      <view slot="right" class="navbar-right">
+        <image class="navbar-left-icon" src="/static/img/news/icon_fb.png" mode="scaleToFill" />
+      </view>
+    </nav-bar>
     <scroll-view
       ref="tabbar1"
       id="tab-bar"
@@ -68,6 +85,7 @@ const dom = weex.requireModule("dom");
 
 import { getRedBag } from "@/api/home.js";
 import newsPage from "./news-page.nvue";
+import navBar from "@/components/zhouWei-navBar";
 // import redBag from "@/components/red-bag/red-bag";
 
 // 缓存每页最多
@@ -78,6 +96,7 @@ const TAB_PRELOAD_OFFSET = 1;
 export default {
   components: {
     newsPage,
+    navBar,
     // redBag,
   },
   data() {
@@ -91,7 +110,10 @@ export default {
       indicatorLineWidth: 0,
       isTap: false,
       showBag: false, // 显示红包
+      searchStr: "", // 搜索字段
       bagDetail: {}, // 红包详情
+      mainColor: "#f04323",
+      inputStyle: "color:#999999;font-size:26rpx;",
       tabList: [
         {
           id: "tab01",
@@ -143,11 +165,11 @@ export default {
     this.switchTab(this.tabIndex);
     this.selectorQuery();
 
-    console.log(this.tabListSize);
+    // console.log(this.tabListSize);
   },
   onShow(...options) {
     // console.log(this.$Route);
-    this.getMyRedBag();
+    // this.getMyRedBag();
   },
   methods: {
     ontabtap(e) {
@@ -333,11 +355,23 @@ export default {
     clearTabData(index) {
       this.pageList[index].clear();
     },
+    // 功能页面跳转
+    goNextPage(type) {
+      switch (type) {
+        case "sign":
+          uni.navigateTo({ url: '/pages/task/sign' });
+          break;
+        default:
+          break;
+      }
+    },
     // 获取红包信息
     async getMyRedBag() {
-      let { data } = await getRedBag(this.vuex_token);
-      if (!data.register.money) {
-        return
+      // console.log(this.vuex_token); // nvue不能直接使用this.vuex_token
+      const token = this.$store.state.vuex_token;
+      let { data } = await getRedBag(token);
+      if (!data.register) {
+        return;
       }
       this.bagDetail = data.register;
       this.showBag = true;
@@ -347,7 +381,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$mainColor: #F04323;
+$mainColor: #f04323;
 /* #ifndef APP-PLUS */
 page {
   width: 100%;
@@ -356,6 +390,48 @@ page {
 }
 
 /* #endif */
+
+.header_title {
+  flex: 1;
+}
+
+.navbar-left {
+  padding-left: 30rpx;
+}
+
+.navbar-right {
+  padding-right: 30rpx;
+}
+
+.search-wrap {
+  /* #ifndef APP-PLUS-NVUE */
+  height: 70%;
+  /* #endif */
+  flex: 1;
+  padding: 0 20rpx;
+  font-weight: normal;
+  align-items: center;
+  flex-direction: row;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+}
+
+.search-input {
+  flex: 1;
+  color: #333333;
+  font-size: 30rpx;
+}
+
+.search-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
+}
+
+.navbar-left-icon {
+  width: 46rpx;
+  height: 46rpx;
+}
 
 .tabs {
   flex: 1;

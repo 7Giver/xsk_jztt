@@ -1,17 +1,5 @@
 <template>
   <view id="app" v-cloak>
-    <!-- <u-navbar
-      :is-back="false"
-      :is-fixed="false"
-      :border-bottom="false"
-      :background="{ background: '#F04323' }"
-    >
-      <view class="solt-wrap">
-        <view>任务中心</view>
-      </view>
-    </u-navbar>
-    <view class="task-page">
-    </view>-->
     <view class="header">
       <view class="main_title">任务中心</view>
       <view class="cash_wrap" @click="goNext('coin')">
@@ -189,22 +177,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#app {
-  // padding-top: env(safe-area-inset-top);
-  // background-image: url("/static/img/task/pic_rwbg.png");
-  // background-repeat: no-repeat;
-  // background-position: top;
-  // background-size: 100%;
-}
-.task-page {
-  height: 600rpx;
-}
 .header {
   background-image: url("/static/img/task/pic_rwbg.png");
   background-repeat: no-repeat;
   background-position: top;
   background-size: 100%;
-  padding-top: env(safe-area-inset-top);
+  // padding-top: env(safe-area-inset-top);
+  padding-top: var(--status-bar-height);
   padding-left: 30rpx;
   padding-right: 30rpx;
   padding-bottom: 180rpx;

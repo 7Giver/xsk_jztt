@@ -1,6 +1,6 @@
 <template>
-  <view id="app" v-cloak>
-    <u-navbar :is-back="false" :is-fixed="false" :border-bottom="false">
+  <view id="app">
+    <u-navbar :is-back="false" :border-bottom="false">
       <view class="navbar-right" slot="right">
         <view class="icon_wrap" @click="goNext('message')">
           <view class="left">
