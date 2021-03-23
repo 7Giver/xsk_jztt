@@ -292,6 +292,10 @@
 		{
 			"path": "pages/mine/creative",
 			"name": "creative"
+		},
+		{
+			"path": "pages/news/editor",
+			"name": "editor"
 		}
 	],
 	"globalStyle": {
@@ -330,16 +334,16 @@
 				"selectedIconPath": "/static/img/tabbar/icon_mine_on.png",
 				"text": "我的"
 			}
-		],
-		"midButton": {
-			"width": "69px",
-			"height": "47px",
-			//#ifdef MP-WEIXIN
-			"text": "文字",
-			//#endif
-			"iconPath": "/static/img/tabbar/icon_middle.png",
-			"iconWidth": "45px"
-			// "backgroundImage": "/static/img/tabbar/icon_middle.png"
-		}
+		]
+		// "midButton": {
+		// 	"width": "69px",
+		// 	"height": "47px",
+		// 	//#ifdef MP-WEIXIN
+		// 	"text": "文字",
+		// 	//#endif
+		// 	"iconPath": "/static/img/tabbar/icon_middle.png",
+		// 	"iconWidth": "45px"
+		// 	// "backgroundImage": "/static/img/tabbar/icon_middle.png"
+		// }
 	}
 }
