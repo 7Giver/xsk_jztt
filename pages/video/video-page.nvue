@@ -24,10 +24,7 @@
 </template>
 
 <script>
-  import {
-    friendlyDate
-  } from '@/common/util.js';
-
+  import { friendlyDate } from '@/common/util.js';
   import uniRefresh from '@/components/uni-list/uni-refresh.vue';
 	import noData from '@/components/nodata/nodata.nvue';
   import videoItem from './video-item.nvue';

@@ -15,7 +15,7 @@
         />
       </view>
       <view slot="right" class="navbar-right">
-        <image class="navbar-left-icon" src="/static/img/news/icon_fb.png" mode="scaleToFill" />
+        <!-- <image class="navbar-left-icon" src="/static/img/news/icon_fb.png" mode="scaleToFill" /> -->
       </view>
     </nav-bar>
     <scroll-view
@@ -169,7 +169,7 @@ export default {
   },
   onShow(...options) {
     // console.log(this.$Route);
-    // this.getMyRedBag();
+    this.getMyRedBag();
   },
   methods: {
     ontabtap(e) {
@@ -359,7 +359,7 @@ export default {
     goNextPage(type) {
       switch (type) {
         case "sign":
-          uni.navigateTo({ url: '/pages/task/sign' });
+          uni.navigateTo({ url: "/pages/task/sign" });
           break;
         default:
           break;
@@ -367,7 +367,7 @@ export default {
     },
     // 获取红包信息
     async getMyRedBag() {
-      // console.log(this.vuex_token); // nvue不能直接使用this.vuex_token
+      // console.log(this.vuex_token); // APP-NVUE不能直接使用this.vuex_token
       const token = this.$store.state.vuex_token;
       let { data } = await getRedBag(token);
       if (!data.register) {
@@ -390,10 +390,6 @@ page {
 }
 
 /* #endif */
-
-.header_title {
-  flex: 1;
-}
 
 .navbar-left {
   padding-left: 30rpx;

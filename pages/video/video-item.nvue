@@ -1,44 +1,54 @@
 <template>
   <view class="video-item" v-if="videoItem.video_link">
-    <view class="video_view" @click="goDetail">
-      <view class="title_wrap">
-        <view class="title">{{videoItem.title}}</view>
+    <view class="video-top" @click="goDetail">
+      <view class="video-content">
+        <image class="banner-img" :src="videoItem.banner" />
+        <!-- <video class="myVideo" :src="videoItem.video_link" @error="videoErrorCallback" controls></video> -->
+        <view class="video-play-wrap" :style="{ left: (windowWidth / 2) + 'px' }">
+          <image class="play-icon" src="/static/img/icon/icon_bf.png" />
+        </view>
+        <view class="video-title-wrap" :style="{ width: windowWidth + 'px' }">
+          <text class="video-title">{{videoItem.title}}</text>
+        </view>
       </view>
-      <!-- <video class="myVideo" :src="videoItem.video_link" @error="videoErrorCallback" controls></video> -->
-      <image class="banner" :src="videoItem.banner" />
-      <view class="play_wrap">
-        <u-icon name="play-right-fill"></u-icon>
-      </view>
-      <view class="video_time">{{videoItem.video_length}}</view>
+      <text class="video-time">{{videoItem.video_length}}</text>
     </view>
-    <view class="video_footer flex-row">
-      <view class="left_wrap flex-row">
-        <view class="user_wrap flex-row">
-          <u-avatar :src="videoItem.avatar" size="52"></u-avatar>
-          <view class="nickname">{{videoItem.nickname}}</view>
+    <view class="video-footer flex-row">
+      <view class="flex-row flex-center">
+        <view class="flex-row flex-center">
+          <image class="avatar" :src="videoItem.avatar || baseAvatar" mode="scaleToFill" />
+          <text class="nickname">{{videoItem.nickname}}</text>
         </view>
         <view class="inner_line"></view>
-        <view class="title_wrap">
-          <view class="foucs" v-if="videoItem.video_type == 0">{{videoItem.is_focus ? '已关注' : '关注'}}</view>
-          <view class="advert" v-else-if="videoItem.video_type == 1">广告</view>
+        <view class="footer-title-wrap">
+          <text
+            class="footer-number foucs"
+            v-if="videoItem.video_type == 0"
+          >{{videoItem.is_focus ? '已关注' : '关注'}}</text>
+          <text class="footer-number" v-else-if="videoItem.video_type == 1">广告</text>
         </view>
       </view>
-      <view class="right_wrap flex-row" v-if="videoItem.video_type == 0">
-        <view class="like_wrap">
+      <view class="flex-row footer-right" v-if="videoItem.video_type == 0">
+        <view class="flex-row flex-center">
           <view class="icon_wrap">
-            <u-icon name="thumb-up-fill" v-if="videoItem.is_like"></u-icon>
-            <u-icon name="thumb-up" v-else></u-icon>
+            <image
+              class="comment_icon"
+              src="/static/img/news/icon_dz_on.png"
+              mode="widthFix"
+              v-if="videoItem.is_like"
+            />
+            <image class="comment_icon" src="/static/img/news/icon_dz.png" mode="widthFix" v-else />
           </view>
-          <view :class="[videoItem.is_like ? 'number like' : 'number']">{{videoItem.like}}</view>
+          <text class="footer-number" :class="{ foucs: videoItem.is_like }">{{videoItem.like}}</text>
         </view>
-        <view class="comment_wrap">
+        <view class="flex-row flex-center comment_wrap">
           <view class="icon_wrap">
             <image class="comment_icon" :src="icon_pl" mode="widthFix" />
           </view>
-          <view class="number">{{videoItem.comment}}</view>
+          <text class="footer-number">{{videoItem.comment}}</text>
         </view>
-        <view class="more_wrap">
-          <u-icon name="more-dot-fill"></u-icon>
+        <view class="flex-row flex-center">
+          <image class="comment_icon" src="/static/img/icon/icon_more.png" mode="widthFix" />
         </view>
       </view>
     </view>
@@ -59,10 +69,18 @@ export default {
     return {
       icon_pl:
         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAWlBMVEUAAACZmZmYmJilpaWZmZmZmZmYmJiZmZmZmZmZmZmampqZmZmZmZmZmZmYmJiZmZmZmZmZmZmYmJiYmJiampqYmJiZmZmZmZmZmZmYmJibm5uampqWlpaZmZmuRwFPAAAAHXRSTlMA5ysG+cs+1LvaYhns84uHR8Ymwm9ubJ6TVBfMOEhvYg4AAADaSURBVCjPfZPbbsMgEEQXWGhxMY4dO7d2/v83K0o0QpTkPNiWjhnQ7iIk5NWomjUH6ZkiAE1JAcRJWjYP+N06EWf38r0JOc3wTVjwmE90isVJg1ugT7vNuEjHBfNfsvNY5B8LfAmb6qulLilnjggyICCWh5chK4Jk7DXHkrrLgSxnWClcQa5SsDiL0frj/ZPca5Qa0SQvSPpGGjBWHl9PHpQ80A3kRplx1IZ+kIlyVARKlm8gWfiRZMvGUiyb3UuOyVjWAfsOI8nRXI/aK5LQDbVpQOyuAxrizy8mVRDzoPmV7gAAAABJRU5ErkJggg==",
+      baseAvatar:
+        "data:image/jpg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjREMEQwRkY0RjgwNDExRUE5OTY2RDgxODY3NkJFODMxIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjREMEQwRkY1RjgwNDExRUE5OTY2RDgxODY3NkJFODMxIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NEQwRDBGRjJGODA0MTFFQTk5NjZEODE4Njc2QkU4MzEiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NEQwRDBGRjNGODA0MTFFQTk5NjZEODE4Njc2QkU4MzEiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAGBAQEBQQGBQUGCQYFBgkLCAYG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",
+      windowWidth: 0, //屏幕宽度
     };
   },
   mounted() {
-    // console.log(this.videoItem);
+    try {
+      const res = uni.getSystemInfoSync();
+      this.windowWidth = res.windowWidth;
+    } catch (e) {
+      // error
+    }
   },
   methods: {
     // 视频报错回调
@@ -74,7 +92,7 @@ export default {
       });
     },
     goDetail() {
-      this.$Router.push({ path: "/pages/video/detail" });
+      uni.navigateTo({ url: "/pages/video/detail" });
     },
   },
 };
@@ -84,140 +102,152 @@ export default {
 .flex-row {
   flex-direction: row;
 }
+
+.flex-center {
+  align-items: center;
+}
+
 .video-item {
-  width: 100%;
-  background: #fff;
+  flex: 1;
+  flex-direction: column;
+  background-color: #fff;
   margin-bottom: 15rpx;
 }
-.video_view {
-  position: relative;
-  .myVideo {
-    width: 100%;
-  }
-  .title_wrap {
-    position: absolute;
-    top: 0;
-    z-index: 99;
-    height: 140rpx;
-    padding: 16rpx 28rpx;
-    background: linear-gradient(to bottom, #242525 35%, transparent 100%);
-    .title {
-      width: 100%;
-      color: #fff;
-      font-size: 30rpx;
-      overflow: hidden;
-      word-break: break-all;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-    }
-  }
-  .icon_play {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100rpx;
-  }
-  .play_wrap {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 96rpx;
-    height: 96rpx;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .u-icon {
-      color: #fff;
-      font-size: 42rpx;
-      padding-left: 10rpx;
-    }
-  }
-  .banner {
-    width: 100%;
-    height: 400rpx;
-  }
-  .video_time {
-    position: absolute;
-    left: 30rpx;
-    bottom: 20rpx;
-    color: #fff;
-    padding: 0 16rpx;
-    font-size: 24rpx;
-    line-height: 40rpx;
-    letter-spacing: 1px;
-    border-radius: 100rpx;
-    background: rgba(0, 0, 0, 0.2);
-  }
+
+.myVideo {
+  // flex: 1;
 }
-.video_footer {
+
+.video-top {
+  position: relative;
+}
+
+.video-title-wrap {
+  position: absolute;
+  top: 0rpx;
+  z-index: 99;
+  height: 120rpx;
+  padding: 16rpx 28rpx;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+}
+
+.video-title {
+  color: #ffffff;
+  font-size: 30rpx;
+  /* #ifndef APP-PLUS-NVUE */
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  /* #endif */
+  /* #ifdef APP-PLUS-NVUE */
+  lines: 2;
+  /* #endif */
+}
+
+.video-content {
+  height: 380rpx;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.banner-img {
+  flex: 1;
+}
+
+.video-play-wrap {
+  position: absolute;
+  z-index: 99;
+  flex: 1;
+  height: 380rpx;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, 0);
+}
+
+.play-icon {
+  width: 96rpx;
+  height: 96rpx;
+}
+
+.video-time {
+  position: absolute;
+  left: 30rpx;
+  bottom: 20rpx;
+  color: #fff;
+  padding: 0 16rpx;
+  font-size: 24rpx;
+  line-height: 40rpx;
+  letter-spacing: 2rpx;
+  border-radius: 100rpx;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.video-footer {
   align-items: center;
   justify-content: space-between;
   padding: 12rpx 26rpx;
-  .left_wrap {
-    align-items: center;
-    .user_wrap {
-      align-items: center;
-      .u-avatar {
-        margin-right: 15rpx;
-      }
-      .nickname {
-        color: #333;
-        font-size: 28rpx;
-        font-weight: bold;
-      }
-    }
-    .inner_line {
-      width: 1rpx;
-      height: 28rpx;
-      margin: 0 20rpx;
-      background: #e6e6e6;
-    }
-    .title_wrap {
-      font-size: 28rpx;
-      .foucs {
-        color: #f04323;
-      }
-    }
-  }
-  .right_wrap {
-    > view {
-      align-items: center;
-      flex-direction: row;
-    }
-    .number {
-      font-size: 26rpx;
-    }
-    .icon_wrap {
-      margin-right: 10rpx;
-    }
-    .like_wrap {
-      .u-icon {
-        color: #f04323;
-        font-size: 32rpx;
-      }
-      .like {
-        color: #f04323;
-      }
-    }
-    .comment_wrap {
-      color: #999999;
-      margin: 0 46rpx;
-      .comment_icon {
-        width: 28rpx;
-      }
-    }
-    .more_wrap {
-      .u-icon {
-        color: #999;
-        font-size: 40rpx;
-      }
-    }
-  }
+}
+
+.nickname {
+  width: 170rpx;
+  color: #333333;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-left: 15rpx;
+  /* #ifndef APP-PLUS-NVUE */
+  overflow: hidden;
+  white-space: nowrap;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  /* #endif */
+  /* #ifdef APP-PLUS-NVUE */
+  lines: 1;
+  /* #endif */
+}
+
+.inner_line {
+  width: 1rpx;
+  height: 28rpx;
+  margin: 0 20rpx;
+  background-color: #e6e6e6;
+}
+
+.footer-title-wrap {
+  color: #999999;
+}
+
+.footer-right {
+  font-size: 32rpx;
+}
+
+.footer-number {
+  font-size: 26rpx;
+}
+
+.comment_wrap {
+  color: #999999;
+  margin: 0 46rpx;
+}
+
+.comment_icon {
+  width: 28rpx;
+}
+
+.icon_wrap {
+  margin-right: 10rpx;
+}
+
+.avatar {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+}
+
+.foucs {
+  color: #f04323;
 }
 </style>

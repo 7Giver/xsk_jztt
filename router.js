@@ -22,9 +22,10 @@ router.beforeEach((to, from, next) => {
   } catch (e) {}
   const hasToken = lifeData.vuex_token;
   if (hasToken) {
-    if (to.name === "login" || to.name === "index") {
+    // if (to.name === "login" || to.name === "index") {
+    if (to.name === "login") {
       // if is logged in, redirect to the home page
-      return next({ name: "news" });
+      return next({ name: "index" });
     } else {
       return next();
     }

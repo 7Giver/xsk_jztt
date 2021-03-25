@@ -3,10 +3,6 @@
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
 	"pages": [{
-			"path": "pages/index/index",
-			"name": "index"
-		},
-		{
 			"path": "pages/login/login",
 			"name": "login"
 		},
@@ -20,6 +16,10 @@
 				"navigationBarTitleText": "头像裁剪",
 				"navigationBarBackgroundColor": "#000000"
 			}
+		},
+		{
+			"path": "pages/index/index",
+			"name": "index"
 		},
 		{
 			"path": "pages/news/news",

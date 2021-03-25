@@ -4,7 +4,7 @@
     <view class="text-area">
       <text class="title" @click="toggleMessage('info')">{{ title }}</text>
     </view>
-    <view @click="goToLogin">登录</view>
+    <!-- <view @click="goToLogin">登录</view> -->
     <view class="">token：{{vuex_token}}</view>
     <!-- 对话框 -->
     <uni-popup
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { getAreaList } from "@/api/home.js";
+import { getAreaList, getSystemConfig } from "@/api/home.js";
 export default {
   data() {
     return {
@@ -35,19 +35,16 @@ export default {
       msgType: "info",
     };
   },
-  onLoad(...options) {
-    this.getPageData();
-  },
   onShow(...options) {
     // console.log(getAreaList);
+    this.vuex_token && this.getSystemDate(this.vuex_token);
   },
   methods: {
-    getPageData() {
-      // getAreaList({
-      //   tel: 12321312321
-      // }).then((res) => {
-      //   console.log(res);
-      // });
+    // 获取系统设置
+    async getSystemDate(token) {
+      let { data } = await getSystemConfig(token);
+      this.$u.vuex("vuex_setting", data);
+      uni.switchTab({ url: '/pages/news/news' });
     },
     goToLogin() {
       uni.switchTab({ url: '/pages/news/news' });

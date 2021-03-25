@@ -1,19 +1,23 @@
 <template>
   <view class="tabs">
-    <u-navbar :is-back="false" :border-bottom="false" :background="navbarBg">
-      <view class="slot-wrap">
-        <u-search
-          v-model="keyword"
-          shape="square"
-          height="60"
-          bg-color="#fff"
-          :show-action="true"
-          :animation="true"
-          :action-style="{color: '#fff'}"
-          :input-style="inputStyle"
-        ></u-search>
+    <nav-bar :bgColor="mainColor" :titleCenter="false">
+      <view slot="left" class="navbar-left" @click="goNextPage('sign')">
+        <image class="navbar-left-icon" src="/static/img/news/icon_qd.png" mode="scaleToFill" />
       </view>
-    </u-navbar>
+      <view slot="default" class="search-wrap">
+        <image class="search-icon" src="/static/img/news/icon_ss.png" mode="scaleToFill" />
+        <input
+          class="search-input"
+          type="text"
+          v-model="searchStr"
+          :placeholder-style="inputStyle"
+          placeholder="输入关键字"
+        />
+      </view>
+      <view slot="right" class="navbar-right">
+        <!-- <image class="navbar-left-icon" src="/static/img/news/icon_fb.png" mode="scaleToFill" /> -->
+      </view>
+    </nav-bar>
     <scroll-view
       ref="tabbar1"
       id="tab-bar"
@@ -78,6 +82,7 @@ const dom = weex.requireModule("dom");
 // #endif
 
 import videoPage from "./video-page.nvue";
+import navBar from "@/components/zhouWei-navBar";
 
 // 缓存每页最多
 const MAX_CACHE_DATA = 100;
@@ -87,6 +92,7 @@ const TAB_PRELOAD_OFFSET = 1;
 export default {
   components: {
     videoPage,
+    navBar,
   },
   data() {
     return {
@@ -101,6 +107,9 @@ export default {
       indicatorLineLeft: 0,
       indicatorLineWidth: 0,
       isTap: false,
+      searchStr: "", // 搜索字段
+      mainColor: "#f04323",
+      inputStyle: "color:#999999;font-size:26rpx;",
       tabList: [
         {
           id: "tab01",
@@ -338,6 +347,16 @@ export default {
     clearTabData(index) {
       this.pageList[index].clear();
     },
+    // 功能页面跳转
+    goNextPage(type) {
+      switch (type) {
+        case "sign":
+          uni.navigateTo({ url: "/pages/task/sign" });
+          break;
+        default:
+          break;
+      }
+    },
   },
 };
 </script>
@@ -353,13 +372,42 @@ page {
 
 /* #endif */
 
-.slot-wrap {
-  flex: 1;
-  padding: 0 30rpx;
+.navbar-left {
+  padding-left: 30rpx;
 }
 
-.u-search {
-  width: 100%;
+.navbar-right {
+  padding-right: 30rpx;
+}
+
+.search-wrap {
+  /* #ifndef APP-PLUS-NVUE */
+  height: 70%;
+  /* #endif */
+  flex: 1;
+  padding: 0 20rpx;
+  font-weight: normal;
+  align-items: center;
+  flex-direction: row;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+}
+
+.search-input {
+  flex: 1;
+  color: #333333;
+  font-size: 30rpx;
+}
+
+.search-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
+}
+
+.navbar-left-icon {
+  width: 46rpx;
+  height: 46rpx;
 }
 
 .tabs {

@@ -85,12 +85,13 @@ export default {
       if (this.isLoading) {
         return;
       }
+      const token = this.$store.state.vuex_token;
       let params = {
-        token: this.vuex_token,
+        token: token,
         page: 1,
         limit: 20,
         title: "",
-        cid: 5,
+        cid: "",
         type: 0
       };
       // let { data } = await getArticleList(params);
