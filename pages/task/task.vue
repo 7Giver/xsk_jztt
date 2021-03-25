@@ -64,9 +64,9 @@
           </view>
           <view class="u-flex btn_wrap">
             <view class="btn get" v-if="item.is_finish == 0">
-              <text v-if="item.id == 1">去阅读</text>
+              <text v-if="item.id == 1" @click="goNext('news')">去阅读</text>
               <text v-if="item.id == 2">去邀请</text>
-              <text v-if="item.id == 3">去完善</text>
+              <text v-if="item.id == 3" @click="goNext('personal')">去完善</text>
             </view>
             <view class="btn done" v-else-if="item.status == 1">已完成</view>
           </view>
@@ -96,9 +96,9 @@
           </view>
           <view class="u-flex btn_wrap">
             <view class="btn get" v-if="item.is_finish == 0">
-              <text v-if="item.id == 4">去阅读</text>
+              <text v-if="item.id == 4" @click="goNext('news')">去阅读</text>
               <text v-if="item.id == 5">去邀请</text>
-              <text v-if="item.id == 6">去签到</text>
+              <text v-if="item.id == 6" @click="goNext('sign')">去签到</text>
               <text v-if="item.id == 7">去提现</text>
             </view>
             <view class="btn done" v-else-if="item.status == 1">已完成</view>
@@ -167,6 +167,12 @@ export default {
           break;
         case "coin":
           this.$Router.push({ name: "myCoin" });
+          break;
+        case "news":
+          uni.switchTab({ url: "/pages/news/news" });
+          break;
+        case "personal":
+          this.$Router.push({ name: "personalData" });
           break;
         default:
           break;

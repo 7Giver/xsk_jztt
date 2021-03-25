@@ -6,13 +6,7 @@
       </view>
       <view slot="default" class="search-wrap">
         <image class="search-icon" src="/static/img/news/icon_ss.png" mode="scaleToFill" />
-        <input
-          class="search-input"
-          type="text"
-          v-model="searchStr"
-          :placeholder-style="inputStyle"
-          placeholder="输入关键字"
-        />
+        <input class="search-input" v-model="searchStr" placeholder="输入关键字" />
       </view>
       <view slot="right" class="navbar-right">
         <!-- <image class="navbar-left-icon" src="/static/img/news/icon_fb.png" mode="scaleToFill" /> -->
@@ -99,7 +93,6 @@ export default {
       showModal: false,
       keyword: "",
       navbarBg: { background: "#F04323" },
-      inputStyle: { color: "#333" },
       tabIndex: 0,
       cacheTab: [],
       scrollInto: "",
@@ -109,7 +102,7 @@ export default {
       isTap: false,
       searchStr: "", // 搜索字段
       mainColor: "#f04323",
-      inputStyle: "color:#999999;font-size:26rpx;",
+      inputStyle: "fontSize: 24rpx",
       tabList: [
         {
           id: "tab01",
@@ -385,7 +378,7 @@ page {
   height: 70%;
   /* #endif */
   flex: 1;
-  padding: 0 20rpx;
+  padding: 4rpx 20rpx;
   font-weight: normal;
   align-items: center;
   flex-direction: row;

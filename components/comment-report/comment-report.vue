@@ -1,7 +1,7 @@
 <template>
-  <view class="comment-report">
+  <view class="comment-report" :style="{ height: (screenHeight - keyboardHeight) + 'px'}">
     <view class="mask" @click="emitShowReport"></view>
-    <view class="content_wrap">
+    <view class="content_wrap" v-show="showContent">
       <view class="container">
         <u-input
           v-model="comment"
@@ -51,8 +51,35 @@ export default {
   data() {
     return {
       comment: "",
-      disabled: true,
+      keyboardHeight: 0, // 键盘高度
+      screenHeight: 0, // 屏幕高度
+      disabled: true, // 禁言发布
+      showContent: false, // 展示组件主体
     };
+  },
+  created() {
+    const res = uni.getSystemInfoSync();
+    this.screenHeight = res.screenHeight;
+    // 根据状态栏高度或品牌判断，是否直接展示主体
+    if (res.brand == "Apple" || !res.statusBarHeight) {
+      this.showContent = true;
+    }
+  },
+  mounted() {
+    uni.onKeyboardHeightChange((res) => {
+      if (res.height == 0) {
+        this.emitShowReport();
+      } else {
+        this.keyboardHeight = res.height;
+        this.showContent = true;
+      }
+    });
+    // 备用方案 显示主体
+    // if (!this.showContent) {
+    //   setTimeout(() => {
+    //     this.showContent = true;
+    //   }, 400);
+    // }
   },
   methods: {
     inputChange(e) {
@@ -65,6 +92,10 @@ export default {
     // 提交评论
     async postComment() {
       let str = this.$u.trim(this.comment); //去除两端空格
+      if (!this.articleId) {
+        this.$u.toast("文章ID不能为空");
+        return;
+      }
       if (!str) {
         this.$u.toast("评论不能为空");
         return;

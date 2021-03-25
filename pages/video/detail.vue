@@ -1,15 +1,21 @@
 <template>
   <view id="app">
-    <u-navbar :border-bottom="false">
+    <!-- <u-navbar :is-fixed="false" :border-bottom="false">
       <view class="u-flex navbar-right" slot="right">
         <u-icon name="star"></u-icon>
         <u-icon name="share"></u-icon>
       </view>
-    </u-navbar>
+    </u-navbar>-->
     <view class="detail-page">
-      <view class="header_wrap">
-        <view class="video_wrap">
-          <video id="myVideo" :src="detail.video" @error="videoErrorCallback" controls></video>
+      <view class="header_wrap" :style="{'padding-top': statusBarHeight + 'px'}">
+        <view class="video_wrap" >
+          <video
+            class="myVideo"
+            id="myVideo"
+            :src="detail.video"
+            @error="videoErrorCallback"
+            controls
+          ></video>
         </view>
         <view class="content">
           <view class="video_title u-line-2">{{detail.title}}</view>
@@ -61,10 +67,10 @@
             <view class="times">{{item.times}}</view>
           </view>
         </view>
-				<view class="showmore_wrap">
-					<view class="text">查看更多</view>
-					<u-icon name="arrow-down"></u-icon>
-				</view>
+        <view class="showmore_wrap">
+          <view class="text">查看更多</view>
+          <u-icon name="arrow-down"></u-icon>
+        </view>
       </view>
       <!-- 评论版块 -->
       <view class="comment_wrap">
@@ -82,6 +88,7 @@ export default {
   },
   data() {
     return {
+      statusBarHeight: 0, // 工具栏高度
       detail: {
         video:
           "https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4",
@@ -100,7 +107,7 @@ export default {
           avatar: "",
           name: "新闻小能手新闻小能手新闻小能手新闻小能手",
           play_time: 15.3,
-          times: '15:03',
+          times: "15:03",
           banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
         },
         {
@@ -108,7 +115,7 @@ export default {
           avatar: "",
           name: "新闻小能手",
           play_time: 8,
-          times: '15:03',
+          times: "15:03",
           banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
         },
         {
@@ -116,11 +123,26 @@ export default {
           avatar: "",
           name: "新闻小能手",
           play_time: 5.04,
-          times: '15:03',
+          times: "15:03",
           banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
         },
       ],
     };
+  },
+  onReady(options) {
+    try {
+      const res = uni.getSystemInfoSync();
+      console.log(res.statusBarHeight);
+      this.windostatusBarHeightwWidth = res.statusBarHeight;
+    } catch (e) {
+      // error
+    }
+    setTimeout(() => {
+      uni.setNavigationBarColor({
+        frontColor: "#ffffff",
+        // backgroundColor: "#000000",
+      });
+    }, 500);
   },
   methods: {
     // 视频报错回调
@@ -155,7 +177,8 @@ export default {
 .header_wrap {
   .video_wrap {
     width: 100%;
-    #myVideo {
+    // background-color: #000000;
+    .myVideo {
       width: 100%;
     }
   }
@@ -287,15 +310,15 @@ export default {
       }
     }
   }
-	.showmore_wrap {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 20rpx 0;
-		.u-icon {
-			color: #333333;
-			margin-left: 10rpx;
-		}
-	}
+  .showmore_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20rpx 0;
+    .u-icon {
+      color: #333333;
+      margin-left: 10rpx;
+    }
+  }
 }
 </style>

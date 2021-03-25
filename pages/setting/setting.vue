@@ -6,12 +6,12 @@
       </view>
     </u-navbar>
     <view class="setting-page">
-      <view class="u-m-t-10">
+      <!-- <view class="u-m-t-10">
         <u-cell-group :border="false">
           <u-cell-item title="账号管理" @click="goNext('account')"></u-cell-item>
           <u-cell-item title="编辑个人资料" @click="goNext('personal')"></u-cell-item>
         </u-cell-group>
-      </view>
+      </view> -->
       <view class="u-m-t-10" @click="showFontPicker=true">
         <u-cell-group :border="false">
           <u-cell-item title="字体大小" :value="fontText"></u-cell-item>
@@ -20,7 +20,7 @@
       </view>
       <view class="u-m-t-10">
         <u-cell-group :border="false">
-          <u-cell-item title="清除缓存" value="147.68MB"></u-cell-item>
+          <u-cell-item title="清除缓存" value="47.6MB"></u-cell-item>
           <u-cell-item title="检查更新" value="13.1.1版"></u-cell-item>
           <u-cell-item title="关于我们"></u-cell-item>
         </u-cell-group>

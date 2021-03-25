@@ -75,7 +75,14 @@
 		},
 		{
 			"path": "pages/video/detail",
-			"name": "videoDetail"
+			"name": "videoDetail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent"
+					}
+				}
+			}
 		},
 		{
 			"path": "pages/task/sign",
@@ -301,8 +308,8 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "九章头条",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8",
+		"navigationBarBackgroundColor": "#ffffff",
+		"backgroundColor": "#ffffff",
 		"navigationStyle": "custom"
 	},
 	"tabBar": {

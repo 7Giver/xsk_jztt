@@ -118,7 +118,7 @@
       ></mix-footer>
       <!-- 发表评论组件 -->
       <comment-report
-        v-show="showReport"
+        v-if="showReport"
         :articleId="detail.id"
         :parentId="parentId"
         @emitShowReport="goShowReport"

@@ -153,11 +153,11 @@ export default {
           icon: "/static/img/mine/icon_wdzp.png",
           title: "我的作品",
         },
-        {
-          id: 7,
-          icon: "/static/img/mine/icon_yjms.png",
-          title: "夜间模式",
-        },
+        // {
+        //   id: 7,
+        //   icon: "/static/img/mine/icon_yjms.png",
+        //   title: "夜间模式",
+        // },
         {
           id: 8,
           icon: "/static/img/mine/icon_fk.png",

@@ -4,7 +4,7 @@
     <view class="text-area">
       <text class="title" @click="toggleMessage('info')">{{ title }}</text>
     </view>
-    <!-- <view @click="goToLogin">登录</view> -->
+    <view @click="goToLogin">登录</view>
     <view class="">token：{{vuex_token}}</view>
     <!-- 对话框 -->
     <uni-popup
