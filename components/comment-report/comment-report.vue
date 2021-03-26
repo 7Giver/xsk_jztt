@@ -58,10 +58,12 @@ export default {
     };
   },
   created() {
-    const res = uni.getSystemInfoSync();
-    this.screenHeight = res.screenHeight;
+    this.screenHeight = this.vuex_system.screenHeight;
     // 根据状态栏高度或品牌判断，是否直接展示主体
-    if (res.brand == "Apple" || !res.statusBarHeight) {
+    if (
+      this.vuex_system.brand == "Apple" ||
+      !this.vuex_system.statusBarHeight
+    ) {
       this.showContent = true;
     }
   },

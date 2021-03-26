@@ -1,259 +1,128 @@
 <template>
   <view>
-    <u-navbar :is-back="false" :is-fixed="false" :border-bottom="false"></u-navbar>
-    <view class="tag-page">
+    <u-navbar :is-back="false" :border-bottom="false">
       <view class="title_wrap">
         <view class="main">选择你感兴趣的东西</view>
         <view class="off">最多可选5个</view>
       </view>
+    </u-navbar>
+    <view class="tag-page">
       <view class="tag_wrap">
         <view class="wrap_item" v-for="(item, index) in tagList" :key="index">
-          <view class="u-line-1 title">{{item.title}}</view>
+          <view class="u-line-1 title">{{item.name}}</view>
           <view class="u-flex tag_list">
             <view
               :class="[tag.checked ? 'u-line-1 tag on' : 'u-line-1 tag']"
-              v-for="(tag, i) in item.tag"
+              v-for="(tag, i) in item.subs"
               :key="i"
-              @click="taggleTag(item, tag)"
+              @click="taggleTag(tag)"
             >{{tag.name}}</view>
           </view>
         </view>
       </view>
-      <view class="next_btn" @click="getLogin">完成</view>
+      <view class="next_btn" @click="submitTags">完成</view>
     </view>
   </view>
 </template>
 
 <script>
-import { userLogin } from "@/api/home.js";
+import { getSecondTag, userLogin, postUserTag } from "@/api/home.js";
 export default {
   data() {
     return {
-      tagList: [
-        {
-          title: "电影AAAFDSFDSFDSFDSFDSFDSFDSFDSFWRD2REQWFWEF",
-          tag: [
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签内容撒旦范德萨范德萨发第三方撒旦范德萨爱的方式",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "是标签",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-          ],
-        },
-        {
-          title: "美食",
-          tag: [
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "是标签",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-          ],
-        },
-        {
-          title: "音乐",
-          tag: [
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "是标签",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-          ],
-        },
-        {
-          title: "运动",
-          tag: [
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "是标签",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-          ],
-        },
-        {
-          title: "学习",
-          tag: [
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-            {
-              name: "是标签",
-              checked: false,
-            },
-            {
-              name: "标签内容",
-              checked: false,
-            },
-            {
-              name: "标签",
-              checked: false,
-            },
-          ],
-        },
-      ],
+      ids: "", // 一级标签
+      tagList: [],
     };
   },
+  onLoad(options) {
+    if (options.ids) {
+      this.ids = options.ids;
+      this.getTagList(options.ids);
+    }
+  },
   methods: {
-    async getLogin() {
-      let params = {
-        mobile: this.vuex_user.tel || 13023367790,
-        code: "1234",
-        invite: "",
-        openid: "",
-      };
-      let { data } = await userLogin(params);
-      this.$u.vuex("vuex_token", data.token);
-      this.$u.toast("登录成功");
-      setTimeout(() => {
-        uni.switchTab({ url: "/pages/news/news" });
-      }, 700);
-    },
     // 选中标签
-    taggleTag(item, tag) {
-      let arr = item.tag;
-      let resutlt = arr.filter((item) => item.checked);
+    taggleTag(tag) {
+      let resutlt = [];
+      this.tagList.forEach((item) => {
+        item.subs.forEach((subs) => {
+          subs.checked && resutlt.push(subs);
+        });
+      });
       if (resutlt.length < 5 || tag.checked) {
         tag.checked = !tag.checked;
       } else {
         this.$u.toast("不能超过5个");
       }
     },
+    // 获取兴趣标签
+    async getTagList(str) {
+      let { data } = await getSecondTag(str);
+      let result = data.list;
+      result.forEach((item) => {
+        item.subs.forEach((v) => {
+          this.$set(v, "checked", false);
+        });
+      });
+      this.tagList = result;
+    },
+    // 提交用户标签
+    async submitTags() {
+      let targetArr = [];
+      this.tagList.forEach((item) => {
+        item.subs.forEach((subs) => {
+          subs.checked && targetArr.push(subs);
+        });
+      });
+      if (!targetArr.length) {
+        this.$u.toast("请选择标签");
+        return;
+      }
+      let arr = targetArr.map((item) => `${item.id},${item.parent_id}`);
+      let result = arr.join(",").split(",");
+      let newArr = new Set([...result]);
+      let ids = [...newArr].join(",");
+      uni.showLoading({
+        title: "登录中...",
+      });
+      let params = {
+        token: this.vuex_token,
+        ids: ids,
+      };
+      let { data } = await postUserTag(params);
+      this.$u.vuex("vuex_user.has_label", 1);
+      setTimeout(() => {
+        uni.hideLoading();
+        uni.switchTab({ url: "/pages/news/news" });
+      }, 500);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-page {
-  padding-bottom: 80rpx;
-}
-.navbar-right {
-  margin-right: 30rpx;
+.title_wrap {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 40rpx;
+  .main {
+    color: #333333;
+    font-size: 36rpx;
+    font-weight: bold;
+  }
+  .off {
+    color: #666666;
+    font-size: 24rpx;
+  }
 }
 .tag-page {
   position: relative;
   padding: 0 40rpx;
-  .title_wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .main {
-      color: #333333;
-      font-size: 36rpx;
-      font-weight: bold;
-    }
-    .off {
-      color: #666666;
-      font-size: 24rpx;
-    }
-  }
+  padding-bottom: 150rpx;
   .tag_wrap {
-    padding-top: 40rpx;
+    padding-top: 30rpx;
     .wrap_item {
       padding: 24rpx 30rpx;
       margin-bottom: 30rpx;
@@ -273,7 +142,7 @@ page {
           line-height: 50rpx;
           text-align: center;
           padding: 0 3%;
-          margin: 20rpx 5% 0 0;
+          margin: 20rpx 4% 0 0;
           border-radius: 8rpx;
           border: 1px solid #999999;
           &:nth-child(4n) {
@@ -288,8 +157,10 @@ page {
     }
   }
   .next_btn {
+    position: sticky;
+    bottom: 120rpx;
     width: 100%;
-    margin: 60rpx auto 0;
+    margin: 80rpx auto 0;
     color: #fff;
     font-size: 30rpx;
     line-height: 80rpx;

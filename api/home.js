@@ -60,6 +60,30 @@ export function getUnlikeList() {
 }
 
 /**
+ * 兴趣一级标签
+ */
+export function getFirstTag() {
+  return get(`/${version}/default/category`);
+}
+
+/**
+ * 兴趣二级标签
+ * @param {ids} token 选择的一级标签 (必填)
+ */
+export function getSecondTag(str) {
+  return get(`/${version}/default/sub-category`, { ids: str });
+}
+
+/**
+ * 用户标签提交
+ * @param {string} token 登录Token (必填)
+ * @param {string} ids 用户选择的标签id (必填)
+ */
+export function postUserTag(params) {
+  return post(`/${version}/label/submit`, params);
+}
+
+/**
  * 消息中心
  * @param {string} token 登录Token (必填)
  */
@@ -334,7 +358,7 @@ export function articleComment(params) {
  * @param {string} limit 查询数量 (必填)
  * @param {string} comment_id 父级评论id (必填)
  */
- export function secondComment(params) {
+export function secondComment(params) {
   return get(`/${version}/comment/sub-list`, params);
 }
 

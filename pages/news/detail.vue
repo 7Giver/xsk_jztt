@@ -254,8 +254,8 @@ export default {
         uid: this.vuex_user.id,
       };
       let { data } = await getArticleDetail(params);
-      this.userinfo = data.userinfo;
-      this.detail = data;
+      this.userinfo = data.userinfo || {};
+      this.detail = data || {};
       this.$nextTick(() => {
         this.$refs.uReadMore.init();
       });

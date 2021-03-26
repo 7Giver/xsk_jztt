@@ -30,6 +30,7 @@ const store = new Vuex.Store({
     vuex_user: lifeData.vuex_user ? lifeData.vuex_user : { name: "明月" },
     vuex_token: lifeData.vuex_token ? lifeData.vuex_token : "",
     vuex_setting: lifeData.vuex_setting ? lifeData.vuex_setting : { font: "中", article_seconds: 15 },
+    vuex_system: {},
     vuex_version: "1.0.1",
   },
   mutations: {

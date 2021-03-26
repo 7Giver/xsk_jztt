@@ -1,14 +1,10 @@
 <template>
-  <view id="app">
+  <view>
     <u-navbar :is-back="false" :border-bottom="false">
       <view class="navbar-right" slot="right">
         <view>遇到问题</view>
       </view>
     </u-navbar>
-    <!-- <view class="u-flex header">
-      <u-icon name="close" @click="closeLogin"></u-icon>
-      <view>遇到问题</view>
-    </view> -->
     <view class="container">
       <view class="top_wrap">
         <view class="u-flex title_wrap">
@@ -28,28 +24,27 @@
       </view>
       <view class="mumber_wrap">
         <view class="u-flex no_code" v-if="!sendCode">
-          <view class="u-flex left_wrap" @click="showZone = true">
-            <view class="zone_number">+{{ zoneNumber }}</view>
+          <view class="u-flex left_wrap">
+            <view class="zone_number">
+              <picker @change="pickerChange" :value="actionIndex" :range="actionSheet">
+                <view class="uni-input">+{{actionSheet[actionIndex]}}</view>
+              </picker>
+            </view>
             <u-icon name="arrow-down"></u-icon>
           </view>
           <view class="input_wrap">
-            <u-input
+            <input
               v-model="phone"
-              :custom-style="{ color: '#333', 'font-size': '40rpx' }"
+              placeholder-class="phcolor"
+              maxlength="13"
               placeholder="手机号"
-              maxlength="15"
               @input="phoneChange"
             />
           </view>
         </view>
         <view class="u-flex has_code" v-else>
           <view class="input_wrap">
-            <u-input
-              v-model="verCode"
-              :custom-style="{ color: '#333', 'font-size': '40rpx' }"
-              placeholder="输入验证码"
-              maxlength="10"
-            />
+            <input v-model="verCode" placeholder-class="phcolor" maxlength="6" placeholder="输入验证码" />
           </view>
           <view class="ver_code" @click="getCode">{{ tips }}</view>
         </view>
@@ -68,14 +63,6 @@
       <u-divider>微信登录</u-divider>
       <image class="icon_wx" src="/static/img/login/icon_wx.png" mode="widthFix" />
     </view>
-    <!-- 选择区号 -->
-    <u-select
-      v-model="showZone"
-      :list="actionSheetList"
-      :default-value="zoneKey"
-      :safe-area-inset-bottom="true"
-      @confirm="zoneConfirm"
-    ></u-select>
     <!-- 验证码倒计时 -->
     <u-verification-code
       ref="uCode"
@@ -88,36 +75,23 @@
 </template>
 
 <script>
-import { getOauthCode } from "@/api/home.js";
+import { getOauthCode, userLogin, getUserInfo } from "@/api/home.js";
 export default {
   data() {
     return {
-      phone: null, //显示手机号
-      zoneNumber: 86, //手机区号
-      seconds: 20, //验证码倒计时
-      phoneNumber: "", //去空格手机号
-      verCode: "", //输入的验证码
-      tips: "", //验证码提示语
-      zoneKey: [0], //区号键
-      showZone: false, //区号选择器
+      tips: "", // 验证码提示语
+      verCode: "", // 输入的验证码
+      phoneNumber: "", // 去空格手机号
+      phone: null, // 显示手机号
+      seconds: 20, // 验证码倒计时
       checkPhone: false, // 验证手机号
       sendCode: false, //是否发送验证码
-      actionSheetList: [
-        {
-          value: 0,
-          label: 86,
-        },
-        {
-          value: 1,
-          label: 87,
-        },
-      ],
+      actionIndex: 0, // 区号下标
+      actionSheet: [86, 87], // 区号数组
     };
   },
   onLoad(options) {
     // console.log(this.$Route.query);
-    // console.log(this.$u.vuex);
-    // console.log(this.$http);
   },
   methods: {
     // 关闭登录
@@ -129,19 +103,18 @@ export default {
     eidtPhone() {
       console.log("edit");
     },
-    // 区号选择
-    zoneConfirm(e) {
-      let obj = e[0];
-      this.zoneNumber = obj.label;
-      this.zoneKey = [obj.value];
+    // 区号监听
+    pickerChange(e) {
+      this.actionIndex = e.target.value;
     },
     // 监听手机号
     phoneChange(e) {
-      let length = e.length;
-      if (length === 3 || length === 8) {
+      // console.log(e);
+      let phone = e.target.value;
+      if (phone.length === 3 || phone.length === 8) {
         this.phone += " ";
       }
-      let str = this.phone.replace(/\s*/g, "");
+      let str = phone.replace(/\s*/g, "");
       if (this.$common.isPhoneNumber(str)) {
         this.checkPhone = true;
         this.phoneNumber = str;
@@ -152,7 +125,10 @@ export default {
     // 点击下一步
     goReadyTo() {
       if (this.sendCode) {
-        this.$Router.push({ name: "tagIndex" });
+        uni.showLoading({
+          title: "加载中...",
+        });
+        this.getLogin();
       } else {
         this.sendCode = true;
       }
@@ -172,19 +148,45 @@ export default {
         title: "正在获取验证码",
       });
       let { data } = await getOauthCode(this.phoneNumber);
-      uni.hideLoading();
-      this.sendCode = true;
-      this.$u.toast("验证码已发送");
-      this.$refs.uCode.start();
+      setTimeout(() => {
+        uni.hideLoading();
+        this.sendCode = true;
+        this.$u.toast("验证码已发送");
+        this.$refs.uCode.start();
+      }, 300);
+    },
+    // 登录接口
+    async getLogin() {
+      let params = {
+        mobile: this.phoneNumber,
+        code: "1234",
+        invite: "",
+        openid: "",
+      };
+      let { data } = await userLogin(params);
+      this.$u.vuex("vuex_token", data.token);
+      this.getUserData();
+    },
+    // 获取用户数据
+    async getUserData() {
+      let { data } = await getUserInfo(this.vuex_token);
+      this.$u.vuex("vuex_user", data);
+      setTimeout(() => {
+        uni.hideLoading();
+        if (data.has_label) {
+          uni.switchTab({ url: "/pages/news/news" });
+        } else {
+          this.$Router.push({ name: "tagIndex" });
+        }
+      }, 500);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-page {
-  // position: relative;
-}
+$mianColor: #f04323;
+$offColor: #ffaa9a;
 .navbar-right {
   margin-right: 30rpx;
   display: flex;
@@ -226,37 +228,31 @@ page {
     margin-top: 90rpx;
     padding-bottom: 20rpx;
     border-bottom: 1px solid #e6e6e6;
+    .phcolor {
+      color: #999999;
+      font-size: 34rpx;
+    }
+    .input_wrap {
+      margin-left: 30rpx;
+      input {
+        color: #333333;
+        font-size: 40rpx;
+      }
+    }
     .no_code {
       .left_wrap {
         font-size: 34rpx;
         .zone_number {
-          margin-right: 10rpx;
+          width: 74rpx;
         }
         .u-icon {
           color: #333;
           font-size: 24rpx;
         }
       }
-      .input_wrap {
-        margin-left: 30rpx;
-        .u-input {
-          u-input {
-            font-size: 40rpx;
-          }
-        }
-      }
     }
     .has_code {
       justify-content: space-between;
-      .input_wrap {
-        flex: 1;
-        padding-right: 24rpx;
-        .u-input {
-          u-input {
-            font-size: 40rpx;
-          }
-        }
-      }
       .ver_code {
         white-space: nowrap;
       }
@@ -271,12 +267,12 @@ page {
     margin-top: 60rpx;
     .u-btn {
       color: #ffffff;
-      border-color: #f04323;
-      background-color: #f04323;
+      border-color: $mianColor;
+      background-color: $mianColor;
     }
     .u-btn--default--disabled {
-      border-color: #ffaa9a;
-      background-color: #ffaa9a;
+      border-color: $offColor;
+      background-color: $offColor;
     }
   }
 }

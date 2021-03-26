@@ -1,8 +1,9 @@
 <template>
   <view>
-    <u-navbar :is-back="false" :is-fixed="true" :border-bottom="false"></u-navbar>
-    <view class="tag-page">
+    <u-navbar :is-back="false" :is-fixed="true" :border-bottom="false">
       <view class="mian_title">选择你感兴趣的东西</view>
+    </u-navbar>
+    <view class="tag-page">
       <view class="tag_wrap">
         <view
           class="u-flex item"
@@ -16,53 +17,49 @@
           </view>
         </view>
       </view>
-      <view class="next_btn" @click="goNext('tagOff')">下一步</view>
+      <view class="next_btn" @click="goSecondTag">下一步</view>
     </view>
   </view>
 </template>
 
 <script>
+import { getFirstTag } from "@/api/home.js";
 export default {
   data() {
     return {
-      tagList: [
-        {
-          title: "电影AAA",
-          checked: false,
-        },
-        {
-          title: "美食",
-          checked: false,
-        },
-        {
-          title: "音乐",
-          checked: false,
-        },
-        {
-          title: "运动",
-          checked: false,
-        },
-        {
-          title: "学习",
-          checked: false,
-        },
-      ],
+      tagList: [],
     };
+  },
+  onShow() {
+    this.getTagList();
   },
   methods: {
     // 点击选中
     checkItem(item) {
       item.checked = !item.checked;
     },
-    // 跳转页面
-    goNext(type) {
-      switch (type) {
-        case "tagOff":
-          this.$Router.push({ path: "/pages/login/tagOff" });
-          break;
-        default:
-          break;
-      }
+    // 跳转下一页面
+    goSecondTag() {
+      let targetArr = this.tagList.filter((item) => item.checked);
+      let arr = targetArr.map((item) => item.id);
+      let result = arr.join(",");
+      this.$Router.push({
+        path: "/pages/login/tagOff",
+        query: {
+          ids: result,
+        },
+      });
+    },
+    // 获取兴趣标签
+    async getTagList() {
+      let { data } = await getFirstTag();
+      this.tagList = data.list.map((item) => {
+        return {
+          id: item.id,
+          title: item.name,
+          checked: false,
+        };
+      });
     },
   },
 };
@@ -70,18 +67,15 @@ export default {
 
 <style lang="scss" scoped>
 $mianColor: #f04323;
-.navbar-right {
-  margin-right: 30rpx;
-  display: flex;
+.mian_title {
+  color: #333333;
+  font-size: 36rpx;
+  font-weight: bold;
+  padding: 0 40rpx;
 }
 .tag-page {
   position: relative;
-  padding: 0 40rpx;
-  .mian_title {
-    color: #333333;
-    font-size: 36rpx;
-    font-weight: bold;
-  }
+  padding: 0 40rpx 120rpx;
   .tag_wrap {
     padding-top: 40rpx;
     .item {
@@ -110,11 +104,10 @@ $mianColor: #f04323;
     }
   }
   .next_btn {
-    position: fixed;
-    bottom: 12%;
-    left: 50%;
-    transform: translate(-50%, 0);
+    position: sticky;
+    bottom: 120rpx;
     width: 80%;
+    margin: 90rpx auto 0;
     color: #fff;
     font-size: 30rpx;
     line-height: 80rpx;

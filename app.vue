@@ -4,6 +4,11 @@ import { getSystemConfig } from "@/api/home.js";
 export default {
   onLaunch: function () {
     // console.log('App Launch');
+
+    // 调取设备信息
+    const systemInfo = uni.getSystemInfoSync();
+    this.$u.vuex("vuex_system", systemInfo);
+
     // #ifdef APP-NVUE
     plus.screen.lockOrientation("portrait-primary");
 
@@ -42,6 +47,7 @@ export default {
     });
     // #endif
 
+    // 请求用户设置
     const token = store.state.vuex_token;
     token && this.getSystemDate(token);
   },
