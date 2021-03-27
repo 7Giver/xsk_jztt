@@ -51,8 +51,9 @@ export default {
       isLoading: false,
       loadingText: '加载中...',
       isNoData: false,
-      pulling: false,
       angle: 0,
+      limit: 20,
+      pageIndex: 1,
       loadingMoreText: {
         contentdown: '',
         contentrefresh: '',
@@ -85,79 +86,112 @@ export default {
       if (this.isLoading) {
         return;
       }
-      const token = this.$store.state.vuex_token;
-      let params = {
-        token: token,
-        page: 1,
-        limit: 20,
-        title: "",
-        cid: "",
-        type: 0
-      };
-      // let { data } = await getArticleList(params);
-
       this.isLoading = true;
       this.isNoData = false;
       this.requestParams.time = new Date().getTime() + '';
 
       var startTime = new Date();
-      uni.request({
-        // url: this.$host + 'api/news',
-        url: 'https://unidemo.dcloud.net.cn/api/news',
-        data: this.requestParams,
-        success: (result) => {
-          var endTime = new Date();
-          //console.log("request time " + new Date(endTime - startTime).getTime());
-          const data = result.data;
-          this.isNoData = (data.length <= 0);
 
-          const data_list = data.map((news) => {
-            return {
-              id: this.newGuid() + news.id,
-              newsid: news.id,
-              article_type: 1,
-              datetime: friendlyDate(new Date(news.published_at.replace(/\-/g, '/')).getTime()),
-              title: news.title,
-              image_url: news.cover,
-              source: news.author_name,
-              comment_count: news.comments_count,
-              post_id: news.post_id
-            };
-          });
-
-          if (refresh) {
-            this.dataList = data_list;
-            this.requestParams.minId = 0;
-          } else {
-            this.dataList = this.dataList.concat(data_list);
-            this.requestParams.minId = data[data.length - 1].id;
-          }
-
-          if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
-            this.goDetail(this.dataList[0]);
-          }
-        },
-        fail: (err) => {
-          //console.log(err);
-          if (this.dataList.length == 0) {
-            this.isNoData = true;
-          }
-        },
-        complete: (e) => {
-          this.isLoading = false;
-          if (refresh) {
-            this.refreshing = false;
-            this.refreshFlag = false;
-            this.refreshText = "已刷新";
-            if (this.pullTimer) {
-              clearTimeout(this.pullTimer);
-            }
-            this.pullTimer = setTimeout(() => {
-              this.pulling = false;
-            }, 1000);
-          }
-        }
+      const token = this.$store.state.vuex_token;
+      let params = {
+        token: token,
+        page: this.pageIndex,
+        limit: this.limit,
+        title: "",  // 搜索关键词
+        cid: "", // 分类id
+        type: 0 // 0或不传--文章、视频，1--文章，2--视频
+      };
+      let { data } = await getArticleList(params);
+      const data_list = data.list.map((news) => {
+        return {
+          id: this.newGuid() + news.id,
+          newsid: news.id,
+          article_type: 1,
+          datetime: friendlyDate(news.add_time),
+          title: news.title,
+          image_url: news.cover,
+          source: news.author_name,
+          comment_count: news.comments,
+        };
       });
+      if (refresh) {
+        this.pageIndex = 1;
+        this.dataList = data_list;
+      } else {
+        this.pageIndex++;
+        this.dataList = this.dataList.concat(data_list);
+      }
+      this.isLoading = false;
+      if (refresh) {
+        this.refreshing = false;
+        this.refreshFlag = false;
+        this.refreshText = "已刷新";
+        if (this.pullTimer) {
+          clearTimeout(this.pullTimer);
+        }
+        this.pullTimer = setTimeout(() => {
+          this.pulling = false;
+        }, 1000);
+      }
+
+      // uni.request({
+      //   // url: this.$host + 'api/news',
+      //   url: 'https://unidemo.dcloud.net.cn/api/news',
+      //   data: this.requestParams,
+      //   success: (result) => {
+      //     var endTime = new Date();
+      //     // console.log("request time " + new Date(endTime - startTime).getTime());
+      //     const data = result.data;
+      //     this.isNoData = (data.length <= 0);
+
+      //     const data_list = data.map((news) => {
+      //       return {
+      //         id: this.newGuid() + news.id,
+      //         newsid: news.id,
+      //         article_type: 1,
+      //         datetime: friendlyDate(new Date(news.published_at.replace(/\-/g, '/')).getTime()),
+      //         title: news.title,
+      //         image_url: news.cover,
+      //         source: news.author_name,
+      //         comment_count: news.comments_count,
+      //         post_id: news.post_id
+      //       };
+      //     });
+
+      //     if (refresh) {
+      //       this.dataList = data_list;
+      //       this.requestParams.minId = 0;
+      //     } else {
+      //       this.dataList = this.dataList.concat(data_list);
+      //       this.requestParams.minId = data[data.length - 1].id;
+      //     }
+
+      //     if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
+      //       this.goDetail(this.dataList[0]);
+      //     }
+      //   },
+      //   fail: (err) => {
+      //     //console.log(err);
+      //     if (this.dataList.length == 0) {
+      //       this.isNoData = true;
+      //     }
+      //   },
+      //   complete: (e) => {
+      //     console.log(111);
+      //     this.isLoading = false;
+      //     if (refresh) {
+      //       this.refreshing = false;
+      //       this.refreshFlag = false;
+      //       this.refreshText = "已刷新";
+      //       if (this.pullTimer) {
+      //         clearTimeout(this.pullTimer);
+      //       }
+      //       this.pullTimer = setTimeout(() => {
+      //         this.pulling = false;
+      //       }, 1000);
+      //     }
+      //   }
+      // });
     },
     loadMore(e) {
       this.loadData();
@@ -176,7 +210,7 @@ export default {
         //   url: '/pages/news/detail?query=' + encodeURIComponent(JSON.stringify(detail))
         // });
         uni.navigateTo({
-          url: '/pages/news/detail'
+          url: `/pages/news/detail?newsId=${detail.newsid}`
         });
       }
     },

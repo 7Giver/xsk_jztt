@@ -4,7 +4,7 @@
       <view class="mian_title">选择你感兴趣的东西</view>
     </u-navbar>
     <view class="tag-page">
-      <view class="tag_wrap">
+      <view class="u-flex tag_wrap">
         <view
           class="u-flex item"
           v-for="(item, index) in tagList"
@@ -41,6 +41,10 @@ export default {
     // 跳转下一页面
     goSecondTag() {
       let targetArr = this.tagList.filter((item) => item.checked);
+      if (!targetArr.length) {
+        this.$u.toast("请选择标签");
+        return;
+      }
       let arr = targetArr.map((item) => item.id);
       let result = arr.join(",");
       this.$Router.push({
@@ -77,8 +81,11 @@ $mianColor: #f04323;
   position: relative;
   padding: 0 40rpx 120rpx;
   .tag_wrap {
+    flex-wrap: wrap;
+    justify-content: space-between;
     padding-top: 40rpx;
     .item {
+      width: 47%;
       justify-content: space-between;
       padding: 24rpx 30rpx;
       margin-bottom: 30rpx;
@@ -107,7 +114,7 @@ $mianColor: #f04323;
     position: sticky;
     bottom: 120rpx;
     width: 80%;
-    margin: 90rpx auto 0;
+    margin: 70rpx auto 0;
     color: #fff;
     font-size: 30rpx;
     line-height: 80rpx;

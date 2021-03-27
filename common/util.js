@@ -55,8 +55,8 @@ function isWeiXinBrowser() {
  * H5授权跳转
  */
 function authH5() {
-	// let url = location.origin + "/" + location.hash.split("?")[0];
-	let url = location.href;
+  // let url = location.origin + "/" + location.hash.split("?")[0];
+  let url = location.href;
   location.href = `${baseURL}?r=api/direct/authorize&path=${encodeURIComponent(url)}`;
   return false;
 }
@@ -65,8 +65,8 @@ function authH5() {
  * 微信分享链接
  */
 function WxShareUrl(id) {
-	let url = location.origin + "/" + location.hash.split("?")[0];
-	// let url = `${location.origin}/${location.hash.split("?")[0]}?bid=${id}`
+  let url = location.origin + "/" + location.hash.split("?")[0];
+  // let url = `${location.origin}/${location.hash.split("?")[0]}?bid=${id}`
   return url;
 }
 
@@ -77,14 +77,7 @@ function getRoute() {
 }
 
 // 提示框
-function modelShow(
-  title = "提示",
-  content = "确认执行此操作吗?",
-  callback = () => {},
-  showCancel = true,
-  cancelText = "取消",
-  confirmText = "确定"
-) {
+function modelShow(title = "提示", content = "确认执行此操作吗?", callback = () => {}, showCancel = true, cancelText = "取消", confirmText = "确定") {
   uni.showModal({
     title: title,
     content: content,
@@ -108,16 +101,10 @@ function modelShow(
 function timeToDate(date, flag = false) {
   var date = new Date(date * 1000); //如果date为13位不需要乘1000
   var Y = date.getFullYear() + "-";
-  var M =
-    (date.getMonth() + 1 < 10
-      ? "0" + (date.getMonth() + 1)
-      : date.getMonth() + 1) + "-";
+  var M = (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) + "-";
   var D = (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
-  var h =
-    (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
-  var m =
-    (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
-    ":";
+  var h = (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
+  var m = (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + ":";
   var s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
   if (flag) {
     return Y + M + D;
@@ -136,66 +123,55 @@ function isPhoneNumber(str) {
   }
 }
 
-// 距今时间格式
+// 距今时间格式(s)
 function friendlyDate(timestamp) {
-	var formats = {
-		'year': '%n% 年前',
-		'month': '%n% 月前',
-		'day': '%n% 天前',
-		'hour': '%n% 小时前',
-		'minute': '%n% 分钟前',
-		'second': '%n% 秒前',
-	};
+  var formats = {
+    year: "%n% 年前",
+    month: "%n% 月前",
+    day: "%n% 天前",
+    hour: "%n% 小时前",
+    minute: "%n% 分钟前",
+    second: "%n% 秒前",
+  };
 
-	var now = Date.now();
-	var seconds = Math.floor((now - timestamp) / 1000);
-	var minutes = Math.floor(seconds / 60);
-	var hours = Math.floor(minutes / 60);
-	var days = Math.floor(hours / 24);
-	var months = Math.floor(days / 30);
-	var years = Math.floor(months / 12);
+  var now = Date.now() / 1000;
+  var seconds = Math.floor(now - timestamp);
+  var minutes = Math.floor(seconds / 60);
+  var hours = Math.floor(minutes / 60);
+  var days = Math.floor(hours / 24);
+  var months = Math.floor(days / 30);
+  var years = Math.floor(months / 12);
 
-	var diffType = '';
-	var diffValue = 0;
-	if (years > 0) {
-		diffType = 'year';
-		diffValue = years;
-	} else {
-		if (months > 0) {
-			diffType = 'month';
-			diffValue = months;
-		} else {
-			if (days > 0) {
-				diffType = 'day';
-				diffValue = days;
-			} else {
-				if (hours > 0) {
-					diffType = 'hour';
-					diffValue = hours;
-				} else {
-					if (minutes > 0) {
-						diffType = 'minute';
-						diffValue = minutes;
-					} else {
-						diffType = 'second';
-						diffValue = seconds === 0 ? (seconds = 1) : seconds;
-					}
-				}
-			}
-		}
-	}
-	return formats[diffType].replace('%n%', diffValue);
+  var diffType = "";
+  var diffValue = 0;
+  if (years > 0) {
+    diffType = "year";
+    diffValue = years;
+  } else {
+    if (months > 0) {
+      diffType = "month";
+      diffValue = months;
+    } else {
+      if (days > 0) {
+        diffType = "day";
+        diffValue = days;
+      } else {
+        if (hours > 0) {
+          diffType = "hour";
+          diffValue = hours;
+        } else {
+          if (minutes > 0) {
+            diffType = "minute";
+            diffValue = minutes;
+          } else {
+            diffType = "second";
+            diffValue = seconds === 0 ? (seconds = 1) : seconds;
+          }
+        }
+      }
+    }
+  }
+  return formats[diffType].replace("%n%", diffValue);
 }
 
-export {
-  deepCopy,
-  modelShow,
-  timeToDate,
-  isPhoneNumber,
-  isWeiXinBrowser,
-  getQueryString,
-  authH5,
-  WxShareUrl,
-  getRoute,
-  friendlyDate
-};
+export { deepCopy, modelShow, timeToDate, isPhoneNumber, isWeiXinBrowser, getQueryString, authH5, WxShareUrl, getRoute, friendlyDate };

@@ -199,20 +199,12 @@ export default {
     this.unlike = this.$refs.unlike;
     this.myComment = this.$refs.myComment;
     this.mixFooter = this.$refs.mixFooter;
-    this.getNewsDetail();
   },
   onLoad(options) {
     // console.log(this.$Route);
-    this.getQueryObj();
+    this.getNewsDetail(options.newsId);
   },
   methods: {
-    // 获取文章对象
-    getQueryObj() {
-      let detail = this.$Route.query;
-      if (detail.id) {
-        // this.detail = detail;
-      }
-    },
     // 滚动到评论区
     scrollComment() {
       let dom = this.myComment.$el;
@@ -247,10 +239,10 @@ export default {
       this.myComment.getComment(this.detail.id);
     },
     // 请求文章详情
-    async getNewsDetail() {
+    async getNewsDetail(newsId) {
       let params = {
         token: this.vuex_token,
-        id: 1,
+        id: newsId,
         uid: this.vuex_user.id,
       };
       let { data } = await getArticleDetail(params);

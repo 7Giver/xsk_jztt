@@ -12,7 +12,8 @@
           <view class="u-line-1 title">{{item.name}}</view>
           <view class="u-flex tag_list">
             <view
-              :class="[tag.checked ? 'u-line-1 tag on' : 'u-line-1 tag']"
+              class="u-line-1 tag"
+              :class="{ on: tag.checked }"
               v-for="(tag, i) in item.subs"
               :key="i"
               @click="taggleTag(tag)"
@@ -119,7 +120,7 @@ export default {
 }
 .tag-page {
   position: relative;
-  padding: 0 40rpx;
+  padding: 0 36rpx;
   padding-bottom: 150rpx;
   .tag_wrap {
     padding-top: 30rpx;
@@ -136,13 +137,14 @@ export default {
       .tag_list {
         flex-wrap: wrap;
         .tag {
-          max-width: 28%;
+          min-width: 17%;
+          // max-width: 24%;
           color: #666666;
           font-size: 26rpx;
           line-height: 50rpx;
           text-align: center;
-          padding: 0 3%;
-          margin: 20rpx 4% 0 0;
+          padding: 0 18rpx;
+          margin: 20rpx 3% 0 0;
           border-radius: 8rpx;
           border: 1px solid #999999;
           &:nth-child(4n) {
