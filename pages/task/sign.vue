@@ -66,6 +66,7 @@
           <br />3.断签一天回到第一天重新获取金币。
         </view>
       </view>
+      <view class="signBtn" @click="goSign">签到</view>
     </view>
     <!-- 签到成功弹窗 -->
     <u-popup v-model="showModal" mode="center">
@@ -194,7 +195,7 @@ export default {
     // 日期点击
     pick(date) {
       // alert(this.formatDate(date.getFullYear(), date.getMonth() + 1, date.getDate()));
-      this.goSign();
+      // this.goSign();
     },
     // 上一个月
     pickPre(year, month) {
@@ -260,7 +261,7 @@ export default {
   padding: 0 15px;
   .header {
     color: #fff;
-    padding: 70rpx 0 60rpx;
+    padding: 30rpx 0 30rpx;
     .main_title {
       font-size: 46rpx;
       letter-spacing: 1px;
@@ -282,7 +283,7 @@ export default {
       justify-content: space-between;
       width: 85%;
       margin: 0 auto;
-      line-height: 100rpx;
+      line-height: 90rpx;
       background: $mainColor;
       .year-month {
         display: flex;
@@ -301,7 +302,7 @@ export default {
       padding: 0 32rpx;
     }
     .weekdays {
-      padding: 6rpx 0 20rpx;
+      padding: 6rpx 0 18rpx;
       background-color: $mainColor;
       border-bottom: 1px solid #e6e6e6;
       display: flex;
@@ -376,6 +377,22 @@ export default {
       font-size: 24rpx;
       line-height: 1.8;
     }
+  }
+  .signBtn {
+    // position: fixed;
+    // bottom: 32px;
+    // left: 50%;
+    // transform: translate(-50%, 0);
+    width: 85%;
+    margin: 40rpx auto 0;
+    color: #fbfeca;
+    text-align: center;
+    font-size: 34rpx;
+    line-height: 90rpx;
+    letter-spacing: 4rpx;
+    border-radius: 400rpx;
+    border: 3px solid #ffd074;
+    background: linear-gradient(0deg, #ea302c 0%, #ff7428 100%);
   }
 }
 .sign_dialog {

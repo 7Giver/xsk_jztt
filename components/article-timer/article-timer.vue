@@ -58,6 +58,8 @@ export default {
       let unitTime = this.vuex_setting.article_commit_seconds;
       let stopUnit = this.vuex_setting.article_seconds;
 
+      console.log(this.vuex_setting);
+
       if (read_task.length) {
         let lastItem = read_task[read_task.length - 1];
         this.readTask = read_task;

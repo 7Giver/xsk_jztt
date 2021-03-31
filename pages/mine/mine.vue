@@ -26,7 +26,10 @@
               </view>
             </view>
           </view>
-          <view class="incode_wrap">我的邀请码：{{ vuex_user.invite_code }}</view>
+          <view
+            class="incode_wrap"
+            @click="copyJSON(vuex_user.invite_code)"
+          >我的邀请码：{{ vuex_user.invite_code }}</view>
         </view>
         <view class="u-flex header_bottom" @click="goNext('coin')">
           <view class="item">
@@ -250,6 +253,19 @@ export default {
           break;
         default:
           break;
+      }
+    },
+    // 复制文本
+    async copyJSON(text) {
+      let target = document.createElement("input"); //创建input节点
+      target.value = text; // 给input的value赋值
+      document.body.appendChild(target); // 向页面插入input节点
+      target.select(); // 选中input
+      try {
+        await document.execCommand("Copy"); // 执行浏览器复制命令
+        this.$u.toast("复制成功");
+      } catch {
+        console.log("复制失败");
       }
     },
   },

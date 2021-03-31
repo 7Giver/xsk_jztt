@@ -6,7 +6,7 @@
       </view>
       <view slot="default" class="search-wrap">
         <image class="search-icon" src="/static/img/news/icon_ss.png" mode="scaleToFill" />
-        <input class="search-input" v-model="searchStr" placeholder="输入关键字" />
+        <input class="search-input" v-model="searchStr" placeholder="输入关键字" @confirm="goSearch" />
       </view>
       <view slot="right" class="navbar-right">
         <!-- <image class="navbar-left-icon" src="/static/img/news/icon_fb.png" mode="scaleToFill" /> -->
@@ -77,7 +77,7 @@
 const dom = weex.requireModule("dom");
 // #endif
 
-import { getRedBag } from "@/api/home.js";
+import { getRedBag, navBarTag } from "@/api/home.js";
 import newsPage from "./news-page.nvue";
 import navBar from "@/components/zhouWei-navBar";
 // import redBag from "@/components/red-bag/red-bag";
@@ -107,44 +107,16 @@ export default {
       searchStr: "", // 搜索字段
       bagDetail: {}, // 红包详情
       mainColor: "#f04323",
-      tabList: [
-        {
-          id: "tab01",
-          name: "关注",
-          newsid: 0,
-        },
-        {
-          id: "tab02",
-          name: "推荐",
-          newsid: 23,
-        },
-        {
-          id: "tab03",
-          name: "抗疫",
-          newsid: 223,
-        },
-        {
-          id: "tab04",
-          name: "城市",
-          newsid: 221,
-        },
-        {
-          id: "tab05",
-          name: "健康养生",
-          newsid: 225,
-        },
-        {
-          id: "tab06",
-          name: "励志",
-          newsid: 208,
-        },
-        {
-          id: "tab07",
-          name: "科技",
-          newsid: 209,
-        },
-      ],
+      tabList: [],
     };
+  },
+  onLoad() {
+    const navbar = this.$store.state.vuex_navBar;
+    this.tabList = navbar;
+  },
+  onShow(...options) {
+    // console.log(this.$Route);
+    this.getMyRedBag();
   },
   onReady() {
     this._lastTabIndex = 0;
@@ -155,14 +127,12 @@ export default {
     // #ifndef MP-ALIPAY
     this.pageList = this.$refs.page;
     // #endif
-    this.switchTab(this.tabIndex);
-    this.selectorQuery();
 
+    if (this.pageList) {
+      this.switchTab(this.tabIndex);
+      this.selectorQuery();
+    }
     // console.log(this.tabListSize);
-  },
-  onShow(...options) {
-    // console.log(this.$Route);
-    this.getMyRedBag();
   },
   methods: {
     ontabtap(e) {
@@ -343,6 +313,8 @@ export default {
       });
     },
     loadTabData(index) {
+      this.pageList[index].limit = 20;
+      this.pageList[index].pageIndex = 1;
       this.pageList[index].loadData();
     },
     clearTabData(index) {
@@ -357,6 +329,13 @@ export default {
         default:
           break;
       }
+    },
+    // 搜索文章
+    goSearch(e) {
+      // console.log("search:", this.searchStr);
+      this.pageList[this.tabIndex].limit = 20;
+      this.pageList[this.tabIndex].pageIndex = 1;
+      this.pageList[this.tabIndex].loadData(true, this.searchStr);
     },
     // 获取红包信息
     async getMyRedBag() {

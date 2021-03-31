@@ -415,7 +415,7 @@ export function receiveReward(params) {
  * @param {string} token 登录Token (必填)
  * @param {?number} id 文章id (必填)
  */
- export function articleRead(params) {
+export function articleRead(params) {
   return post(`/${version}/article/read`, params);
 }
 
@@ -424,6 +424,13 @@ export function receiveReward(params) {
  * @param {string} token 登录Token (必填)
  * @param {?number} track_id 文章id (必填)
  */
- export function articleClose(params) {
+export function articleClose(params) {
   return post(`/${version}/article/close`, params);
+}
+
+/**
+ * 菜单导航
+ */
+export function navBarTag(token) {
+  return get(`/${version}/default/nav`);
 }

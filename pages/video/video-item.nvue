@@ -92,7 +92,7 @@ export default {
       });
     },
     goDetail() {
-      uni.navigateTo({ url: "/pages/video/detail" });
+      // uni.navigateTo({ url: "/pages/video/detail" });
     },
   },
 };

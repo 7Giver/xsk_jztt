@@ -36,7 +36,13 @@
         <!-- 富文本 -->
         <view class="content_wrap">
           <u-read-more ref="uReadMore" color="#F04323" show-height="800" :toggle="true">
-            <u-parse :html="detail.content"></u-parse>
+            <!-- <u-parse
+              :html="detail.content"
+              compress="1"
+              :lazy-load="true"
+              loading-img="/static/img/mine/coin_header.png"
+            ></u-parse>-->
+            <rich-text :nodes="detail.content"></rich-text>
           </u-read-more>
         </view>
         <view class="handle_wrap">
@@ -56,7 +62,7 @@
           </view>
         </view>
         <!-- 广告区 -->
-        <view class="advert_wrap">
+        <!-- <view class="advert_wrap">
           <u-swiper :list="bannerList" mode="none"></u-swiper>
           <view class="u-flex bottom_wrap">
             <view class="u-flex left">
@@ -67,7 +73,7 @@
               <u-icon name="close"></u-icon>
             </view>
           </view>
-        </view>
+        </view> -->
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 推荐版块 -->
@@ -79,9 +85,9 @@
               <view class="u-flex bottom">
                 <view class="u-flex left">
                   <u-avatar :src="item.avatar" size="40" />
-                  <view class="name">{{item.name}}</view>
+                  <view class="name">{{item.author || '九章新闻'}}</view>
                 </view>
-                <view class="add_time">{{item.add_time}}</view>
+                <view class="add_time">{{item.add_time | date('mm-dd hh:MM')}}</view>
               </view>
             </view>
             <view class="right_wrap">
@@ -89,7 +95,7 @@
             </view>
           </view>
         </view>
-        <view class="advert_wrap">
+        <!-- <view class="advert_wrap">
           <u-swiper :list="bannerList" mode="none"></u-swiper>
           <view class="u-flex bottom_wrap">
             <view class="u-flex left">
@@ -100,7 +106,7 @@
               <u-icon name="close"></u-icon>
             </view>
           </view>
-        </view>
+        </view> -->
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 评论版块 -->
@@ -181,7 +187,7 @@ export default {
           avatar: "",
           name: "新闻小能手新闻小能手新闻小能手新闻小能手",
           add_time: "12-15 14:36",
-          banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
+          banner: "https://cdn.uviewui.com/uview/swiper/1.jpg",
         },
         {
           title: "这边是标题这边是标题这边是标题这边是标题",
@@ -195,7 +201,7 @@ export default {
           avatar: "",
           name: "新闻小能手",
           add_time: "12-15 14:36",
-          banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
+          banner: "https://cdn.uviewui.com/uview/swiper/3.jpg",
         },
       ],
     };
@@ -211,9 +217,11 @@ export default {
   onPageScroll({ scrollTop }) {
     let articleTimer = this.$refs.articleTimer;
     // 防抖函数，根据全局设置的参数暂停计时
-    !articleTimer.timer && this.$u.debounce(timerStart, 6000, true);
-    function timerStart() {
-      articleTimer.initData();
+    if (articleTimer) {
+      !articleTimer.timer && this.$u.debounce(timerStart, 6000, true);
+      function timerStart() {
+        articleTimer.initData();
+      }
     }
   },
   onHide() {
@@ -223,9 +231,11 @@ export default {
   },
   onUnload() {
     // console.log("onUnload");
-    this.postArticleClose();
     let articleTimer = this.$refs.articleTimer;
-    articleTimer.timerStop();
+    if (articleTimer) {
+      this.postArticleClose();
+      articleTimer.timerStop();
+    }
   },
   methods: {
     // 滚动到评论区
@@ -271,6 +281,7 @@ export default {
       let { data } = await getArticleDetail(params);
       this.userinfo = data.userinfo || {};
       this.detail = data || {};
+      this.recommendList = data.recommands;
       this.$nextTick(() => {
         this.$refs.uReadMore.init();
       });
@@ -457,6 +468,7 @@ export default {
             color: #333333;
             font-size: 28rpx;
             letter-spacing: 1px;
+            min-height: 80rpx;
           }
           .bottom {
             color: #999999;

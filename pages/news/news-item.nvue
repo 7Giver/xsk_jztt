@@ -26,15 +26,15 @@
       <text class="media-title">{{newsItem.title}}</text>
       <view v-if="newsItem.image_list || newsItem.image_url" class="image-section flex-row" :class="{'image-section-right': newsItem.article_type === 1, 'image-section-left': newsItem.article_type === 2}">
         <image :fade-show="false" class="image-list1" :class="{'image-list2': newsItem.article_type === 1 || newsItem.article_type === 2}"
-          v-if="newsItem.image_url" :src="newsItem.image_url"></image>
-        <image :fade-show="false" class="image-list3" v-if="newsItem.image_list" :src="cover.url" v-for="(cover, i) in newsItem.image_list"
-          :key="i" />
+          v-if="newsItem.image_list.length < 3" :src="newsItem.image_url"></image>
+        <image :fade-show="false" class="image-list3" :src="cover" v-for="(cover, i) in newsItem.image_list.slice(0,3)"
+          :key="i" v-else />
       </view>
     </view>
     <view class="media-foot flex-row">
       <view class="media-info flex-row">
         <text class="info-text">{{newsItem.source}}</text>
-        <text class="info-text">{{newsItem.comment_count}}条评论</text>
+        <text class="info-text">{{newsItem.comment_count}}评</text>
         <text class="info-text">{{newsItem.datetime}}</text>
       </view>
       <view class="close-view" @click.stop="close">
@@ -82,7 +82,7 @@
   }
 
   .list-cell {
-    padding: 0 15px;
+    padding: 0 30rpx;
   }
 
   .uni-list-cell-hover {
@@ -93,7 +93,7 @@
     position: relative;
     flex: 1;
     flex-direction: column;
-    padding: 10px 15px 10px 15px;
+    padding: 20rpx 30rpx 20px 30rpx;
   }
 
   .media-item-line {
@@ -121,6 +121,7 @@
     lines: 3;
     text-overflow: ellipsis;
     font-size: 32rpx;
+    font-weight: 600;
     color: #555555;
   }
 
@@ -139,38 +140,39 @@
   .image-section-right {
     margin-top: 0;
     margin-left: 5px;
-    width: 112px;
-    height: 73px;
+    width: 224rpx;
+    height: 154rpx;
   }
 
   .image-section-left {
     margin-top: 0;
     margin-right: 5px;
-    width: 112px;
-    height: 73px;
+    width: 224rpx;
+    height: 154rpx;
   }
 
   .image-list1 {
-    height: 240px;
+    height: 480rpx;
   }
 
   .image-list2 {
-    width: 112px;
-    height: 73px;
+    width: 224rpx;
+    height: 154rpx;
   }
 
   .image-list3 {
-    width: 112px;
-    height: 73px;
+    width: 224rpx;
+    height: 154rpx;
   }
 
   .media-info {
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    width: 50%;
   }
 
   .info-text {
-    margin-right: 10px;
     color: #999999;
     font-size: 26rpx;
   }

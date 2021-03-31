@@ -103,44 +103,12 @@ export default {
       searchStr: "", // 搜索字段
       mainColor: "#f04323",
       inputStyle: "fontSize: 24rpx",
-      tabList: [
-        {
-          id: "tab01",
-          name: "关注",
-          newsid: 0,
-        },
-        {
-          id: "tab02",
-          name: "推荐",
-          newsid: 23,
-        },
-        {
-          id: "tab03",
-          name: "抗疫",
-          newsid: 223,
-        },
-        {
-          id: "tab04",
-          name: "城市",
-          newsid: 221,
-        },
-        {
-          id: "tab05",
-          name: "健康养生",
-          newsid: 225,
-        },
-        {
-          id: "tab06",
-          name: "励志",
-          newsid: 208,
-        },
-        {
-          id: "tab07",
-          name: "科技",
-          newsid: 209,
-        },
-      ],
+      tabList: [],
     };
+  },
+  onLoad() {
+    const navbar = this.$store.state.vuex_navBar;
+    this.tabList = navbar;
   },
   onReady() {
     this._lastTabIndex = 0;
@@ -154,7 +122,7 @@ export default {
     this.switchTab(this.tabIndex);
     this.selectorQuery();
 
-    console.log(this.tabListSize);
+    // console.log(this.tabListSize);
   },
   methods: {
     ontabtap(e) {

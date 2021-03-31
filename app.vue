@@ -1,6 +1,6 @@
 <script>
 import store from "@/store";
-import { getSystemConfig, getUserInfo } from "@/api/home.js";
+import { getSystemConfig, getUserInfo, navBarTag } from "@/api/home.js";
 export default {
   onLaunch: function () {
     // console.log('App Launch');
@@ -46,6 +46,9 @@ export default {
       src: "url('./static/text-icon.ttf')",
     });
     // #endif
+
+    // 请求获取首页标签
+    this.getNavBarTag();
   },
   onShow: function () {
     // console.log("App Show");
@@ -70,6 +73,18 @@ export default {
     async getUserData() {
       let { data } = await getUserInfo(this.vuex_token);
       this.$u.vuex("vuex_user", data);
+    },
+    // 获取文章导航
+    async getNavBarTag() {
+      let { data } = await navBarTag();
+      let newArr = data.list.map((item, index) => {
+        return {
+          id: `tab${index + 1}`,
+          newsid: String(item.id),
+          name: item.name,
+        };
+      });
+      this.$u.vuex("vuex_navBar", newArr);
     },
   },
 };

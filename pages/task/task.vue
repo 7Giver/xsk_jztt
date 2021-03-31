@@ -26,7 +26,12 @@
           </view>
         </view>
         <view class="u-flex bottom">
-          <view class="u-flex item" v-for="(item, index) in taskCoin" :key="index">
+          <view
+            class="u-flex item"
+            v-for="(item, index) in taskCoin"
+            :key="index"
+            @click="goCoinPage(item.id)"
+          >
             <template>
               <div
                 class="u-flex icon receivedBg"
@@ -128,21 +133,25 @@ export default {
       redBag: "/static/img/task/pic_hb.png",
       taskCoin: [
         {
+          id: 1,
           cash: 50,
           title: "看视频领金币",
           status: 3,
         },
         {
+          id: 2,
           cash: 50,
           title: "看文章领金币",
           status: 1,
         },
         {
+          id: 3,
           cash: 20,
           title: "看视频领金币",
           status: 3,
         },
         {
+          id: 4,
           cash: 20,
           title: "签到领金币",
           status: 0,
@@ -181,6 +190,20 @@ export default {
         case "personal":
           this.$Router.push({ name: "personalData" });
           break;
+        default:
+          break;
+      }
+    },
+    // 币区跳转
+    goCoinPage(id) {
+      switch (id) {
+        case 2:
+          uni.switchTab({ url: "/pages/news/news" });
+          break;
+        case 4:
+          this.$Router.push({ name: "taskSign" });
+          break;
+
         default:
           break;
       }
