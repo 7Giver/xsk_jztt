@@ -2,8 +2,11 @@
   <view>
     <u-navbar :is-back="false" :border-bottom="false">
       <view class="title_wrap">
-        <view class="main">选择你感兴趣的东西</view>
-        <view class="off">最多可选5个</view>
+        <view class="main">
+          选择你感兴趣的
+          <view class="off">（最多选{{maxNumber}}个）</view>
+        </view>
+        <view class="off" @click="goPassTag">点击跳过</view>
       </view>
     </u-navbar>
     <view class="tag-page">
@@ -32,12 +35,15 @@ export default {
   data() {
     return {
       ids: "", // 一级标签
+      maxNumber: 6, // 最多标签数量
       tagList: [],
     };
   },
   onLoad(options) {
     if (options.ids) {
       this.ids = options.ids;
+      this.getTagList(options.ids);
+    } else {
       this.getTagList(options.ids);
     }
   },
@@ -50,14 +56,18 @@ export default {
           subs.checked && resutlt.push(subs);
         });
       });
-      if (resutlt.length < 5 || tag.checked) {
+      if (resutlt.length < this.maxNumber || tag.checked) {
         tag.checked = !tag.checked;
       } else {
-        this.$u.toast("不能超过5个");
+        this.$u.toast(`不能超过${this.maxNumber}个`);
       }
     },
+    // 跳过选择
+    goPassTag() {
+      uni.switchTab({ url: "/pages/news/news" });
+    },
     // 获取兴趣标签
-    async getTagList(str) {
+    async getTagList(str = "") {
       let { data } = await getSecondTag(str);
       let result = data.list;
       result.forEach((item) => {
@@ -109,13 +119,16 @@ export default {
   width: 100%;
   padding: 0 40rpx;
   .main {
+    display: flex;
+    align-items: baseline;
     color: #333333;
     font-size: 36rpx;
     font-weight: bold;
   }
   .off {
     color: #666666;
-    font-size: 24rpx;
+    font-size: 26rpx;
+    font-weight: normal;
   }
 }
 .tag-page {
@@ -137,13 +150,13 @@ export default {
       .tag_list {
         flex-wrap: wrap;
         .tag {
-          min-width: 17%;
+          min-width: 21%;
           // max-width: 24%;
           color: #666666;
           font-size: 26rpx;
           line-height: 50rpx;
           text-align: center;
-          padding: 0 18rpx;
+          padding: 0 6rpx;
           margin: 20rpx 3% 0 0;
           border-radius: 8rpx;
           border: 1px solid #999999;

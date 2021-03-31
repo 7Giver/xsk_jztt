@@ -24,7 +24,7 @@
               <u-avatar :src="userinfo.avatar" size="75"></u-avatar>
             </view>
             <view class="right">
-              <view class="nickname">{{userinfo.name}}</view>
+              <view class="nickname">{{userinfo.name || '佚名'}}</view>
               <view class="date">{{detail.add_time}}</view>
             </view>
           </view>
@@ -125,6 +125,8 @@
       ></comment-report>
       <!-- 不喜欢原因 -->
       <unlike-popup ref="unlike" :articleId="detail.id"></unlike-popup>
+      <!-- 阅读计时器 -->
+      <article-timer ref="articleTimer" :articleId="detail.id"></article-timer>
     </view>
   </view>
 </template>
@@ -135,17 +137,20 @@ import {
   collectArticle,
   likeArticle,
   postUserFocus,
+  articleClose,
 } from "@/api/home.js";
 import MyComment from "@/components/my-comment/my-comment";
 import MixFooter from "@/components/mix-footer/mix-footer";
 import UnlikePopup from "@/components/unlike-popup/unlike-popup";
 import CommentReport from "@/components/comment-report/comment-report";
+import articleTimer from "@/components/article-timer/article-timer";
 export default {
   components: {
     MyComment,
     MixFooter,
     UnlikePopup,
     CommentReport,
+    articleTimer,
   },
   data() {
     return {
@@ -201,8 +206,26 @@ export default {
     this.mixFooter = this.$refs.mixFooter;
   },
   onLoad(options) {
-    // console.log(this.$Route);
     this.getNewsDetail(options.newsId);
+  },
+  onPageScroll({ scrollTop }) {
+    let articleTimer = this.$refs.articleTimer;
+    // 防抖函数，根据全局设置的参数暂停计时
+    !articleTimer.timer && this.$u.debounce(timerStart, 6000, true);
+    function timerStart() {
+      articleTimer.initData();
+    }
+  },
+  onHide() {
+    // console.log("hide");
+    // let articleTimer = this.$refs.articleTimer;
+    // articleTimer.timerClear();
+  },
+  onUnload() {
+    // console.log("onUnload");
+    this.postArticleClose();
+    let articleTimer = this.$refs.articleTimer;
+    articleTimer.timerStop();
   },
   methods: {
     // 滚动到评论区
@@ -306,6 +329,14 @@ export default {
         this.userinfo.is_focus = 1;
         this.$u.toast("关注成功");
       }
+    },
+    // 阅读停止
+    async postArticleClose() {
+      let params = {
+        token: this.vuex_token,
+        track_id: this.detail.track_id,
+      };
+      let { data } = await articleClose(params);
     },
   },
 };

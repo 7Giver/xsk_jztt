@@ -1,6 +1,6 @@
 <script>
 import store from "@/store";
-import { getSystemConfig } from "@/api/home.js";
+import { getSystemConfig, getUserInfo } from "@/api/home.js";
 export default {
   onLaunch: function () {
     // console.log('App Launch');
@@ -46,15 +46,16 @@ export default {
       src: "url('./static/text-icon.ttf')",
     });
     // #endif
+  },
+  onShow: function () {
+    // console.log("App Show");
 
     // 请求用户设置
     const token = store.state.vuex_token;
-    token && this.getSystemDate(token);
-  },
-  onShow: function () {
-    // console.log('App Show')
-    // const token = store.state.vuex_token;
-    // token && this.getSystemDate(token);
+    if (token) {
+      this.getSystemDate(token);
+      this.getUserData(token);
+    }
   },
   onHide: function () {
     // console.log('App Hide')
@@ -64,6 +65,11 @@ export default {
     async getSystemDate(token) {
       let { data } = await getSystemConfig(token);
       this.$u.vuex("vuex_setting", data);
+    },
+    // 获取用户数据
+    async getUserData() {
+      let { data } = await getUserInfo(this.vuex_token);
+      this.$u.vuex("vuex_user", data);
     },
   },
 };

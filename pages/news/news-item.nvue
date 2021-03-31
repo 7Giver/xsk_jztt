@@ -1,11 +1,33 @@
 <template>
   <view class="media-item view" v-if="newsItem.title" @click="click">
-    <view class="view" :style="{flexDirection: (newsItem.article_type === 1 || newsItem.article_type === 2)?(newsItem.article_type === 2 ?'row':'row-reverse'):'column' }">
+    <!-- 旧样式 -->
+    <!-- <view class="view" :style="{flexDirection: (newsItem.article_type === 1 || newsItem.article_type === 2)?(newsItem.article_type === 2 ?'row':'row-reverse'):'column' }">
       <text class="media-title" :class="{'media-title2': newsItem.article_type === 1 || newsItem.article_type === 2}">{{newsItem.title}}</text>
       <view v-if="newsItem.image_list || newsItem.image_url" class="image-section flex-row" :class="{'image-section-right': newsItem.article_type === 2, 'image-section-left': newsItem.article_type === 1}">
         <image :fade-show="false" class="image-list1" :class="{'image-list2': newsItem.article_type === 1 || newsItem.article_type === 2}"
           v-if="newsItem.image_url" :src="newsItem.image_url"></image>
         <image :fade-show="false" class="image-list3" v-if="newsItem.image_list" :src="source.url" v-for="(source, i) in newsItem.image_list"
+          :key="i" />
+      </view>
+    </view>
+    <view class="media-foot flex-row">
+      <view class="media-info flex-row">
+        <text class="info-text">{{newsItem.source}}</text>
+        <text class="info-text">{{newsItem.comment_count}}条评论</text>
+        <text class="info-text">{{newsItem.datetime}}</text>
+      </view>
+      <view class="close-view" @click.stop="close">
+        <view class="close-l close-h"></view>
+        <view class="close-l close-v"></view>
+      </view>
+    </view> -->
+    <!-- 新样式 -->
+    <view class="view" :style="{flexDirection: (newsItem.article_type === 1 || newsItem.article_type === 2)?(newsItem.article_type === 2 ?'row-reverse':'row'):'column' }">
+      <text class="media-title">{{newsItem.title}}</text>
+      <view v-if="newsItem.image_list || newsItem.image_url" class="image-section flex-row" :class="{'image-section-right': newsItem.article_type === 1, 'image-section-left': newsItem.article_type === 2}">
+        <image :fade-show="false" class="image-list1" :class="{'image-list2': newsItem.article_type === 1 || newsItem.article_type === 2}"
+          v-if="newsItem.image_url" :src="newsItem.image_url"></image>
+        <image :fade-show="false" class="image-list3" v-if="newsItem.image_list" :src="cover.url" v-for="(cover, i) in newsItem.image_list"
           :key="i" />
       </view>
     </view>
@@ -167,17 +189,14 @@
     width: 20px;
     height: 15px;
     line-height: 15px;
-    border-width: 1upx;
-    border-style: solid;
     border-color: #aaaaaa;
-    border-radius: 4px;
     justify-content: center;
     text-align: center;
   }
 
   .close-l {
     position: absolute;
-    width: 9px;
+    width: 22rpx;
     height: 1px;
     background-color: #aaaaaa;
   }

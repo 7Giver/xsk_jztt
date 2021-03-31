@@ -409,3 +409,21 @@ export function getRedBag(token) {
 export function receiveReward(params) {
   return post(`/${version}/index/receive`, params);
 }
+
+/**
+ * 文章阅读（默认每阅读5秒，调用一次）
+ * @param {string} token 登录Token (必填)
+ * @param {?number} id 文章id (必填)
+ */
+ export function articleRead(params) {
+  return post(`/${version}/article/read`, params);
+}
+
+/**
+ * 文章阅读结束
+ * @param {string} token 登录Token (必填)
+ * @param {?number} track_id 文章id (必填)
+ */
+ export function articleClose(params) {
+  return post(`/${version}/article/close`, params);
+}

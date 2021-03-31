@@ -28,20 +28,24 @@
         <view class="u-flex bottom">
           <view class="u-flex item" v-for="(item, index) in taskCoin" :key="index">
             <template>
-              <div class="u-flex icon receivedBg" v-if="item.status == 2">{{ item.cash }}</div>
+              <div
+                class="u-flex icon receivedBg"
+                v-if="item.status == 2 || item.status == 3"
+              >{{ item.cash }}</div>
               <div class="u-flex icon receiveBg" v-else>
                 <text>{{ item.cash }}</text>
-                <view class="can_get" v-if="item.status == 1">可领取</view>
+                <!-- <view class="can_get" v-if="item.status == 1">可领取</view> -->
               </div>
             </template>
             <view class="title">
               <text v-if="item.status == 2">已领</text>
+              <text v-if="item.status == 3">敬请期待</text>
               <text v-else>{{ item.title }}</text>
             </view>
           </view>
         </view>
       </view>
-      <view class="task_wrap" style="margin-top: -40px;">
+      <view class="task_wrap" style="margin-top: -80rpx;">
         <view class="main_title">新手任务</view>
         <view class="item" v-for="(item, index) in new_task" :key="index">
           <view class="u-flex left_wrap">
@@ -101,7 +105,10 @@
               <text v-if="item.id == 6" @click="goNext('sign')">去签到</text>
               <text v-if="item.id == 7">去提现</text>
             </view>
-            <view class="btn done" v-else-if="item.status == 1">已完成</view>
+            <view class="btn done" v-else-if="item.status == 1">
+              <text v-if="item.has_receive">+{{item.has_receive}}</text>
+              <text v-else>已完成</text>
+            </view>
           </view>
         </view>
       </view>
@@ -122,18 +129,18 @@ export default {
       taskCoin: [
         {
           cash: 50,
-          title: "看文章领金币",
-          status: 2,
+          title: "看视频领金币",
+          status: 3,
         },
         {
           cash: 50,
-          title: "看视频领金币",
+          title: "看文章领金币",
           status: 1,
         },
         {
           cash: 20,
           title: "看视频领金币",
-          status: 2,
+          status: 3,
         },
         {
           cash: 20,

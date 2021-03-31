@@ -177,7 +177,6 @@ export default {
       //     }
       //   },
       //   complete: (e) => {
-      //     console.log(111);
       //     this.isLoading = false;
       //     if (refresh) {
       //       this.refreshing = false;
@@ -217,6 +216,7 @@ export default {
     closeItem(index) {
       uni.showModal({
         content: '不感兴趣？',
+        confirmColor: "#f04323",
         success: (res) => {
           if (res.confirm) {
             this.dataList.splice(index, 1);

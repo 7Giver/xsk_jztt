@@ -35,19 +35,22 @@
               <view>日</view>
             </view>
             <view class="days">
-              <view :class="{is_sign: day.sign}" v-for="day in days" @click="pick(day)">
+              <view v-for="day in days" @click="pick(day)">
                 <text
                   v-if="day.date.getMonth() + 1 != currentMonth"
                   class="item other-month"
+                  :class="{is_sign :day.sign}"
                 >{{ day.date.getDate() < 10 ? '0' + day.date.getDate() : day.date.getDate() }}</text>
                 <template v-else>
                   <text
                     v-if="day.date.getFullYear() == new Date().getFullYear() && day.date.getMonth() == new Date().getMonth() && day.date.getDate() == new Date().getDate()"
-                    class="active"
+                    class="item active"
+                    :class="{is_sign: day.sign}"
                   >{{ day.date.getDate() < 10 ? '0' + day.date.getDate() : day.date.getDate() }}</text>
                   <text
                     v-else
                     class="item"
+                    :class="{is_sign: day.sign}"
                   >{{ day.date.getDate() < 10 ? '0' + day.date.getDate() : day.date.getDate() }}</text>
                 </template>
               </view>
@@ -108,7 +111,7 @@ export default {
   onLoad(options) {
     this.initData();
     this.getSignData();
-    console.log(this.$u.timeFormat(new Date(), "yyyy-mm"));
+    console.log(this.$u.timeFormat(new Date(), "yyyy-mm-dd"));
   },
   methods: {
     // 获取签到信息
@@ -224,7 +227,7 @@ export default {
     // 渲染已签到日期
     initSignDate() {
       let days = this.days;
-      let signList = this.signList || [{ add_date: "2021-02-01", id: "1" }];
+      let signList = this.signList || [{ add_date: "2021-03-10", id: "1" }];
 
       days.forEach((item) => {
         signList.forEach((v) => {
@@ -257,7 +260,7 @@ export default {
   padding: 0 15px;
   .header {
     color: #fff;
-    padding: 90rpx 0 60rpx;
+    padding: 70rpx 0 60rpx;
     .main_title {
       font-size: 46rpx;
       letter-spacing: 1px;
@@ -270,7 +273,7 @@ export default {
   }
   .container {
     $mainColor: #fff;
-    margin-bottom: 30rpx;
+    margin-bottom: 40rpx;
     background: #fff;
     border-radius: 20rpx;
     overflow: hidden;
@@ -334,28 +337,28 @@ export default {
           width: $width;
           height: $width;
         }
-        .item {
-          background: url("/static/img/task/pic_coin.png");
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: 83%;
-        }
-        .active {
-          color: $mainColor;
-          border-radius: 50%;
-          border: 1px solid $mainColor;
-        }
-        .other-month {
-          padding: 5px;
-          opacity: 0.3;
-        }
+      }
+      .active {
+        color: $mainColor;
+        border-radius: 50%;
+        border: 1px solid #f04323;
+      }
+      .other-month {
+        padding: 5px;
+        opacity: 0.3;
+      }
+      .item {
+        background: url("/static/img/task/pic_coin.png");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 83%;
       }
       .is_sign {
         color: #ffe985;
         background: url("/static/img/task/pic_coin_on.png");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 77%;
+        background-size: 83%;
       }
     }
   }

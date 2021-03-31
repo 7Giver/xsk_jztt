@@ -176,7 +176,7 @@ export default {
         if (data.has_label) {
           uni.switchTab({ url: "/pages/news/news" });
         } else {
-          this.$Router.push({ name: "tagIndex" });
+          this.$Router.push({ name: "tagOff" });
         }
       }, 500);
     },
