@@ -58,15 +58,17 @@
           </view>
         </view>
       </view>
-      <view class="footer">
-        <view class="main_title">签到规则</view>
-        <view class="content">
-          1.每日完成签到，即可获得当日金币。
-          <br />2.保持连续签到，每日以5个金币递增，最高每日可获得100个金币。
-          <br />3.断签一天回到第一天重新获取金币。
+      <view class="signBtn" @click="goSign">签到</view>
+      <view class="bottom-wrap">
+        <view class="footer">
+          <view class="main_title">签到规则</view>
+          <view class="content">
+            1.每日完成签到，即可获得当日金币。
+            <br />2.保持连续签到，每日以5个金币递增，最高每日可获得100个金币。
+            <br />3.断签一天回到第一天重新获取金币。
+          </view>
         </view>
       </view>
-      <view class="signBtn" @click="goSign">签到</view>
     </view>
     <!-- 签到成功弹窗 -->
     <u-popup v-model="showModal" mode="center">
@@ -104,13 +106,13 @@ export default {
       currentYear: 1970,
       currentWeek: 1,
       days: [],
+      signList: [], // 签到数组
       integral: 0, //签到获得金币数
       series: 0, //连续签到天数
       tomorrow: 0, // 明天可获得的金币数
     };
   },
   onLoad(options) {
-    this.initData();
     this.getSignData();
     console.log(this.$u.timeFormat(new Date(), "yyyy-mm-dd"));
   },
@@ -122,6 +124,11 @@ export default {
         date: this.$u.timeFormat(new Date(), "yyyy-mm"),
       };
       let { data } = await getSign(params);
+      let result = data.list.filter((item) => {
+        return item.is_sign == 1;
+      });
+      this.signList = result;
+      this.initData();
     },
     // 点击签到
     async goSign() {
@@ -133,6 +140,7 @@ export default {
       this.integral = data.integral;
       this.tomorrow = data.tomorrow;
       this.showModal = true;
+      this.getSignData();
     },
     // 返回类似 2016-01-02 格式的字符串
     formatDate: function (year, month, day) {
@@ -171,7 +179,7 @@ export default {
         this.currentMonth,
         this.currentDay
       );
-      console.log("initDay:" + str + "," + this.currentWeek);
+      // console.log("initDay:" + str + "," + this.currentWeek);
       this.days.length = 0;
       // 今天是周日，放在第一行第7个位置，前面6个
       for (var i = this.currentWeek - 1; i >= 0; i--) {
@@ -228,11 +236,11 @@ export default {
     // 渲染已签到日期
     initSignDate() {
       let days = this.days;
-      let signList = this.signList || [{ add_date: "2021-03-10", id: "1" }];
+      let signList = this.signList || [{ date: "2021-03-10", id: "1" }];
 
       days.forEach((item) => {
         signList.forEach((v) => {
-          if (item.date.getTime() === new Date(v.add_date).getTime()) {
+          if (item.date.getTime() === new Date(v.date).getTime()) {
             item.sign = 1;
           }
         });
@@ -265,6 +273,7 @@ export default {
     .main_title {
       font-size: 46rpx;
       letter-spacing: 1px;
+      font-weight: bold;
     }
     .off_title {
       font-size: 30rpx;
@@ -363,6 +372,13 @@ export default {
       }
     }
   }
+  .bottom-wrap {
+    position: absolute;
+    left: 50%;
+    bottom: 5%;
+    width: 90%;
+    transform: translate(-50%, 0);
+  }
   .footer {
     color: #fff;
     padding: 20rpx 32rpx;
@@ -384,7 +400,7 @@ export default {
     // left: 50%;
     // transform: translate(-50%, 0);
     width: 85%;
-    margin: 40rpx auto 0;
+    margin: 50rpx auto 30rpx;
     color: #fbfeca;
     text-align: center;
     font-size: 34rpx;

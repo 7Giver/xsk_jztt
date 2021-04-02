@@ -431,6 +431,6 @@ export function articleClose(params) {
 /**
  * 菜单导航
  */
-export function navBarTag(token) {
+export function navBarTag() {
   return get(`/${version}/default/nav`);
 }

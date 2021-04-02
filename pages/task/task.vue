@@ -36,9 +36,13 @@
               <div
                 class="u-flex icon receivedBg"
                 v-if="item.status == 2 || item.status == 3"
-              >{{ item.cash }}</div>
+              >
+                <!-- <text>{{ item.cash }}</text> -->
+                <text>金</text>
+              </div>
               <div class="u-flex icon receiveBg" v-else>
-                <text>{{ item.cash }}</text>
+                <!-- <text>{{ item.cash }}</text> -->
+                <text>金</text>
                 <!-- <view class="can_get" v-if="item.status == 1">可领取</view> -->
               </div>
             </template>
@@ -225,9 +229,10 @@ export default {
   padding-bottom: 180rpx;
   .main_title {
     color: #fff;
-    font-size: 36rpx;
+    font-size: 48rpx;
+    font-weight: bold;
     letter-spacing: 1px;
-    padding: 20rpx 0 30rpx;
+    padding: 30rpx 0 20rpx;
   }
   .cash_wrap {
     color: #fff;
@@ -265,6 +270,7 @@ export default {
       border-bottom: 1px solid #e6e6e6;
       color: #333333;
       font-size: 28rpx;
+      font-weight: 600;
       .left {
         line-height: 3;
         text {
@@ -302,6 +308,7 @@ export default {
           background-position: center;
           background-size: 100% 100%;
           font-size: 30rpx;
+          line-height: 82rpx;
         }
         .title {
           margin-top: 10rpx;

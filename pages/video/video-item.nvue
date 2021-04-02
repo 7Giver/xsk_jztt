@@ -1,19 +1,26 @@
 <template>
   <view class="video-item" v-if="videoItem.video_link">
-    <view class="video-top" @click="goDetail">
+    <view class="video-top">
       <view class="video-content">
-        <image class="banner-img" :src="videoItem.banner" />
-        <!-- <video class="myVideo" :src="videoItem.video_link" @error="videoErrorCallback" controls></video> -->
-        <view class="video-play-wrap" :style="{ left: (windowWidth / 2) + 'px' }">
+        <!-- <image class="banner-img" :src="videoItem.banner" mode="aspectFit" /> -->
+        <video
+          class="myVideo"
+          :src="videoItem.video_link"
+          :poster="videoItem.banner"
+          :controls="true"
+          direction="0"
+          @error="videoErrorCallback"
+        ></video>
+        <!-- <view class="video-play-wrap" :style="{ left: (windowWidth / 2) + 'px' }">
           <image class="play-icon" src="/static/img/icon/icon_bf.png" />
-        </view>
+        </view>-->
         <view class="video-title-wrap" :style="{ width: windowWidth + 'px' }">
           <text class="video-title">{{videoItem.title}}</text>
         </view>
       </view>
-      <text class="video-time">{{videoItem.video_length}}</text>
+      <!-- <text class="video-time">{{videoItem.video_length}}</text> -->
     </view>
-    <view class="video-footer flex-row">
+    <view class="video-footer flex-row" @click="goDetail(videoItem.id)">
       <view class="flex-row flex-center">
         <view class="flex-row flex-center">
           <image class="avatar" :src="videoItem.avatar || baseAvatar" mode="scaleToFill" />
@@ -39,13 +46,16 @@
             />
             <image class="comment_icon" src="/static/img/news/icon_dz.png" mode="widthFix" v-else />
           </view>
-          <text class="footer-number" :class="{ foucs: videoItem.is_like }">{{videoItem.like}}</text>
+          <text
+            class="footer-number"
+            :class="{ foucs: videoItem.is_like }"
+          >{{videoItem.like > 999 ? '999+' : videoItem.like}}</text>
         </view>
         <view class="flex-row flex-center comment_wrap">
           <view class="icon_wrap">
             <image class="comment_icon" :src="icon_pl" mode="widthFix" />
           </view>
-          <text class="footer-number">{{videoItem.comment}}</text>
+          <text class="footer-number">{{videoItem.comment > 9999 ? '1w+' : videoItem.comment}}</text>
         </view>
         <view class="flex-row flex-center">
           <image class="comment_icon" src="/static/img/icon/icon_more.png" mode="widthFix" />
@@ -85,14 +95,14 @@ export default {
   methods: {
     // 视频报错回调
     videoErrorCallback(e) {
-      // console.log(e);
-      uni.showModal({
-        content: "视频错误",
-        showCancel: false,
-      });
+      console.log(e);
+      // uni.showModal({
+      //   content: "视频错误",
+      //   showCancel: false,
+      // });
     },
-    goDetail() {
-      // uni.navigateTo({ url: "/pages/video/detail" });
+    goDetail(id) {
+      uni.navigateTo({ url: `/pages/video/detail?id=${id}`});
     },
   },
 };
@@ -115,7 +125,8 @@ export default {
 }
 
 .myVideo {
-  // flex: 1;
+  flex: 1;
+  height: 380rpx;
 }
 
 .video-top {
@@ -133,7 +144,7 @@ export default {
 
 .video-title {
   color: #ffffff;
-  font-size: 30rpx;
+  font-size: 32rpx;
   /* #ifndef APP-PLUS-NVUE */
   overflow: hidden;
   word-break: break-all;
@@ -150,7 +161,8 @@ export default {
 .video-content {
   height: 380rpx;
   flex-direction: row;
-  overflow: hidden;
+  // overflow: hidden;
+  // background-color: black;
 }
 
 .banner-img {
@@ -193,7 +205,7 @@ export default {
 }
 
 .nickname {
-  width: 170rpx;
+  max-width: 170rpx;
   color: #333333;
   font-size: 28rpx;
   font-weight: bold;

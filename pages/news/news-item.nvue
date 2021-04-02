@@ -1,47 +1,48 @@
 <template>
   <view class="media-item view" v-if="newsItem.title" @click="click">
-    <!-- 旧样式 -->
-    <!-- <view class="view" :style="{flexDirection: (newsItem.article_type === 1 || newsItem.article_type === 2)?(newsItem.article_type === 2 ?'row':'row-reverse'):'column' }">
-      <text class="media-title" :class="{'media-title2': newsItem.article_type === 1 || newsItem.article_type === 2}">{{newsItem.title}}</text>
-      <view v-if="newsItem.image_list || newsItem.image_url" class="image-section flex-row" :class="{'image-section-right': newsItem.article_type === 2, 'image-section-left': newsItem.article_type === 1}">
-        <image :fade-show="false" class="image-list1" :class="{'image-list2': newsItem.article_type === 1 || newsItem.article_type === 2}"
-          v-if="newsItem.image_url" :src="newsItem.image_url"></image>
-        <image :fade-show="false" class="image-list3" v-if="newsItem.image_list" :src="source.url" v-for="(source, i) in newsItem.image_list"
-          :key="i" />
+    
+    <template v-if="newsItem.article_type === 1 || newsItem.article_type === 2">
+      <view class="view" :style="{ flexDirection: 'row' }">
+        <view class="media-left">
+          <text class="media-title">{{newsItem.title}}</text>
+          <view class="media-foot flex-row">
+            <view class="media-info flex-row">
+              <text class="info-text">{{newsItem.source || '九章新闻'}}</text>
+              <text class="info-text">{{newsItem.comment_count > 999 ? '999+' : newsItem.comment_count}}评</text>
+              <text class="info-text">{{newsItem.datetime}}</text>
+            </view>
+            <view class="close-view" @click.stop="close">
+              <view class="close-l close-h"></view>
+              <view class="close-l close-v"></view>
+            </view>
+          </view>
+        </view>
+        <view v-if="newsItem.image_list.length || newsItem.image_url" class="image-section flex-row" :class="{'image-section-right': newsItem.article_type === 1, 'image-section-left': newsItem.article_type === 2}">
+          <image :fade-show="false" class="image-list1 image-list2"
+            :src="newsItem.image_url || newsItem.image_list[0]"></image>
+        </view>
       </view>
-    </view>
-    <view class="media-foot flex-row">
-      <view class="media-info flex-row">
-        <text class="info-text">{{newsItem.source}}</text>
-        <text class="info-text">{{newsItem.comment_count}}条评论</text>
-        <text class="info-text">{{newsItem.datetime}}</text>
+    </template>
+    <template v-if="newsItem.article_type == 3">
+      <view class="view" :style="{flexDirection: 'column'}">
+        <text class="media-title">{{newsItem.title}}</text>
+        <view v-if="newsItem.image_list.length || newsItem.image_url" class="image-section flex-row">
+          <image :fade-show="false" class="image-list3" :src="cover" v-for="(cover, i) in newsItem.image_list.slice(0,3)"
+            :key="i"/>
+        </view>
       </view>
-      <view class="close-view" @click.stop="close">
-        <view class="close-l close-h"></view>
-        <view class="close-l close-v"></view>
+      <view class="media-foot flex-row">
+        <view class="media-info flex-row info-between">
+          <text class="info-text no-right" >{{newsItem.source || '九章新闻'}}</text>
+          <text class="info-text no-right">{{newsItem.comment_count > 999 ? '999+' : newsItem.comment_count}}评</text>
+          <text class="info-text no-right">{{newsItem.datetime}}</text>
+        </view>
+        <view class="close-view" @click.stop="close">
+          <view class="close-l close-h"></view>
+          <view class="close-l close-v"></view>
+        </view>
       </view>
-    </view> -->
-    <!-- 新样式 -->
-    <view class="view" :style="{flexDirection: (newsItem.article_type === 1 || newsItem.article_type === 2)?(newsItem.article_type === 2 ?'row-reverse':'row'):'column' }">
-      <text class="media-title">{{newsItem.title}}</text>
-      <view v-if="newsItem.image_list || newsItem.image_url" class="image-section flex-row" :class="{'image-section-right': newsItem.article_type === 1, 'image-section-left': newsItem.article_type === 2}">
-        <image :fade-show="false" class="image-list1" :class="{'image-list2': newsItem.article_type === 1 || newsItem.article_type === 2}"
-          v-if="newsItem.image_list.length < 3" :src="newsItem.image_url"></image>
-        <image :fade-show="false" class="image-list3" :src="cover" v-for="(cover, i) in newsItem.image_list.slice(0,3)"
-          :key="i" v-else />
-      </view>
-    </view>
-    <view class="media-foot flex-row">
-      <view class="media-info flex-row">
-        <text class="info-text">{{newsItem.source}}</text>
-        <text class="info-text">{{newsItem.comment_count}}评</text>
-        <text class="info-text">{{newsItem.datetime}}</text>
-      </view>
-      <view class="close-view" @click.stop="close">
-        <view class="close-l close-h"></view>
-        <view class="close-l close-v"></view>
-      </view>
-    </view>
+    </template>
     <view class="media-item-line" style="position: absolute;"></view>
   </view>
 </template>
@@ -93,7 +94,7 @@
     position: relative;
     flex: 1;
     flex-direction: column;
-    padding: 20rpx 30rpx 20px 30rpx;
+    padding: 20rpx 30rpx;
   }
 
   .media-item-line {
@@ -113,16 +114,30 @@
     flex-direction: row-reverse;
   }
 
-  .media-title {
+  .media-left {
     flex: 1;
+    justify-content: space-between;
+    min-height: 154rpx;
   }
 
   .media-title {
-    lines: 3;
+    /* #ifdef APP-NVUE */
+    lines: 2;
+    /* #endif */
     text-overflow: ellipsis;
-    font-size: 32rpx;
+    font-size: 36rpx;
     font-weight: 600;
     color: #555555;
+    /* #ifndef APP-NVUE */
+    text-overflow: -o-ellipsis-lastline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
+    /* #endif */
   }
 
   .media-title2 {
@@ -168,20 +183,28 @@
   .media-info {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    width: 50%;
   }
 
   .info-text {
     color: #999999;
-    font-size: 26rpx;
+    font-size: 22rpx;
+    margin-right: 26rpx;
   }
 
   .media-foot {
-    margin-top: 26rpx;
+    margin-top: 20rpx;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+  }
+
+  .info-between {
+    justify-content: space-between;
+    flex: 0.5;
+  }
+
+  .no-right {
+    margin-right: 0;
   }
 
   .close-view {

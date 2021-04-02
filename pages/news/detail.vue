@@ -35,15 +35,10 @@
         </view>
         <!-- 富文本 -->
         <view class="content_wrap">
-          <u-read-more ref="uReadMore" color="#F04323" show-height="800" :toggle="true">
-            <!-- <u-parse
-              :html="detail.content"
-              compress="1"
-              :lazy-load="true"
-              loading-img="/static/img/mine/coin_header.png"
-            ></u-parse>-->
+          <rich-text :nodes="detail.content"></rich-text>
+          <!-- <u-read-more ref="uReadMore" color="#F04323" show-height="800" text-indent="0" :toggle="true">
             <rich-text :nodes="detail.content"></rich-text>
-          </u-read-more>
+          </u-read-more>-->
         </view>
         <view class="handle_wrap">
           <view class="u-flex item_wrap" @click="unlike.showDialog=true">
@@ -73,28 +68,44 @@
               <u-icon name="close"></u-icon>
             </view>
           </view>
-        </view> -->
+        </view>-->
       </view>
+      <!-- <u-input v-model="mytest" type="textarea" :focus="true" /> -->
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 推荐版块 -->
       <view class="recommend_wrap">
-        <view class="item_list">
-          <view class="item" v-for="(item, index) in recommendList" :key="index">
-            <view class="left_wrap">
-              <view class="title u-line-2">{{item.title}}</view>
-              <view class="u-flex bottom">
-                <view class="u-flex left">
-                  <u-avatar :src="item.avatar" size="40" />
-                  <view class="name">{{item.author || '九章新闻'}}</view>
+        <u-read-more
+          ref="uReadMore"
+          close-text="查看更多"
+          color="#F04323"
+          show-height="620"
+          text-indent="0"
+          :toggle="true"
+          :shadow-style="shadowStyle"
+        >
+          <view class="item_list">
+            <view
+              class="item"
+              v-for="(item, index) in recommendList"
+              :key="index"
+              @click="goRecommend(item.id)"
+            >
+              <view class="left_wrap">
+                <view class="title u-line-2">{{item.title}}</view>
+                <view class="u-flex bottom">
+                  <view class="u-flex left">
+                    <u-avatar :src="item.avatar" size="40" />
+                    <view class="name">{{item.author || '九章新闻'}}</view>
+                  </view>
+                  <view class="add_time">{{item.add_time | date('mm-dd hh:MM')}}</view>
                 </view>
-                <view class="add_time">{{item.add_time | date('mm-dd hh:MM')}}</view>
+              </view>
+              <view class="right_wrap">
+                <image class="banner" :src="item.cover" />
               </view>
             </view>
-            <view class="right_wrap">
-              <image class="banner" :src="item.banner" />
-            </view>
           </view>
-        </view>
+        </u-read-more>
         <!-- <view class="advert_wrap">
           <u-swiper :list="bannerList" mode="none"></u-swiper>
           <view class="u-flex bottom_wrap">
@@ -106,7 +117,7 @@
               <u-icon name="close"></u-icon>
             </view>
           </view>
-        </view> -->
+        </view>-->
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <!-- 评论版块 -->
@@ -124,7 +135,7 @@
       ></mix-footer>
       <!-- 发表评论组件 -->
       <comment-report
-        v-if="showReport"
+        ref="commentReport"
         :articleId="detail.id"
         :parentId="parentId"
         @emitShowReport="goShowReport"
@@ -165,7 +176,11 @@ export default {
       commentNum: 0, // 评论数量
       parentId: "", // 父级评论Id
       showReport: false, //评论组件
+      mytest: "",
       commentList: [],
+      shadowStyle: {
+        backgroundImage: "none",
+      },
       bannerList: [
         {
           image: "https://cdn.uviewui.com/uview/swiper/1.jpg",
@@ -210,9 +225,14 @@ export default {
     this.unlike = this.$refs.unlike;
     this.myComment = this.$refs.myComment;
     this.mixFooter = this.$refs.mixFooter;
+    this.commentReport = this.$refs.commentReport;
   },
   onLoad(options) {
     this.getNewsDetail(options.newsId);
+    uni.$on("emitRefreshComment", (data) => {
+      this.detail.comments++;
+      this.refreshComment();
+    });
   },
   onPageScroll({ scrollTop }) {
     let articleTimer = this.$refs.articleTimer;
@@ -255,12 +275,10 @@ export default {
     },
     // 展示评论组件
     goShowReport(data) {
-      this.showReport = !this.showReport;
+      // this.showReport = !this.showReport;
+      this.commentReport.showContent = !this.commentReport.showContent;
       // data是Boolean刷新评论视图，是string则传入父级评论id
-      if (typeof data === "boolean") {
-        this.detail.comments++;
-        this.refreshComment();
-      } else if (typeof data === "string") {
+      if (typeof data === "string") {
         this.parentId = data;
       }
     },
@@ -270,6 +288,13 @@ export default {
       this.myComment.pageIndex = 1;
       this.myComment.commentList = [];
       this.myComment.getComment(this.detail.id);
+    },
+    // 跳转视频详情
+    goRecommend(id) {
+      this.$Router.push({
+        path: "/pages/news/detail",
+        query: { newsId: id },
+      });
     },
     // 请求文章详情
     async getNewsDetail(newsId) {
@@ -369,12 +394,16 @@ export default {
   }
 }
 .detail-page {
+  /deep/.u-content {
+    line-height: 1;
+  }
   .detail_wrap {
     padding: 0 15px;
     .main_title {
       margin: 10rpx auto 0;
       color: #333333;
-      font-size: 38rpx;
+      font-size: 44rpx;
+      font-weight: bold;
     }
     .inner_header {
       justify-content: space-between;
@@ -386,11 +415,12 @@ export default {
         .right {
           .nickname {
             color: #333333;
-            font-size: 26rpx;
+            font-size: 30rpx;
+            font-weight: 600;
           }
           .date {
             color: #999999;
-            font-size: 24rpx;
+            font-size: 26rpx;
             margin-top: 3rpx;
           }
         }
@@ -413,6 +443,12 @@ export default {
       }
     }
   }
+  .content_wrap {
+    font-size: 32rpx;
+    /deep/.u-content {
+      font-size: 32rpx;
+    }
+  }
   .handle_wrap {
     display: flex;
     align-items: center;
@@ -422,7 +458,7 @@ export default {
     .item_wrap {
       justify-content: center;
       width: 230rpx;
-      line-height: 76rpx;
+      height: 76rpx;
       border-radius: 100rpx;
       border: 1px solid #e5e5e5;
       .icon {
@@ -497,8 +533,8 @@ export default {
         }
         .right_wrap {
           .banner {
-            width: 250rpx;
-            height: 100%;
+            width: 240rpx;
+            height: 142rpx;
           }
         }
       }

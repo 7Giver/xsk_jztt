@@ -37,15 +37,9 @@ export default {
   },
   onShow(...options) {
     // console.log(getAreaList);
-    this.vuex_token && this.getSystemDate(this.vuex_token);
+    this.vuex_token && uni.switchTab({ url: '/pages/news/news' });
   },
   methods: {
-    // 获取系统设置
-    async getSystemDate(token) {
-      let { data } = await getSystemConfig(token);
-      this.$u.vuex("vuex_setting", data);
-      uni.switchTab({ url: '/pages/news/news' });
-    },
     goToLogin() {
       uni.switchTab({ url: '/pages/news/news' });
     },

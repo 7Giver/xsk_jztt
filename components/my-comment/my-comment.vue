@@ -136,7 +136,7 @@ export default {
 <style lang="scss" scoped>
 $mianColor: #F04323;
 .comment_list {
-	height: 100vh;
+	// height: 100vh;
 	padding-bottom: 140rpx;
 }
 .main_title {

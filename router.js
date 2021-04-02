@@ -16,10 +16,7 @@ const router = createRouter({
 
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-  let lifeData = {};
-  try {
-    lifeData = uni.getStorageSync("lifeData");
-  } catch (e) {}
+  let lifeData = uni.getStorageSync("lifeData");
   const hasToken = lifeData.vuex_token;
   if (hasToken) {
     // if (to.name === "login" || to.name === "index") {
@@ -31,7 +28,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   /* has no token*/
-  if (to.name !== "login" && to.name !== "tagIndex" && to.name !== "tagOff") {
+  if (to.name !== "login" && to.name !== "index" && to.name !== "tagOff") {
     return next({ name: "login" });
   }
   next();

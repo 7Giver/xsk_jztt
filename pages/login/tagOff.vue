@@ -24,7 +24,7 @@
           </view>
         </view>
       </view>
-      <view class="next_btn" @click="submitTags">完成</view>
+      <view class="next_btn" @click="submitTags">完成({{targetList.length}})</view>
     </view>
   </view>
 </template>
@@ -37,6 +37,7 @@ export default {
       ids: "", // 一级标签
       maxNumber: 6, // 最多标签数量
       tagList: [],
+      targetList: [], //选中的标签
     };
   },
   onLoad(options) {
@@ -61,6 +62,13 @@ export default {
       } else {
         this.$u.toast(`不能超过${this.maxNumber}个`);
       }
+      let target = []
+      this.tagList.forEach((item) => {
+        item.subs.forEach((subs) => {
+          subs.checked && target.push(subs);
+        });
+      });
+      this.targetList = target
     },
     // 跳过选择
     goPassTag() {

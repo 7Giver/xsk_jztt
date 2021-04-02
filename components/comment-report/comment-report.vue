@@ -1,17 +1,20 @@
 <template>
-  <view class="comment-report" :style="{ height: (screenHeight - keyboardHeight) + 'px'}">
+  <view
+    class="comment-report"
+    :style="{ height: (screenHeight - keyboardHeight) + 'px'}"
+    v-if="showContent"
+  >
     <view class="mask" @click="emitShowReport"></view>
-    <view class="content_wrap" v-show="showContent">
+    <view class="content_wrap">
       <view class="container">
         <u-input
           v-model="comment"
           type="textarea"
-          :focus="true"
-          :border="true"
+          :focus="firstFocus"
+          :border="firstFocus"
           :height="120"
           :maxlength="100"
           @input="inputChange"
-          @blur="emitShowReport"
         />
         <view class="right_wrap">
           <u-icon name="arrow-up" color="#999999"></u-icon>
@@ -54,6 +57,7 @@ export default {
       keyboardHeight: 0, // 键盘高度
       screenHeight: 0, // 屏幕高度
       disabled: true, // 禁言发布
+      firstFocus: false,
       showContent: false, // 展示组件主体
     };
   },
@@ -64,11 +68,15 @@ export default {
       this.vuex_system.brand == "Apple" ||
       !this.vuex_system.statusBarHeight
     ) {
-      this.showContent = true;
+      // this.showContent = true;
     }
   },
   mounted() {
+    setTimeout(() => {
+      this.firstFocus = true;
+    }, 500);
     uni.onKeyboardHeightChange((res) => {
+      console.log("res", res);
       if (res.height == 0) {
         this.emitShowReport();
       } else {
@@ -76,12 +84,6 @@ export default {
         this.showContent = true;
       }
     });
-    // 备用方案 显示主体
-    // if (!this.showContent) {
-    //   setTimeout(() => {
-    //     this.showContent = true;
-    //   }, 400);
-    // }
   },
   methods: {
     inputChange(e) {
@@ -102,6 +104,7 @@ export default {
         this.$u.toast("评论不能为空");
         return;
       }
+
       let params = {
         token: this.vuex_token,
         article_id: this.articleId,
@@ -110,7 +113,7 @@ export default {
       };
       let { data } = await commentSubmit(params);
       this.comment = "";
-      this.$emit("emitShowReport", true);
+      uni.$emit("emitRefreshComment", true);
       this.$u.toast("评论成功");
     },
   },
@@ -122,7 +125,7 @@ $mianColor: #f04323;
 .comment-report {
   position: fixed;
   bottom: 0;
-  z-index: 3;
+  z-index: 99999999;
   display: flex;
   flex-direction: column;
   width: 100%;

@@ -142,8 +142,7 @@
 						video_type: 0, // 0默认 1广告
 					},
 				]
-				this.dataList = testList;
-				this.isLoading = false;
+        var startTime = new Date();
 
         const token = this.$store.state.vuex_token;
         let params = {
@@ -155,6 +154,42 @@
           type: 2 // 0或不传--文章、视频，1--文章，2--视频
         };
         let { data } = await getArticleList(params);
+        const data_list = data.list.map((item) => {
+          return {
+            id: item.id,
+            datetime: friendlyDate(item.add_time),
+            title: item.title,
+						banner: item.cover,
+						video_link: item.content,
+						// video_length: '01:27',
+						avatar: item.avatar,
+						nickname: item.author,
+						like: item.likes,
+						comment: item.comments,
+						is_focus: 0,
+						is_like: 1,
+						video_type: 0, // 0默认 1广告
+          };
+        });
+        if (refresh == true) {
+          this.pageIndex = 1;
+          this.dataList = data_list;
+        } else {
+          this.pageIndex++;
+          this.dataList = this.dataList.concat(data_list);
+        }
+        this.isLoading = false;
+        if (refresh == true) {
+          this.refreshing = false;
+          this.refreshFlag = false;
+          this.refreshText = "已刷新";
+          if (this.pullTimer) {
+            clearTimeout(this.pullTimer);
+          }
+          this.pullTimer = setTimeout(() => {
+            this.pulling = false;
+          }, 1000);
+        }
       },
       loadMore(e) {
         this.loadData();

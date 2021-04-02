@@ -8,11 +8,11 @@
     </u-navbar>-->
     <view class="detail-page">
       <view class="header_wrap" :style="{'padding-top': statusBarHeight + 'px'}">
-        <view class="video_wrap" >
+        <view class="video_wrap">
           <video
             class="myVideo"
             id="myVideo"
-            :src="detail.video"
+            :src="detail.content"
             @error="videoErrorCallback"
             controls
           ></video>
@@ -25,7 +25,7 @@
                 <u-icon name="thumb-up-fill" v-if="detail.is_like"></u-icon>
                 <u-icon name="thumb-up" v-else></u-icon>
               </template>
-              <view class="text">{{detail.like}}</view>
+              <view class="text">{{detail.likes > 9999 ? '1w+' : detail.likes}}</view>
             </view>
             <view class="u-flex item">
               <image class="icon" src="/static/img/icon/icon_wx.png" mode="widthFix" />
@@ -38,10 +38,10 @@
           </view>
           <view class="u-flex user_wrap">
             <view class="u-flex left_wrap">
-              <u-avatar :src="detail.avatar" size="80"></u-avatar>
+              <u-avatar :src="userinfo.avatar" size="80"></u-avatar>
               <view class="right">
-                <view class="nickname">{{detail.nickname}}</view>
-                <view class="fans">{{detail.fans}}粉丝</view>
+                <view class="nickname">{{userinfo.name}}</view>
+                <view class="fans">{{userinfo.fans}}粉丝</view>
               </view>
             </view>
             <view class="right_wrap">
@@ -52,25 +52,35 @@
       </view>
       <u-gap height="15" bg-color="#F2F2F2"></u-gap>
       <view class="recommend_wrap">
-        <view class="item" v-for="(item, index) in recommendList" :key="index">
-          <view class="left_wrap">
-            <view class="title u-line-2">{{item.title}}</view>
-            <view class="u-flex bottom">
-              <view class="u-flex left">
-                <view class="name">{{item.name}}</view>
+        <u-read-more
+          ref="uReadMore"
+          close-text="查看更多"
+          color="#F04323"
+          show-height="620"
+          text-indent="0"
+          :toggle="true"
+          :shadow-style="shadowStyle"
+        >
+          <view
+            class="item"
+            v-for="(item, index) in recommendList"
+            :key="index"
+            @click="goRecommend(item.id)"
+          >
+            <view class="left_wrap">
+              <view class="title u-line-2">{{item.title}}</view>
+              <view class="u-flex bottom">
+                <view class="u-flex left">
+                  <view class="name">{{item.name}}</view>
+                </view>
+                <view class="play_time">{{item.views}}播放</view>
               </view>
-              <view class="play_time">{{item.play_time}}万次播放</view>
+            </view>
+            <view class="right_wrap">
+              <image class="banner" :src="item.cover" mode="aspectFit" />
             </view>
           </view>
-          <view class="right_wrap">
-            <image class="banner" :src="item.banner" />
-            <view class="times">{{item.times}}</view>
-          </view>
-        </view>
-        <view class="showmore_wrap">
-          <view class="text">查看更多</view>
-          <u-icon name="arrow-down"></u-icon>
-        </view>
+        </u-read-more>
       </view>
       <!-- 评论版块 -->
       <view class="comment_wrap">
@@ -81,6 +91,7 @@
 </template>
 
 <script>
+import { getArticleDetail } from "@/api/home.js";
 import myComment from "@/components/my-comment/my-comment";
 export default {
   components: {
@@ -88,17 +99,12 @@ export default {
   },
   data() {
     return {
+      videoId: "",
       statusBarHeight: 0, // 工具栏高度
-      detail: {
-        video:
-          "https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4",
-        title:
-          "这里是视频标题这里是视频标题这里是视频标题这里是视频标题这里是视频标题这里是视频标题这里是视频标题这里是视频标题",
-        like: 220,
-        avatar: "",
-        nickname: "这里是用户名这里是用户名这里是用户名这里是用户名",
-        fans: 5425,
-        is_like: 0,
+      detail: {},
+      userinfo: {},
+      shadowStyle: {
+        backgroundImage: "none",
       },
       recommendList: [
         {
@@ -129,33 +135,42 @@ export default {
       ],
     };
   },
-  onReady(options) {
-    try {
-      const res = uni.getSystemInfoSync();
-      console.log(res.statusBarHeight);
-      this.windostatusBarHeightwWidth = res.statusBarHeight;
-    } catch (e) {
-      // error
+  onLoad(options) {
+    if (options.id) {
+      this.videoId = options.id;
+      this.getNewsDetail();
     }
-    setTimeout(() => {
-      uni.setNavigationBarColor({
-        frontColor: "#ffffff",
-        // backgroundColor: "#000000",
-      });
-    }, 500);
   },
   methods: {
     // 视频报错回调
     videoErrorCallback(e) {
-      // console.log(e);
-      uni.showModal({
-        content: "视频错误",
-        showCancel: false,
-      });
+      console.log(e);
     },
     // 视频点赞
     getLikes() {
       this.detail.is_like = !this.detail.is_like;
+    },
+    // 跳转视频详情
+    goRecommend(id) {
+      this.$Router.push({
+        path: "/pages/video/detail",
+        query: { id: id },
+      });
+    },
+    // 请求文章详情
+    async getNewsDetail() {
+      let params = {
+        token: this.vuex_token,
+        id: this.videoId,
+        uid: this.vuex_user.id,
+      };
+      let { data } = await getArticleDetail(params);
+      this.userinfo = data.userinfo || {};
+      this.detail = data || {};
+      this.recommendList = data.recommands;
+      this.$nextTick(() => {
+        this.$refs.uReadMore.init();
+      });
     },
   },
 };
@@ -173,6 +188,9 @@ export default {
   }
 }
 .detail-page {
+}
+/deep/.u-content {
+  line-height: 1;
 }
 .header_wrap {
   .video_wrap {
@@ -192,8 +210,8 @@ export default {
       .item {
         justify-content: center;
         flex: 1;
+        height: 70rpx;
         padding: 0 15rpx;
-        line-height: 68rpx;
         border-radius: 400rpx;
         border: 1px solid #e5e5e5;
         &:nth-child(2) {
@@ -260,11 +278,16 @@ export default {
     border-bottom: 1px solid #e6e6e6;
     .left_wrap {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       margin-right: 26rpx;
+      padding-bottom: 10rpx;
       .title {
         color: #333333;
         font-size: 28rpx;
         letter-spacing: 1px;
+        line-height: 34rpx;
       }
       .bottom {
         color: #999999;
@@ -291,9 +314,10 @@ export default {
     .right_wrap {
       position: relative;
       .banner {
-        width: 250rpx;
-        height: 100%;
+        width: 240rpx;
+        height: 142rpx;
         border-radius: 10rpx;
+        background-color: black;
       }
       .times {
         position: absolute;
