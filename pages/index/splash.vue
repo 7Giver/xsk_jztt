@@ -7,8 +7,8 @@
     <view @click="goToLogin">登录</view>
     <view class="">token：{{vuex_token}}</view> -->
 
-    <image class="splash" src="/static/img/splash.png"></image>
-    <view class="pass-wap" @click="closeSplash" :style="{top: (statusBarHeight + 34) + 'px'}">
+    <image class="splash" src="/static/img/login/splash.png" mode="widthFix" :style="{'padding-top': (statusBarHeight + 50) + 'px'}"></image>
+    <view class="pass-wap" @click="closeSplash" :style="{top: (statusBarHeight + 10) + 'px'}">
       <text>{{count}} | 关闭广告</text>
       <view class="close-view">
         <view class="close-l close-h"></view>
@@ -46,16 +46,14 @@ export default {
     },
     // 关闭广告
     closeSplash() {
-      uni.redirectTo({ url: '/pages/login/login' });
+      this.vuex_token ? uni.switchTab({ url: '/pages/news/news' }) : uni.redirectTo({ url: '/pages/login/login' });
     },
     // 清除定时器
     timerClear(data) {
       clearInterval(this.myTimer);
       this.timer = null;
-      // data && uni.redirectTo({ url: '/pages/login/login' });
       if (data) {
-        uni.navigateTo({ url: '/pages/404/404' });
-        console.log('router!');
+        this.closeSplash();
       }
     },
     // 开启计时器
@@ -101,7 +99,8 @@ export default {
 
 .splash {
   width: 100%;
-  height: 100vh;
+  padding-top: 0px;
+  background-color: #FC4A23;
 }
 
 .pass-wap {

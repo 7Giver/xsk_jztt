@@ -8,7 +8,7 @@
     <view class="container">
       <view class="top_wrap">
         <view class="u-flex title_wrap">
-          <image class="logo" src="/static/img/login/icon_logo.png" mode="widthFix" />
+          <image class="logo" src="/static/img/login/logo.png" mode="widthFix" />
           <view class="title">{{ sendCode ? "输入验证码" : "手机登录" }}</view>
         </view>
         <view class="off_title">
@@ -206,6 +206,7 @@ $offColor: #ffaa9a;
       .logo {
         width: 80rpx;
         margin-right: 20rpx;
+        border-radius: 14rpx;
       }
       .title {
         font-size: 54rpx;

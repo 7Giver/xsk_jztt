@@ -210,6 +210,9 @@ export default {
     // 区域跳转
     innerNext(id) {
       switch (id) {
+        case 1:
+          this.callWxshare();
+          break;
         case 4:
           this.$Router.push({ path: "/pages/mine/friend" });
           break;
@@ -255,8 +258,40 @@ export default {
           break;
       }
     },
+    // 调用微信分享
+    callWxshare() {
+      // uni.share({
+      //   provider: "weixin",
+      //   scene: "WXSceneSession",
+      //   type: 0,
+      //   href: "http://uniapp.dcloud.io/",
+      //   title: "uni-app分享",
+      //   summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
+      //   imageUrl:
+      //     "https://bjetxgzv.cdn.bspapp.com/VKCEYUGU-uni-app-doc/d8590190-4f28-11eb-b680-7980c8a877b8.png",
+      //   success: function (res) {
+      //     console.log("success:" + JSON.stringify(res));
+      //   },
+      //   fail: function (err) {
+      //     console.log("fail:" + JSON.stringify(err));
+      //   },
+      // });
+      uni.shareWithSystem({
+        summary: "",
+        href: "https://uniapp.dcloud.io",
+        imageUrl:
+          "https://bjetxgzv.cdn.bspapp.com/VKCEYUGU-uni-app-doc/d8590190-4f28-11eb-b680-7980c8a877b8.png",
+        success() {
+          // 分享完成，请注意此时不一定是成功分享
+        },
+        fail() {
+          // 分享失败
+        },
+      });
+    },
     // 复制文本
     async copyJSON(text) {
+      // #ifdef H5
       let target = document.createElement("input"); //创建input节点
       target.value = text; // 给input的value赋值
       document.body.appendChild(target); // 向页面插入input节点
@@ -265,8 +300,20 @@ export default {
         await document.execCommand("Copy"); // 执行浏览器复制命令
         this.$u.toast("复制成功");
       } catch {
-        console.log("复制失败");
+        console.log("h5复制失败");
       }
+      // #endif
+      // #ifdef APP-PLUS
+      uni.setClipboardData({
+        data: text,
+        success: () => {
+          this.$u.toast("复制成功");
+        },
+        fail: () => {
+          console.log("app复制失败");
+        },
+      });
+      // #endif
     },
   },
 };

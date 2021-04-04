@@ -11,7 +11,7 @@
           <u-cell-item title="账号管理" @click="goNext('account')"></u-cell-item>
           <u-cell-item title="编辑个人资料" @click="goNext('personal')"></u-cell-item>
         </u-cell-group>
-      </view> -->
+      </view>-->
       <view class="u-m-t-10" @click="showFontPicker=true">
         <u-cell-group :border="false">
           <u-cell-item title="字体大小" :value="fontText"></u-cell-item>
@@ -26,7 +26,7 @@
         </u-cell-group>
       </view>
       <view class="u-m-t-10">
-        <view class="login_out">退出登录</view>
+        <view class="login_out" @click="loginOut">退出登录</view>
       </view>
       <!-- 设置全局字符大小 -->
       <u-select
@@ -98,6 +98,12 @@ export default {
       window.document.documentElement.setAttribute("data-size", target.value);
       this.goSetFont();
     },
+    // 推出登录
+    loginOut() {
+      this.$u.vuex("vuex_token", "");
+      console.log(">>>>>>>>>>>>Clear token!");
+      uni.reLaunch({ url: "/pages/login/login" });
+    },
     // 请求设置字体大小
     async goSetFont() {
       let params = {
@@ -105,7 +111,7 @@ export default {
         font: this.fontText,
       };
       let { data } = await setFontSize(params);
-      this.$u.vuex('vuex_setting.font', this.fontText);
+      this.$u.vuex("vuex_setting.font", this.fontText);
     },
   },
 };

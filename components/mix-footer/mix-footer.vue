@@ -18,7 +18,7 @@
         <image v-if="detail.is_like" src="/static/img/news/icon_dz_on.png" mode="widthFix" />
         <image v-else src="/static/img/news/icon_dz.png" mode="widthFix" />
       </view>
-      <view class="item">
+      <view class="item" @click="emitShare">
         <image src="/static/img/icon/icon_fx.png" mode="widthFix" />
       </view>
     </view>
@@ -65,6 +65,9 @@ export default {
     },
     emitCollect() {
       this.$emit("emitCollect");
+    },
+    emitShare() {
+      this.$emit("emitShare");
     },
   },
 };

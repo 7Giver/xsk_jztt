@@ -1,6 +1,6 @@
 <template>
   <view id="app">
-    <u-navbar :title="detail.title" :border-bottom="false">
+    <u-navbar title-width="400" :title="detail.title" :border-bottom="false">
       <view class="u-flex navbar-right" slot="right">
         <view @click="postCollect">
           <u-icon name="star-fill" color="#F04323" v-if="detail.is_favor == 1"></u-icon>
@@ -10,7 +10,7 @@
           class="icon"
           src="/static/img/icon/icon_fx.png"
           mode="widthFix"
-          @click="scrollToBottom"
+          @click="goShareDetail"
         />
       </view>
     </u-navbar>
@@ -132,6 +132,7 @@
         @emitShowReport="goShowReport"
         @emitLike="postLike"
         @emitCollect="postCollect"
+        @emitShare="goShareDetail"
       ></mix-footer>
       <!-- 发表评论组件 -->
       <comment-report
@@ -171,6 +172,7 @@ export default {
   },
   data() {
     return {
+      logo_url: "/static/img/login/logo.png",
       userinfo: {}, // 文章用户信息
       detail: {}, // 文章详情
       commentNum: 0, // 评论数量
@@ -295,6 +297,40 @@ export default {
         path: "/pages/news/detail",
         query: { newsId: id },
       });
+    },
+    // 分享文章详情
+    goShareDetail() {
+      // #ifdef H5
+      console.log("H5分享开发中");
+      // #endif
+      // #ifdef  APP-PLUS
+      // uni.shareWithSystem({
+      //   summary: this.detail.title,
+      //   href: this.detail.share_url,
+      //   imageUrl: this.detail.cover ? this.detail.cover : this.logo_url,
+      //   success() {
+      //     // 分享完成，请注意此时不一定是成功分享
+      //   },
+      //   fail() {
+      //     // 分享失败
+      //   },
+      // });
+      // #endif
+      // #ifdef APP-PLUS
+      plus.share.sendWithSystem(
+        {
+          content: this.detail.title,
+          href: this.detail.share_url,
+          pictures: [this.detail.cover ? this.detail.cover : this.logo_url],
+        },
+        function () {
+          console.log("分享成功");
+        },
+        function (e) {
+          console.log("分享失败：" + JSON.stringify(e));
+        }
+      );
+      // #endif
     },
     // 请求文章详情
     async getNewsDetail(newsId) {

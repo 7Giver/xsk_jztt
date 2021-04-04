@@ -22,6 +22,10 @@
 			"name": "index"
 		},
 		{
+			"path": "pages/index/splash",
+			"name": "splash"
+		},
+		{
 			"path": "pages/news/news",
 			"name": "news"
 		},
