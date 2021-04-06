@@ -69,6 +69,7 @@
     </swiper>
     <!-- 红包组件 -->
     <!-- <red-bag v-if="showBag" :detail="bagDetail" @emitClose="showBag=false"></red-bag> -->
+    <u-tabbar :list="vuex_tabbar"></u-tabbar>
   </view>
 </template>
 
@@ -95,6 +96,7 @@ export default {
   },
   data() {
     return {
+      current: 0,
       tabIndex: 0,
       cacheTab: [],
       scrollInto: "",
@@ -104,6 +106,7 @@ export default {
       indicatorLineWidth: 0,
       isTap: false,
       showBag: false, // 显示红包
+      loaded: false, // 是否加载过
       searchStr: "", // 搜索字段
       bagDetail: {}, // 红包详情
       mainColor: "#f04323",
@@ -117,6 +120,9 @@ export default {
   onShow(...options) {
     // console.log(this.$Route);
     this.getMyRedBag();
+    if (this.loaded == true) {
+      this.pageList[0].refreshData();
+    }
   },
   onReady() {
     this._lastTabIndex = 0;
@@ -268,6 +274,7 @@ export default {
     switchTab(index) {
       if (this.pageList[index].dataList.length === 0) {
         this.loadTabData(index);
+        this.loaded = true;
       }
 
       if (this.tabIndex === index) {

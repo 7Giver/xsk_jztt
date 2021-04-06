@@ -8,12 +8,11 @@ const router = createRouter({
     // #ifdef APP-PLUS
     if (type === 3) {
       router.$lockStatus = false;
-      uni.showModal({
-        content: "确定退出应用？",
-        success: function (res) {
-          if (res.confirm) {
-            plus.runtime.quit();
-          }
+      uni.showToast({
+        title: "九章头条：再滑一次退出应用",
+        duration: 2000,
+        complete: () => {
+          plus.runtime.quit();
         },
       });
     }

@@ -10,7 +10,7 @@ try {
 } catch (e) {}
 
 // 需要永久存储，且下次APP启动需要取出的，在state中的变量名
-let saveStateKeys = ["vuex_user", "vuex_token", "vuex_setting", "vuex_navBar"];
+let saveStateKeys = ["vuex_user", "vuex_token", "vuex_setting", "vuex_navBar", "vuex_tabbar"];
 
 // 保存变量到本地存储中
 const saveLifeData = function (key, value) {
@@ -32,6 +32,32 @@ const store = new Vuex.Store({
     vuex_setting: lifeData.vuex_setting ? lifeData.vuex_setting : { font: "中", article_seconds: 15 },
     vuex_system: {},
     vuex_navBar: [],
+    vuex_tabbar: [
+      {
+        pagePath: "pages/news/news",
+        iconPath: "/static/img/tabbar/icon_news.png",
+        selectedIconPath: "/static/img/tabbar/icon_news_on.png",
+        text: "新闻"
+      },
+      {
+        pagePath: "pages/video/video",
+        iconPath: "/static/img/tabbar/icon_video.png",
+        selectedIconPath: "/static/img/tabbar/icon_video_on.png",
+        text: "视频"
+      },
+      {
+        pagePath: "pages/task/task",
+        iconPath: "/static/img/tabbar/icon_task.png",
+        selectedIconPath: "/static/img/tabbar/icon_task_on.png",
+        text: "任务"
+      },
+      {
+        pagePath: "pages/mine/mine",
+        iconPath: "/static/img/tabbar/icon_mine.png",
+        selectedIconPath: "/static/img/tabbar/icon_mine_on.png",
+        text: "我的"
+      },
+    ],
     vuex_version: "1.0.1",
   },
   mutations: {

@@ -28,7 +28,7 @@
               <view class="date">{{detail.add_time}}</view>
             </view>
           </view>
-          <view class="right_wrap" @click="postFocus">
+          <view class="right_wrap" @click="postFocus" v-show="userinfo.id">
             <view class="foucs_btn on" v-if="!userinfo.is_focus">+关注</view>
             <view class="foucs_btn" v-else>已关注</view>
           </view>

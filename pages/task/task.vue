@@ -33,10 +33,7 @@
             @click="goCoinPage(item.id)"
           >
             <template>
-              <div
-                class="u-flex icon receivedBg"
-                v-if="item.status == 2 || item.status == 3"
-              >
+              <div class="u-flex icon receivedBg" v-if="item.status == 2 || item.status == 3">
                 <!-- <text>{{ item.cash }}</text> -->
                 <text>金</text>
               </div>
@@ -80,6 +77,7 @@
               <text v-if="item.id == 1" @click="goNext('news')">去阅读</text>
               <text v-if="item.id == 2">去邀请</text>
               <text v-if="item.id == 3" @click="goNext('personal')">去完善</text>
+              <text v-if="item.id == 12" @click="goNext('model')">去填写</text>
             </view>
             <view class="btn done" v-else-if="item.status == 1">已完成</view>
           </view>
@@ -122,11 +120,25 @@
         </view>
       </view>
     </view>
+    <u-modal
+      ref="uModal"
+      v-model="showModel"
+      title="邀请码"
+      confirm-color="#f04323"
+      :show-cancel-button="true"
+      :async-close="true"
+      @confirm="modelConfim"
+    >
+      <view class="slot-content">
+        <u-input v-model="inviteCode" :border="true" placeholder="输入邀请码" />
+      </view>
+    </u-modal>
+    <u-tabbar :list="vuex_tabbar"></u-tabbar>
   </view>
 </template>
 
 <script>
-import { getTaskList } from "@/api/home.js";
+import { getTaskList, postUserBind } from "@/api/home.js";
 export default {
   data() {
     return {
@@ -134,6 +146,8 @@ export default {
       assess_money: 0, //折合现金
       series: 0, //连续签到天数
       sign_final: 0, //连续签到可得金币数
+      showModel: false, // 显示绑定弹窗
+      inviteCode: "", // 输入的邀请码
       redBag: "/static/img/task/pic_hb.png",
       taskCoin: [
         {
@@ -194,6 +208,9 @@ export default {
         case "personal":
           this.$Router.push({ name: "personalData" });
           break;
+        case "model":
+          this.showModel = true;
+          break;
         default:
           break;
       }
@@ -210,6 +227,37 @@ export default {
 
         default:
           break;
+      }
+    },
+    // 邀请码弹窗确认
+    async modelConfim() {
+      if (!this.inviteCode) {
+        this.$u.toast("请输入邀请码");
+        this.$refs.uModal.clearLoading();
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        code: this.inviteCode,
+      };
+      try {
+        let { code, data, msg } = await this.$u.post(
+          `${this.$baseURL}/v1/user/bind`,
+          params,
+          {
+            "content-type": "application/x-www-form-urlencoded",
+          }
+        );
+        if (code !== 0) {
+          this.$u.toast(msg);
+          this.showModel = false;
+          return;
+        }
+        this.$u.toast("绑定成功");
+        this.showModel = false;
+      } catch (err) {
+        console.log(err);
+        this.showModel = false;
       }
     },
   },
@@ -426,5 +474,8 @@ export default {
       }
     }
   }
+}
+.slot-content {
+  padding: 50rpx 70rpx 60rpx;
 }
 </style>

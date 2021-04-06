@@ -67,6 +67,7 @@
         <video-page class="page-item" :nid="page.newsid" ref="page"></video-page>
       </swiper-item>
     </swiper>
+    <u-tabbar :list="vuex_tabbar"></u-tabbar>
   </view>
 </template>
 

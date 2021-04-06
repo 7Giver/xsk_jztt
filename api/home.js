@@ -30,6 +30,13 @@ export function getOauthCode(tel) {
 }
 
 /**
+ * 菜单导航
+ */
+export function navBarTag() {
+  return get(`/${version}/default/nav`);
+}
+
+/**
  * 用户任务列表
  * @param {string} token 登录Token (必填)
  */
@@ -429,8 +436,10 @@ export function articleClose(params) {
 }
 
 /**
- * 菜单导航
+ * 用户绑定上级
+ * @param {string} token 登录Token (必填)
+ * @param {?number} code 上级邀请码 (必填)
  */
-export function navBarTag() {
-  return get(`/${version}/default/nav`);
+export function postUserBind(params) {
+  return post(`/${version}/user/bind`, params);
 }

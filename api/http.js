@@ -7,8 +7,6 @@ const dataURL = "http://cdn.blackhw.com"; // 引用资源地址
 const testURL = "http://server.st712.com"; // 测试接口
 let baseURL = "";
 
-Vue.prototype.$dataURL = dataURL;
-
 if (process.env.NODE_ENV == "development") {
   //开发
   baseURL = "http://bssdzs188.com";
@@ -28,6 +26,9 @@ export const request = uni_request({
   withCredentials: true,
   // #endif
 });
+
+Vue.prototype.$dataURL = dataURL;
+Vue.prototype.$baseURL = baseURL;
 
 // request拦截器
 request.interceptors.request.use(
@@ -54,8 +55,8 @@ request.interceptors.response.use(
         name: "vuex_token",
         value: "",
       });
-      console.log('>>>>>>>>>>>>Clear token!');
-      console.log('NowToken:', store.state.vuex_token);
+      console.log(">>>>>>>>>>>>Clear token!");
+      console.log("NowToken:", store.state.vuex_token);
       uni.reLaunch({ url: "/pages/login/login" });
       return Promise.reject(response || "error");
     } else if (response.statusCode === 200 && response.data.code !== 0) {
