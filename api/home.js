@@ -318,7 +318,7 @@ export function getArticleList(params) {
 
 /**
  * 文章详情
- * @param {string} token 登录Token (必填)
+ * @param {string} token 登录Token
  * @param {string} id 文章id (必填)
  * @param {string} uid 分享人id (必填)
  */

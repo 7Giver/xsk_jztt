@@ -69,7 +69,7 @@
     </swiper>
     <!-- 红包组件 -->
     <!-- <red-bag v-if="showBag" :detail="bagDetail" @emitClose="showBag=false"></red-bag> -->
-    <u-tabbar :list="vuex_tabbar"></u-tabbar>
+    <!-- <u-tabbar :list="vuex_tabbar"></u-tabbar> -->
   </view>
 </template>
 

@@ -255,7 +255,9 @@ export default {
     // console.log("onUnload");
     let articleTimer = this.$refs.articleTimer;
     if (articleTimer) {
-      this.postArticleClose();
+      if (this.detail.track_id && this.vuex_token) {
+        this.postArticleClose();
+      }
       articleTimer.timerStop();
     }
   },
@@ -335,7 +337,7 @@ export default {
     // 请求文章详情
     async getNewsDetail(newsId) {
       let params = {
-        token: this.vuex_token,
+        token: this.vuex_token || "",
         id: newsId,
         uid: this.vuex_user.id,
       };

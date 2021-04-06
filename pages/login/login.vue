@@ -131,6 +131,7 @@ export default {
         this.getLogin();
       } else {
         this.sendCode = true;
+        this.getCode();
       }
     },
     // 验证码倒计时监听

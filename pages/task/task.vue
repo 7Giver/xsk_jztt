@@ -133,7 +133,7 @@
         <u-input v-model="inviteCode" :border="true" placeholder="输入邀请码" />
       </view>
     </u-modal>
-    <u-tabbar :list="vuex_tabbar"></u-tabbar>
+    <!-- <u-tabbar :list="vuex_tabbar"></u-tabbar> -->
   </view>
 </template>
 

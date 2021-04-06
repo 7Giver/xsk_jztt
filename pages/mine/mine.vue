@@ -81,7 +81,7 @@
         </view>
       </view>
     </view>
-    <u-tabbar :list="vuex_tabbar"></u-tabbar>
+    <!-- <u-tabbar :list="vuex_tabbar"></u-tabbar> -->
   </view>
 </template>
 

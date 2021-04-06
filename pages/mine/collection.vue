@@ -21,7 +21,7 @@
               <view class="right_wrap">
                 <view class="u-line-2 title">{{item.title}}</view>
                 <view class="u-flex bottom">
-                  <view class="nickname">{{item.author || '暂无作者'}}{{item.id}}</view>
+                  <view class="nickname">{{item.author || '暂无作者'}}</view>
                   <view class="add_time">收藏于{{item.add_time | date('mm-dd')}}</view>
                 </view>
               </view>
@@ -195,7 +195,7 @@ export default {
         padding: 20rpx 0;
         border-bottom: 1px solid #e6e6e6;
         .banner {
-          width: 200rpx;
+          width: 240rpx;
           height: 155rpx;
           margin-right: 20rpx;
           image {

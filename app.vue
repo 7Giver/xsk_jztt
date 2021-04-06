@@ -60,9 +60,6 @@ export default {
       this.getUserData(token);
     }
   },
-  onHide: function () {
-    // console.log('App Hide')
-  },
   methods: {
     // 获取系统设置
     async getSystemDate(token) {
