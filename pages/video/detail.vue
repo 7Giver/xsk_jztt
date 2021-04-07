@@ -20,12 +20,15 @@
         <view class="content">
           <view class="video_title u-line-2">{{detail.title}}</view>
           <view class="u-flex handle_wrap">
-            <view class="u-flex item" @click="getLikes">
+            <view class="u-flex item" @click="postLike">
               <template>
-                <u-icon name="thumb-up-fill" v-if="detail.is_like"></u-icon>
-                <u-icon name="thumb-up" v-else></u-icon>
+                <u-icon name="thumb-up-fill" color="#f04323" v-if="detail.is_like"></u-icon>
+                <u-icon name="thumb-up" color="#f04323" v-else></u-icon>
               </template>
-              <view class="text">{{detail.likes > 9999 ? '1w+' : detail.likes}}</view>
+              <view
+                class="text"
+                :class="{on: detail.is_like}"
+              >{{detail.likes > 9999 ? '1w+' : detail.likes}}</view>
             </view>
             <view class="u-flex item">
               <image class="icon" src="/static/img/icon/icon_wx.png" mode="widthFix" />
@@ -44,8 +47,9 @@
                 <view class="fans">{{userinfo.fans}}粉丝</view>
               </view>
             </view>
-            <view class="right_wrap">
-              <view class="foucs_btn">+关注</view>
+            <view class="right_wrap" @click="postFocus" v-show="userinfo.id">
+              <view class="foucs_btn on" v-if="!userinfo.is_focus">+关注</view>
+              <view class="foucs_btn" v-else>已关注</view>
             </view>
           </view>
         </view>
@@ -84,71 +88,78 @@
       </view>
       <!-- 评论版块 -->
       <view class="comment_wrap">
-        <my-comment></my-comment>
+        <my-comment ref="myComment" @emitShowReport="goShowReport" @scrollToBottom="scrollToBottom"></my-comment>
       </view>
+      <!-- 底部功能组件 -->
+      <mix-footer
+        ref="mixFooter"
+        :detail="detail"
+        @emitScroll="scrollComment"
+        @emitShowReport="goShowReport"
+        @emitLike="postLike"
+        @emitCollect="postCollect"
+        @emitShare="goShareDetail"
+      ></mix-footer>
+      <!-- 发表评论组件 -->
+      <comment-report
+        ref="commentReport"
+        :articleId="detail.id"
+        :parentId="parentId"
+        @emitShowReport="goShowReport"
+      ></comment-report>
     </view>
   </view>
 </template>
 
 <script>
-import { getArticleDetail } from "@/api/home.js";
+import {
+  getArticleDetail,
+  likeArticle,
+  postUserFocus,
+  collectArticle,
+} from "@/api/home.js";
 import myComment from "@/components/my-comment/my-comment";
+import MixFooter from "@/components/mix-footer/mix-footer";
+import CommentReport from "@/components/comment-report/comment-report";
 export default {
   components: {
     myComment,
+    MixFooter,
+    CommentReport,
   },
   data() {
     return {
       videoId: "",
+      parentId: "", // 父级评论Id
       statusBarHeight: 0, // 工具栏高度
       detail: {},
       userinfo: {},
       shadowStyle: {
         backgroundImage: "none",
       },
-      recommendList: [
-        {
-          title:
-            "这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题这边是标题",
-          avatar: "",
-          name: "新闻小能手新闻小能手新闻小能手新闻小能手",
-          play_time: 15.3,
-          times: "15:03",
-          banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
-        },
-        {
-          title: "这边是标题这边是标题这边是标题这边是标题",
-          avatar: "",
-          name: "新闻小能手",
-          play_time: 8,
-          times: "15:03",
-          banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
-        },
-        {
-          title: "这边是标题这边是标题这边是标题这边是标题",
-          avatar: "",
-          name: "新闻小能手",
-          play_time: 5.04,
-          times: "15:03",
-          banner: "https://cdn.uviewui.com/uview/swiper/2.jpg",
-        },
-      ],
+      recommendList: [],
     };
+  },
+  onReady() {
+    this.myComment = this.$refs.myComment;
+    this.mixFooter = this.$refs.mixFooter;
+    this.commentReport = this.$refs.commentReport;
+    this.detail.id && this.myComment.getComment(this.detail.id);
   },
   onLoad(options) {
     if (options.id) {
       this.videoId = options.id;
       this.getNewsDetail();
     }
+    uni.$on("emitRefreshComment", (data) => {
+      this.detail.comments++;
+      this.refreshComment();
+    });
   },
   methods: {
     // 视频报错回调
     videoErrorCallback(e) {
       console.log(e);
-    },
-    // 视频点赞
-    getLikes() {
-      this.detail.is_like = !this.detail.is_like;
     },
     // 跳转视频详情
     goRecommend(id) {
@@ -157,20 +168,138 @@ export default {
         query: { id: id },
       });
     },
+    // 展示评论组件
+    goShowReport(data) {
+      // this.showReport = !this.showReport;
+      this.commentReport.showContent = !this.commentReport.showContent;
+      // data是Boolean刷新评论视图，是string则传入父级评论id
+      if (typeof data === "string") {
+        this.parentId = data;
+      }
+    },
+    // 滚动到评论区
+    scrollComment() {
+      let dom = this.myComment.$el;
+      uni.pageScrollTo({
+        scrollTop: dom.offsetTop,
+        duration: 300, // 动画默认300ms
+      });
+    },
+    // 刷新评论区
+    refreshComment() {
+      this.myComment.limit = 10;
+      this.myComment.pageIndex = 1;
+      this.myComment.commentList = [];
+      this.myComment.getComment(this.detail.id);
+    },
+    // 分享文章详情
+    goShareDetail() {
+      // #ifdef H5
+      console.log("H5分享开发中");
+      // #endif
+      // #ifdef APP-PLUS
+      plus.share.sendWithSystem(
+        {
+          content: this.detail.title,
+          href: this.detail.share_url,
+          pictures: [this.detail.cover ? this.detail.cover : this.logo_url],
+        },
+        function () {
+          console.log("分享成功");
+        },
+        function (e) {
+          console.log("分享失败：" + JSON.stringify(e));
+        }
+      );
+      // #endif
+    },
     // 请求文章详情
     async getNewsDetail() {
       let params = {
-        token: this.vuex_token,
+        token: this.vuex_token || "",
         id: this.videoId,
         uid: this.vuex_user.id,
       };
       let { data } = await getArticleDetail(params);
       this.userinfo = data.userinfo || {};
       this.detail = data || {};
+      uni.setNavigationBarTitle({
+        title: data.title,
+      });
       this.recommendList = data.recommands;
       this.$nextTick(() => {
         this.$refs.uReadMore.init();
       });
+    },
+    // 请求用户关注
+    async postFocus(item) {
+      if (!this.vuex_token) {
+        console.log("请先登录");
+        return;
+      }
+      if (this.userinfo.id == this.vuex_user.id) {
+        this.$u.toast("不能关注自己哦");
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        focus_id: this.userinfo.id,
+        opt: this.userinfo.is_focus ? "cancel" : "focus",
+      };
+      let { data } = await postUserFocus(params);
+      if (this.userinfo.is_focus == 1) {
+        this.userinfo.is_focus = 0;
+        this.$u.toast("取关成功");
+      } else {
+        this.userinfo.is_focus = 1;
+        this.$u.toast("关注成功");
+      }
+    },
+    // 点赞视频
+    async postLike(item) {
+      if (!this.vuex_token) {
+        console.log("请先登录");
+        return;
+      }
+      if (this.userinfo.id == this.vuex_user.id) {
+        this.$u.toast("不能点赞自己哦");
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        id: this.detail.id,
+        type: this.detail.is_like ? 2 : 1,
+      };
+      let { data } = await likeArticle(params);
+      if (this.detail.is_like == 1) {
+        this.detail.is_like = 0;
+        --this.detail.likes;
+        this.$u.toast("取消成功");
+      } else {
+        this.detail.is_like = 1;
+        ++this.detail.likes;
+        this.$u.toast("点赞成功");
+      }
+    },
+    // 收藏视频
+    async postCollect() {
+      if (!this.vuex_token) {
+        console.log("请先登录");
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        id: this.detail.id,
+        type: this.detail.is_favor ? 2 : 1,
+      };
+      let { data } = await collectArticle(params);
+      if (this.detail.is_favor == 1) {
+        this.detail.is_favor = 0;
+        this.$u.toast("取消成功");
+      } else {
+        this.detail.is_favor = 1;
+        this.$u.toast("收藏成功");
+      }
     },
   },
 };
@@ -227,6 +356,9 @@ export default {
           font-size: 24rpx;
           margin-left: 10rpx;
         }
+        .on {
+          color: #f04323;
+        }
       }
     }
     .user_wrap {
@@ -257,13 +389,17 @@ export default {
       }
       .right_wrap {
         .foucs_btn {
-          color: #fff;
-          width: 100rpx;
-          font-size: 24rpx;
+          width: 120rpx;
+          color: #999999;
+          font-size: 26rpx;
           text-align: center;
+          line-height: 48rpx;
+          border-radius: 13rpx;
           letter-spacing: 1px;
-          line-height: 52rpx;
-          border-radius: 10rpx;
+          background-color: #f0f0f0;
+        }
+        .on {
+          color: #fff;
           background-color: #f04323;
         }
       }

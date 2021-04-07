@@ -97,7 +97,7 @@ export default {
     async getComment(id) {
 			this.articleId ? this.articleId : this.articleId = id;
       let params = {
-        token: this.vuex_token,
+        token: this.vuex_token || "",
         article_id: this.articleId,
         page: this.pageIndex,
         limit: this.limit,

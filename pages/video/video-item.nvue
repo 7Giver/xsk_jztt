@@ -31,13 +31,13 @@
           <text
             class="footer-number foucs"
             v-if="videoItem.video_type == 0"
-            @click.stop="goGetFocus(videoItem.user_id)"
+            @click.stop="goGetFocus(videoItem)"
           >{{videoItem.is_focus ? '已关注' : '关注'}}</text>
           <text class="footer-number" v-else-if="videoItem.video_type == 1">广告</text>
         </view>
       </view>
       <view class="flex-row footer-right" v-if="videoItem.video_type == 0">
-        <view class="flex-row flex-center">
+        <view class="flex-row flex-center" @click.stop="postLike(videoItem)">
           <view class="icon_wrap">
             <image
               class="comment_icon"
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { likeArticle, postUserFocus } from "@/api/home.js";
 export default {
   props: {
     videoItem: {
@@ -107,8 +108,55 @@ export default {
     goDetail(id) {
       uni.navigateTo({ url: `/pages/video/detail?id=${id}` });
     },
-    goGetFocus(id) {
-      console.log("user_id", id);
+    // 请求用户关注
+    async goGetFocus(item) {
+      if (!this.vuex_token) {
+        console.log("请先登录");
+        return;
+      }
+      if (item.user_id == this.vuex_user.id) {
+        this.$u.toast("不能关注自己哦");
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        focus_id: item.user_id,
+        opt: item.is_focus ? "cancel" : "focus",
+      };
+      let { data } = await postUserFocus(params);
+      if (item.is_focus == 1) {
+        item.is_focus = 0;
+        this.$u.toast("取关成功");
+      } else {
+        item.is_focus = 1;
+        this.$u.toast("关注成功");
+      }
+    },
+    // 点赞视频
+    async postLike(item) {
+      if (!this.vuex_token) {
+        console.log("请先登录");
+        return;
+      }
+      if (item.user_id == this.vuex_user.id) {
+        this.$u.toast("不能点赞自己哦");
+        return;
+      }
+      let params = {
+        token: this.vuex_token,
+        id: item.id,
+        type: item.is_like ? 2 : 1,
+      };
+      let { data } = await likeArticle(params);
+      if (item.is_like == 1) {
+        item.is_like = 0;
+        --item.likes;
+        this.$u.toast("取消成功");
+      } else {
+        item.is_like = 1;
+        ++item.likes;
+        this.$u.toast("点赞成功");
+      }
     },
   },
 };
